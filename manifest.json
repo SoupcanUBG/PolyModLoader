@@ -12,6 +12,10 @@
 	"theme_color": "#28346a",
 	"start_url": "./index.html",
 	"orientation": "landscape",
-	"display_override": ["fullscreen", "standalone", "minimal-ui"],
+	"display_override": [
+		"fullscreen",
+		"standalone",
+		"minimal-ui"
+	],
 	"display": "fullscreen"
 }
