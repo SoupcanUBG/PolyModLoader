@@ -24054,7 +24054,7 @@
                         throw new Error("package.json beta version property must be a positive integer");
                     let tu = "";
                     tu = "-beta" + eu.toString();
-                    const nu = Xd.rE + tu
+                    const versionInt = Xd.rE + tu
                         , iu = Xd.l$.M;
                     if (!Number.isSafeInteger(iu) || iu < 1)
                         throw new Error("package.json beta physicsVersion property must be a positive integer");
@@ -38610,7 +38610,7 @@
                             d.textContent = n.get("Leaderboard"),
                                 YP(this, _P, "f").appendChild(d);
                             const u = document.createElement("h3")
-                                , p = nu.replace(/(\d+\.\d+)\.\d+/, "$1");
+                                , p = versionInt.replace(/(\d+\.\d+)\.\d+/, "$1");
                             u.textContent = n.get("Version") + " " + p,
                                 YP(this, _P, "f").appendChild(u),
                                 QP(this, IP, document.createElement("div"), "f"),
@@ -40060,13 +40060,18 @@
                             const t = document.createElement("a");
                             t.href = "https://www.kodub.com",
                                 t.target = "_blank",
-                                t.textContent = "kodub.com - " + e.get("Version") + " " + nu,
+                                t.textContent = "kodub.com - " + e.get("Version") + " " + versionInt,
                                 GL(this, AL, "f").appendChild(t);
                             const n = document.createElement("a");
                             n.href = "https://opengameart.org/content/sci-fi-theme-1",
                                 n.target = "_blank",
                                 n.textContent = 'OpenGameArt.org "Sci-fi Theme" by Maou (CC-BY 4.0)',
-                                GL(this, AL, "f").appendChild(n),
+                                GL(this, AL, "f").appendChild(n);
+                                
+                            const tes = document.createElement("a");
+                            tes.target = "_blank",
+                                tes.textContent = "Modded by Orangy",
+                                GL(this, AL, "f").appendChild(tes),
                                 GL(this, AL, "f").appendChild(document.createElement("br"));
                             const i = document.createElement("a");
                             i.href = "https://www.kodub.com/privacy/polytrack",
@@ -42306,7 +42311,7 @@
                                     aB.set(this, 1e4)
                             }
                             getLeaderboard(e, t, n, i, r) {
-                                let a = $d + "leaderboard?version=" + nu + "&trackId=" + t + "&skip=" + n.toString() + "&amount=" + i.toString() + "&onlyVerified=" + r.toString();
+                                let a = $d + "leaderboard?version=" + versionInt + "&trackId=" + t + "&skip=" + n.toString() + "&amount=" + i.toString() + "&onlyVerified=" + r.toString();
                                 return this.determinismState == gP.Ok && (a += "&userTokenHash=" + encodeURIComponent(e)),
                                     new Promise(( (t, n) => {
                                             const i = new XMLHttpRequest;
@@ -42406,7 +42411,7 @@
                                     ))
                             }
                             getRecordings(e) {
-                                const t = $d + "recordings?version=" + nu + "&recordingIds=" + e.join(",");
+                                const t = $d + "recordings?version=" + versionInt + "&recordingIds=" + e.join(",");
                                 return new Promise(( (e, n) => {
                                         if (this.determinismState != gP.Ok)
                                             n(new Error("Getting recordings not allowed"));
@@ -42479,7 +42484,7 @@
                                                 o(new Error("Recording is too large"));
                                             else {
                                                 const a = $d + "leaderboard"
-                                                    , c = "version=" + nu + "&userToken=" + encodeURIComponent(e) + "&name=" + encodeURIComponent(t) + "&carColors=" + n.serialize() + "&trackId=" + i + "&frames=" + r.numberOfFrames.toString() + "&recording=" + l
+                                                    , c = "version=" + versionInt + "&userToken=" + encodeURIComponent(e) + "&name=" + encodeURIComponent(t) + "&carColors=" + n.serialize() + "&trackId=" + i + "&frames=" + r.numberOfFrames.toString() + "&recording=" + l
                                                     , h = new XMLHttpRequest;
                                                 h.timeout = sB(this, rB, "f"),
                                                     h.overrideMimeType("text/plain"),
@@ -42516,7 +42521,7 @@
                             submitUserProfile(e, t, n) {
                                 return new Promise(( (i, r) => {
                                         const a = $d + "user"
-                                            , s = "version=" + nu + "&userToken=" + encodeURIComponent(e) + "&name=" + encodeURIComponent(t) + "&carColors=" + n.serialize()
+                                            , s = "version=" + versionInt + "&userToken=" + encodeURIComponent(e) + "&name=" + encodeURIComponent(t) + "&carColors=" + n.serialize()
                                             , o = new XMLHttpRequest;
                                         o.timeout = sB(this, rB, "f"),
                                             o.overrideMimeType("text/plain"),
@@ -42536,7 +42541,7 @@
                                             s(new Error("Submit not allowed"));
                                         else {
                                             const o = $d + "verifyRecordings"
-                                                , l = "version=" + nu + "&userToken=" + encodeURIComponent(e) + (null != t ? "&trackId=" + t : "") + "&maxFrames=" + n.toString() + "&getEstimatedRemaining=" + i.toString() + "&recordings=" + encodeURIComponent(JSON.stringify(r))
+                                                , l = "version=" + versionInt + "&userToken=" + encodeURIComponent(e) + (null != t ? "&trackId=" + t : "") + "&maxFrames=" + n.toString() + "&getEstimatedRemaining=" + i.toString() + "&recordings=" + encodeURIComponent(JSON.stringify(r))
                                                 , c = new XMLHttpRequest;
                                             c.timeout = sB(this, rB, "f"),
                                                 c.overrideMimeType("text/plain"),
@@ -42598,7 +42603,7 @@
                             }
                             getUser(e) {
                                 return new Promise(( (t, n) => {
-                                        const i = $d + "user?version=" + nu + "&userToken=" + encodeURIComponent(e)
+                                        const i = $d + "user?version=" + versionInt + "&userToken=" + encodeURIComponent(e)
                                             , r = new XMLHttpRequest;
                                         r.timeout = sB(this, rB, "f"),
                                             r.overrideMimeType("text/plain"),
