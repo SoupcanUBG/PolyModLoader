@@ -4,6 +4,9 @@
   "private": true,
   "main": "electron/main.js",
   "devDependencies": {
+    "@babel/cli": "^7.27.0",
+    "@babel/core": "^7.26.10",
+    "@babel/preset-env": "^7.26.9",
     "@electron/packager": "^18.3.3",
     "@types/pako": "^0.2.0",
     "@types/three": "^0.166.0",
