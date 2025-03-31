@@ -40005,7 +40005,6 @@ window.polyModLoader.importMods().then(() => {
                     }
                     ,
                     dD = function e(t, n, i, r, a, s, o, l, c, h, d, u, p, f, m, g) {
-                        console.log(this);
                         for (const e of yD(this, rD, "f"))
                             yD(this, iD, "f").removeChild(e);
                         wD(this, rD, [], "f");
@@ -48199,6 +48198,7 @@ window.polyModLoader.importMods().then(() => {
                                 }
                             ))
                     }();
+                    console.log(`yd test: ${yD(rD, rD, "f")}`);
             }
         )()
     }

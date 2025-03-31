@@ -15,14 +15,8 @@ class PMLCoreMod extends PolyMod {
             const A = document.createElement("p");
             A.textContent = t.get("Editor");
             y.appendChild(A);
-            let localyD = this.modPmlInstance.getFromPolyTrack("yD");
-            let localiD = this.modPmlInstance.getFromPolyTrack("iD");
-            let localrD = this.modPmlInstance.getFromPolyTrack("rD");
-            let localAD = this.modPmlInstance.getFromPolyTrack("AD");
-            localyD.call(localAD, localAD, localiD, "f").appendChild(y);
-            localyD.call(localAD, localAD, localrD, "f").push(y);
-            // this.modPmlInstance.getFromPolyTrack(`yD(this, iD, "f")`).appendChild(y);
-            // this.modPmlInstance.getFromPolyTrack(`yD(this, rD, "f")`).push(y);
+            // this.modPmlInstance.getFromPolyTrack(`yD(iD, iD, "f")`).appendChild(y);
+            // this.modPmlInstance.getFromPolyTrack(`yD(rD, rD, "f")`).push(y);
         })
     }
     postInit = () => {
