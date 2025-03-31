@@ -1,7 +1,8 @@
 import { PolyMod } from "./PolyModLoader.js";
 
 class PMLCoreMod extends PolyMod {
-    init = () => {
+    init = (pmlInstance) => {
+        this.modPmlInstance = pmlInstance;
         console.log(`Hello from ${this.name}!`)
         this.modPmlInstance.registerFuncMixin("dD", true, (t, n, i, r, a, s, o, l, c, h, d, u, p, f, m, g) => {
             const y = document.createElement("button");

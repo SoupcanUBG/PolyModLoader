@@ -1615,7 +1615,7 @@ window.polyModLoader.importMods().then(() => {
                 window.polyModLoader.getFromPolyTrack = (path) => {
                     return eval(path);
                 }
-                window.polyModLoader.registerClassMixin = (scope, path, before, func) => {
+                window.polyModLoader.registerClassMixin = (scope, path, before, accessors, func) => {
                     let originalFunc = eval(scope)[path];
                     let newFunc;
                     
