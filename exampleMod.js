@@ -1,34 +1,43 @@
-import { PolyMod } from "./PolyModLoader.js";
+import { PolyMod, MixinType } from "./PolyModLoader.js";
 
 class PMLCoreMod extends PolyMod {
     init = (pmlInstance) => {
         this.modPmlInstance = pmlInstance;
         console.log(`Hello from ${this.name}!`)
-        this.modPmlInstance.registerFuncMixin("dD", true, (t, n, i, r, a, s, o, l, c, h, d, u, p, f, m, g) => {
-            const y = document.createElement("button");
-            y.className = "button button-image";
-            y.innerHTML = '<img src="images/editor.svg">';
-            y.addEventListener("click", ( () => {
+        this.modPmlInstance.registerFuncMixin("dD", MixinType.TAIL, [`yD(this, iD, "f")`, `yD(this, rD, "f")`], (t, n, i, r, a, s, o, l, c, h, d, u, p, f, m, g, iD, rD) => {
+            const modButton = document.createElement("button");
+            modButton.className = "button button-image button-spawn";
+            modButton.style = "animation-delay: 0.7s";
+            modButton.innerHTML = '<img src="images/load.svg">';
+            modButton.addEventListener("click", (() => {
                     n.playUIClick();
-                    p()
+                    let menuDiv = document.getElementById("ui").children[0];
+                    let originalState = Array.prototype.slice.call(originalState).concat(Array.prototype.slice(menuDiv));
+                    let modDiv = document.createElement('div');
+                    modDiv.className = "track-info";
+
+                    menuDiv.appendChild(modDiv);
+                    console.log(originalState)
                 }
             ));
-            const A = document.createElement("p");
-            A.textContent = t.get("Editor");
-            y.appendChild(A);
-            // this.modPmlInstance.getFromPolyTrack(`yD(iD, iD, "f")`).appendChild(y);
-            // this.modPmlInstance.getFromPolyTrack(`yD(rD, rD, "f")`).push(y);
+            const modTextContainer = document.createElement("p");
+            modTextContainer.textContent = "Mods"
+            modButton.appendChild(modTextContainer);
+            iD.insertBefore(modButton, iD.childNodes[0])
+            rD.push(modButton);
+            console.log(iD);
+            console.log(rD);
         })
     }
     postInit = () => {
         console.log(`Hello from ${this.name}, but postInit this time!`);
-        this.modPmlInstance.registerFuncMixin("FO", true, (track) => {
+        this.modPmlInstance.registerFuncMixin("FO", MixinType.HEAD, [], (track) => {
             console.log("Hello from FO")
         })
-        this.modPmlInstance.registerFuncMixin("FO", false, (track) => {
+        this.modPmlInstance.registerFuncMixin("FO", MixinType.TAIL, [], (track) => {
             console.log("Hello from FO, but after!");
         })
-        this.modPmlInstance.registerClassMixin("DN.prototype", "deleteCustomTrack", true, (track) => {
+        this.modPmlInstance.registerClassMixin("DN.prototype", "deleteCustomTrack", MixinType.HEAD, [], (track) => {
             console.log("Hello from deleteCustomTrack!");
             console.log(track);
         })

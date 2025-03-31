@@ -1,4 +1,4 @@
-import { PolyModLoader } from "./PolyModLoader.js"
+import { PolyModLoader, MixinType } from "./PolyModLoader.js"
 window.polyMods = ["http://localhost:63342/PolyTrackCarPickerModded/examplemod.js"]
 window.polyModLoader = new PolyModLoader(window.polyMods) // savePoint pml
 window.polyModLoader.importMods().then(() => {
@@ -1615,36 +1615,75 @@ window.polyModLoader.importMods().then(() => {
                 window.polyModLoader.getFromPolyTrack = (path) => {
                     return eval(path);
                 }
-                window.polyModLoader.registerClassMixin = (scope, path, before, accessors, func) => {
+                window.polyModLoader.registerClassMixin = (scope, path, mixinType, accessors, func) => {
                     let originalFunc = eval(scope)[path];
                     let newFunc;
-                    
-                    if (before) {
+                    switch(mixinType) {
+                      case MixinType.HEAD:
                         newFunc = function() {
-                            func.apply(this, arguments);
-                            originalFunc.apply(this, arguments);
+                          let originalArguments = Array.prototype.slice.call(arguments);;
+                          for(let accessor of accessors) {
+                            originalArguments.push(eval(accessor))
+                          }
+                          func.apply(this, originalArguments);
+                          originalFunc.apply(this, arguments);
                         }
-                    } else {
+                        break;
+                      case MixinType.TAIL:
                         newFunc = function() {
-                            original.apply(this, arguments);
-                            originalFunc.apply(this, arguments);
+                          let originalArguments = Array.prototype.slice.call(arguments);;
+                          for(let accessor of accessors) {
+                            originalArguments.push(eval(accessor))
+                          }
+                          originalFunc.apply(this, arguments);
+                          func.apply(this, originalArguments);
                         }
+                        break;
+                      case MixinType.OVERRIDE:
+                        newFunc = function() {
+                          let originalArguments = Array.prototype.slice.call(arguments);;
+                          for(let accessor of accessors) {
+                            originalArguments.push(eval(accessor))
+                          }
+                          func.apply(this, originalArguments);
+                        }
+                        break;
                     }
                     eval(scope)[path] = newFunc;
                 }
-                window.polyModLoader.registerFuncMixin = (path, before, func) => {
-                    var original = eval(path);
+                window.polyModLoader.registerFuncMixin = (path, mixinType, accessors, func) => {
+                    var originalFunc = eval(path);
                     var newFunc;
-                    if (before) {
+                    switch(mixinType) {
+                      case MixinType.HEAD:
                         newFunc = function() {
-                            func.apply(this, arguments);
-                            original.apply(this, arguments);
+                          let originalArguments = Array.prototype.slice.call(arguments);;
+                          for(let accessor of accessors) {
+                            originalArguments.push(eval(accessor))
+                          }
+                          func.apply(this, originalArguments);
+                          originalFunc.apply(this, arguments);
                         }
-                    } else {
+                        break;
+                      case MixinType.TAIL:
                         newFunc = function() {
-                            original.apply(this, arguments);
-                            func.apply(this, arguments);
+                          let originalArguments = Array.prototype.slice.call(arguments);;
+                          for(let accessor of accessors) {
+                            originalArguments.push(eval(accessor))
+                          }
+                          originalFunc.apply(this, arguments);
+                          func.apply(this, originalArguments);
                         }
+                        break;
+                      case MixinType.OVERRIDE:
+                        newFunc = function() {
+                          let originalArguments = Array.prototype.slice.call(arguments);;
+                          for(let accessor of accessors) {
+                            originalArguments.push(eval(accessor))
+                          }
+                          func.apply(this, originalArguments);
+                        }
+                        break;
                     }
                     eval(`${path} = newFunc;`)
                 }
@@ -33296,7 +33335,7 @@ window.polyModLoader.importMods().then(() => {
                                 y.addEventListener("click", ( () => {
                                         Kk(this, yk, "f").playUIClick(),
                                             this.hide(),
-                                            qk(this, Ok, new Gx("",( () => {
+                                            qk(this, Ok, new Gx("",(() => {
                                                     var e;
                                                     this.show(),
                                                     null === (e = Kk(this, Ok, "f")) || void 0 === e || e.dispose(),
@@ -48198,7 +48237,6 @@ window.polyModLoader.importMods().then(() => {
                                 }
                             ))
                     }();
-                    console.log(`yd test: ${yD(rD, rD, "f")}`);
             }
         )()
     }
