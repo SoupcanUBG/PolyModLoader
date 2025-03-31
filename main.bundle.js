@@ -1,16 +1,22 @@
 import { PolyModLoader, MixinType } from "./PolyModLoader.js"
 if(localStorage.getItem("polyMods")) {
-  window.polyMods = localStorage.getItem("polyMods");
+  window.polyMods = JSON.parse(localStorage.getItem("polyMods"));
 } else {
-  window.polyMods = [
-    {
-      "base": "http://localhost:63342/PolyTrackCarPickerModded/pmlcore",
-      "version": "1.0.0"
-    }
-  ]
+  window.polyMods = []
   localStorage.setItem("polyMods", JSON.stringify(window.polyMods));
 }
-window.polyModLoader = new PolyModLoader("0.5.0-beta5", window.polyMods) // savePoint pml
+if(localStorage.getItem("loadedPolyMods")) {
+    window.loadedPolyMods = JSON.parse(localStorage.getItem("loadedPolyMods"));
+  } else {
+    window.loadedPolyMods = [
+      {
+        "base": "http://localhost:63342/PolyTrackCarPickerModded/pmlcore",
+        "version": "1.0.0"
+      }
+    ]
+    localStorage.setItem("loadedPolyMods", JSON.stringify(window.loadedPolyMods));
+  }
+window.polyModLoader = new PolyModLoader("0.5.0-beta5", window.polyMods, window.loadedPolyMods) // savePoint pml
 window.polyModLoader.importMods().then(() => {
     var e = {
         77: (e, t, n) => {
@@ -24120,10 +24126,15 @@ window.polyModLoader.importMods().then(() => {
                 r()
             }));
             const E = document.createElement("p");
-            E.textContent = t.get("Profile"), k.appendChild(E), yD(this, iD, "f").appendChild(k), yD(this, rD, "f").push(k);
+            E.textContent = t.get("Profile"), k.appendChild(E), 
+            yD(this, iD, "f").appendChild(k), 
+            yD(this, rD, "f").push(k);
             const S = document.createElement("button");
             S.className = "button button-image", S.innerHTML = '<img src="images/play.svg">', S.addEventListener("click", (() => {
-                n.playUIClick(), yD(this, WL, "m", pD).call(this), yD(this, WL, "m", mD).call(this), yD(this, XL, "f").show()
+                n.playUIClick(), 
+                yD(this, WL, "m", pD).call(this), 
+                yD(this, WL, "m", mD).call(this), 
+                yD(this, XL, "f").show()
             }));
             const M = document.createElement("p");
             if (M.textContent = t.get("Play"), S.appendChild(M), yD(this, iD, "f").appendChild(S), yD(this, rD, "f").push(S), window.electron) {
@@ -24146,11 +24157,20 @@ window.polyModLoader.importMods().then(() => {
         }, uD = function (e) {
             yD(this, qL, "f").innerHTML = "";
             const t = document.createElement("a");
-            t.href = "https://www.kodub.com", t.target = "_blank", t.textContent = "kodub.com - " + e.get("Version") + " " + iu, yD(this, qL, "f").appendChild(t);
+            t.href = "https://www.kodub.com", t.target = "_blank",
+            t.textContent = "kodub.com - " + e.get("Version") + " " + iu, 
+            yD(this, qL, "f").appendChild(t);
             const n = document.createElement("a");
-            n.href = "https://opengameart.org/content/sci-fi-theme-1", n.target = "_blank", n.textContent = 'OpenGameArt.org "Sci-fi Theme" by Maou (CC-BY 4.0)', yD(this, qL, "f").appendChild(n), yD(this, qL, "f").appendChild(document.createElement("br"));
+            n.href = "https://opengameart.org/content/sci-fi-theme-1", 
+            n.target = "_blank", 
+            n.textContent = 'OpenGameArt.org "Sci-fi Theme" by Maou (CC-BY 4.0)', 
+            yD(this, qL, "f").appendChild(n), 
+            yD(this, qL, "f").appendChild(document.createElement("br"));
             const i = document.createElement("a");
-            i.href = "https://www.kodub.com/privacy/polytrack", i.target = "_blank", i.textContent = "Privacy Policy", yD(this, qL, "f").appendChild(i)
+            i.href = "https://www.kodub.com/privacy/polytrack", 
+            i.target = "_blank", 
+            i.textContent = "Privacy Policy", 
+            yD(this, qL, "f").appendChild(i)
         }, pD = function () {
             var e;
             null === (e = yD(this, nD, "f")) || void 0 === e || e.classList.add("hidden"), yD(this, iD, "f").classList.add("hidden");

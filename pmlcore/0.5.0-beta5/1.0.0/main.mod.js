@@ -1,6 +1,6 @@
 import { PolyMod, MixinType } from "../../../PolyModLoader.js";
 
-let createModScreen = (pml) => {
+let createModScreen = (pml, n) => {
     let menuDiv = document.getElementById("ui").children[0];
     let hideList = [0,1,3,4,5,6]
     for(let intToHide of hideList) {
@@ -18,10 +18,30 @@ let createModScreen = (pml) => {
 
     let activatedModsList = document.createElement("div");
     activatedModsList.className = "leaderboard";
-    
+
     let modActivatedLabel = document.createElement("h2")
     modActivatedLabel.textContent = "Loaded"
     activatedModsList.appendChild(modActivatedLabel)
+
+    let activatedModsContainer = document.createElement("div")
+    activatedModsContainer.className = "container";
+    activatedModsList.appendChild(activatedModsContainer);
+
+    let buttonWrapper = document.createElement("div")
+    buttonWrapper.className = "button-wapper"
+    activatedModsList.appendChild(buttonWrapper)
+
+    let goUpButton = document.createElement('button');
+    goUpButton.className = "button first";
+    goUpButton.style = "margin: 10px; float: left;padding: 10px"
+    goUpButton.innerHTML = `<img class="button-icon" src="images/arrow_up.svg" style="margin: 0px 10px">`;
+    buttonWrapper.appendChild(goUpButton);
+
+    let goDownButton = document.createElement('button');
+    goDownButton.className = "button first";
+    goDownButton.style = "margin: 10px 0; float: left;padding: 10px"
+    goDownButton.innerHTML = `<img class="button-icon" src="images/arrow_down.svg" style="margin: 0px 10px">`;
+    buttonWrapper.appendChild(goDownButton);
 
     let availableModsContainer = document.createElement("div")
     availableModsContainer.className = "container";
@@ -30,6 +50,7 @@ let createModScreen = (pml) => {
     for(let polyMod of pml.LoadedMods) {
         let modDiv = document.createElement('button');
         modDiv.className = "button main";
+        modDiv.style = "margin: 15px";
         modDiv.id = `mod:${polyMod.id}`;
         modDiv.innerHTML = `<img src="${polyMod.iconSrc}" style="max-width:100px;max-height=100px;">`;
 
@@ -45,20 +66,35 @@ let createModScreen = (pml) => {
         availableModsContainer.appendChild(modDiv);
     }
 
-    let buttonWrapper = document.createElement("div")
-    buttonWrapper.className = "button-wapper"
+    let backButtonWrapper = document.createElement("div")
+    backButtonWrapper.className = "button-wapper"
     
     let backButton = document.createElement('button');
     backButton.className = "button back";
-    backButton.innerHTML = `<img class="button-icon" src="images/back.svg"> Back`;
+    backButton.style = "margin: 10px; float: left;padding: 10px"
+    backButton.innerHTML = `<img class="button-icon" src="images/back.svg" style="margin: 0 5"> Back`;
     backButton.addEventListener("click", () => {
+        n.playUIClick();
         for(let intToUnhide of hideList) {
             menuDiv.children[intToUnhide].classList.remove("hidden")
         }
         modsDiv.remove()
     })
-    buttonWrapper.appendChild(backButton);
-    availableModsList.appendChild(buttonWrapper)
+    backButtonWrapper.appendChild(backButton);
+
+    let addButton = document.createElement('button');
+    addButton.className = "button back";
+    addButton.style = "margin: 10px 0; float: left;padding: 10px"
+    addButton.innerHTML = `<img class="button-icon" src="images/load.svg" style="margin: 0 5"> Add`;
+    backButtonWrapper.appendChild(addButton)
+
+    let loadButton = document.createElement('button');
+    loadButton.className = "button first";
+    loadButton.style = "margin: 10px 0; float: right;padding: 10px"
+    loadButton.innerHTML = `Load <img class="button-icon" src="images/play.svg">`;
+
+    backButtonWrapper.appendChild(loadButton);
+    availableModsList.appendChild(backButtonWrapper)
     
     modsDiv.appendChild(availableModsList)
     modsDiv.appendChild(activatedModsList)
@@ -79,7 +115,7 @@ class PMLCoreMod extends PolyMod {
             modButton.innerHTML = '<img src="images/load.svg">';
             modButton.addEventListener("click", () => {
                 n.playUIClick();
-                createModScreen(this.modPmlInstance);
+                createModScreen(this.modPmlInstance, n);
             });
             
             const modTextContainer = document.createElement("p");
@@ -87,7 +123,9 @@ class PMLCoreMod extends PolyMod {
             modButton.appendChild(modTextContainer);
 
             iD.insertBefore(modButton, iD.childNodes[0])
-            rD.push(modButton);
+            console.log(rD)
+            rD.push(modButton)
+            console.log(rD);
         })
     }
     postInit = () => {
