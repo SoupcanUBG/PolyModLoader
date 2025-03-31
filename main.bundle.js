@@ -1,4 +1,17 @@
-(() => {
+import { PolyModLoader, MixinType } from "./PolyModLoader.js"
+if(localStorage.getItem("polyMods")) {
+  window.polyMods = localStorage.getItem("polyMods");
+} else {
+  window.polyMods = [
+    {
+      "base": "http://localhost:63342/PolyTrackCarPickerModded/pmlcore",
+      "version": "1.0.0"
+    }
+  ]
+  localStorage.setItem("polyMods", JSON.stringify(window.polyMods));
+}
+window.polyModLoader = new PolyModLoader("0.5.0-beta5", window.polyMods) // savePoint pml
+window.polyModLoader.importMods().then(() => {
     var e = {
         77: (e, t, n) => {
             "use strict";
@@ -909,6 +922,83 @@
         e = e.replace(/^blob:/, "").replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/"), n.p = e
     })(), n.b = document.baseURI || self.location.href, n.nc = void 0, (() => {
         "use strict";
+        window.polyModLoader.getFromPolyTrack = (path) => {
+          return eval(path);
+        }
+      
+      
+        window.polyModLoader.registerClassMixin = (scope, path, mixinType, accessors, func) => {
+          let originalFunc = eval(scope)[path];
+          let newFunc;
+          switch(mixinType) {
+            case MixinType.HEAD:
+              newFunc = function() {
+                let originalArguments = Array.prototype.slice.call(arguments);;
+                for(let accessor of accessors) {
+                  originalArguments.push(eval(accessor))
+                }
+                func.apply(this, originalArguments);
+                originalFunc.apply(this, arguments);
+              }
+              break;
+            case MixinType.TAIL:
+              newFunc = function() {
+                let originalArguments = Array.prototype.slice.call(arguments);;
+                for(let accessor of accessors) {
+                  originalArguments.push(eval(accessor))
+                }
+                originalFunc.apply(this, arguments);
+                func.apply(this, originalArguments);
+              }
+              break;
+            case MixinType.OVERRIDE:
+              newFunc = function() {
+                let originalArguments = Array.prototype.slice.call(arguments);;
+                for(let accessor of accessors) {
+                  originalArguments.push(eval(accessor))
+                }
+                func.apply(this, originalArguments);
+              }
+              break;
+          }
+          eval(scope)[path] = newFunc;
+        }
+        window.polyModLoader.registerFuncMixin = (path, mixinType, accessors, func) => {
+          var originalFunc = eval(path);
+          var newFunc;
+          switch(mixinType) {
+            case MixinType.HEAD:
+              newFunc = function() {
+                let originalArguments = Array.prototype.slice.call(arguments);;
+                for(let accessor of accessors) {
+                  originalArguments.push(eval(accessor))
+                }
+                func.apply(this, originalArguments);
+                originalFunc.apply(this, arguments);
+              }
+              break;
+            case MixinType.TAIL:
+              newFunc = function() {
+                let originalArguments = Array.prototype.slice.call(arguments);;
+                for(let accessor of accessors) {
+                  originalArguments.push(eval(accessor))
+                }
+                originalFunc.apply(this, arguments);
+                func.apply(this, originalArguments);
+              }
+              break;
+            case MixinType.OVERRIDE:
+              newFunc = function() {
+                let originalArguments = Array.prototype.slice.call(arguments);;
+                for(let accessor of accessors) {
+                  originalArguments.push(eval(accessor))
+                }
+                func.apply(this, originalArguments);
+              }
+              break;
+          }
+          eval(`${path} = newFunc;`)
+        }
         n(6925);
         var e = n(5072), t = n.n(e), i = n(7825), r = n.n(i), a = n(7659), s = n.n(a), o = n(5056), l = n.n(o),
             c = n(540), h = n.n(c), d = n(1113), u = n.n(d), p = n(8419), f = {};
@@ -24121,6 +24211,7 @@
                     t.href = FL(), t.textContent = FL(), yD(this, nD, "f").appendChild(t), yD(this, jL, "f").appendChild(yD(this, nD, "f"))
                 } else wD(this, nD, null, "f");
                 wD(this, XL, yD(this, WL, "m", hD).call(this, e, t, s, c, a, d, o, l, m, g), "f"), wD(this, YL, document.createElement("a"), "f"), yD(this, YL, "f").className = "discord-link", yD(this, YL, "f").href = "https://www.kodub.com/discord/polytrack", yD(this, YL, "f").target = "_blank", yD(this, YL, "f").innerHTML = '<img src="images/discord.svg">', yD(this, jL, "f").appendChild(yD(this, YL, "f")), wD(this, qL, document.createElement("div"), "f"), yD(this, qL, "f").className = "info", yD(this, jL, "f").appendChild(yD(this, qL, "f")), yD(this, WL, "m", uD).call(this, e), wD(this, iD, document.createElement("div"), "f"), yD(this, iD, "f").className = "main-buttons-container hidden", yD(this, jL, "f").appendChild(yD(this, iD, "f")), wD(this, aD, document.createElement("div"), "f"), yD(this, aD, "f").className = "bottom-buttons", yD(this, jL, "f").appendChild(yD(this, aD, "f")), yD(this, WL, "m", dD).call(this, e, t, n, h, r, c, a, s, o, l, d, p, f, m, g, v), i.hasLoaded() ? yD(this, WL, "m", fD).call(this) : (yD(this, jL, "f").classList.add("loading-screen"), wD(this, KL, new JP(yD(this, jL, "f"), e, i), "f"), i.addCompleteListener((() => {
+                    window.polyModLoader.postInitMods();
                     yD(this, jL, "f").classList.remove("loading-screen");
                     const t = yD(this, KL, "f");
                     null == t || t.fadeOut((() => {
@@ -30189,6 +30280,7 @@
          * @license
          * Copyright 2025 Kodub.com
          */
+        window.polyModLoader.initMods();
         nn.enabled = !1, function () {
             const e = new lN;
             e.addResource(), K_().then((() => {
@@ -30288,4 +30380,4 @@
             }))
         }()
     })()
-})();
+});

@@ -12,6 +12,8 @@ window.polyModLoader.getFromPolyTrack = (path) => {
     return eval(path);
 }
 
+window.polyModLoader.initMods();
+m.enabled = !1;
 
 window.polyModLoader.registerClassMixin = (scope, path, mixinType, accessors, func) => {
     let originalFunc = eval(scope)[path];
