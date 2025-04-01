@@ -24,6 +24,18 @@ export class PolyMod {
     set iconSrc(src) {
         this.IconSrc = src;
     }
+    get isLoaded() {
+        return this.loaded;
+    }
+    set setLoaded(status) {
+        this.loaded = status;
+    }
+    get baseUrl() {
+        return this.modBaseUrl;
+    }
+    set baseUrl(url) {
+        this.modBaseUrl = url;
+    }
     init = (pmlInstance) => {}
     postInit = () => {}
 }
@@ -35,21 +47,53 @@ export const MixinType = Object.freeze({
 })
 
 export class PolyModLoader {
-    constructor(polyVersion, modUrlList) {
+    constructor(polyVersion) {
+        
         this.polyVersion = polyVersion
-        this.polyModUrls = modUrlList;
+        this.polyModUrls = window.polyMods;
         this.loadedMods = []
+        this.allMods = []
     }
     importMods = async() =>{
         for(let polyModObject of this.polyModUrls) {
-            console.log(polyModObject)
             let polyModUrl = `${polyModObject.base}/${this.polyVersion}/${polyModObject.version}`;
             let modImport = await import(`${polyModUrl}/main.mod.js`);
             let newMod = modImport.polyMod;
             newMod.iconSrc = `${polyModUrl}/icon.png`
-            this.loadedMods.push(newMod);
+            newMod.baseUrl = polyModObject.base;
+            if(polyModObject.loaded) {
+                newMod.setLoaded = true;
+                this.loadedMods.push(newMod);
+            }
+            this.allMods.push(newMod)
         }
     }
+    getPolyModsStorage = () => {
+        if(localStorage.getItem("polyMods")) {
+            window.polyMods = JSON.parse(localStorage.getItem("polyMods"));
+        } else {
+            window.polyMods = [
+            {
+            "base": "http://localhost:63342/PolyTrackCarPickerModded/pmlcore",
+            "version": "1.0.0",
+            "loaded": true
+            }
+        ]
+        localStorage.setItem("polyMods", JSON.stringify(window.polyMods));
+        }
+        return window.polyMods;
+    }
+    serializeMod = (mod) => {
+        return { "base": mod.baseUrl, "version": mod.version, "loaded": mod.isLoaded}
+    }
+    saveModsToLocalStorage = () => {
+        let savedMods = []
+        for(let mod of this.allMods) {
+            savedMods.push(this.serializeMod(mod));
+        }
+        window.polyMods = savedMods;
+    }
+    
     initMods = () => {
         for(let polyMod of this.loadedMods) {
             polyMod.init(this);
@@ -61,12 +105,20 @@ export class PolyModLoader {
         }
     }
     getMod(id) {
+        for(let polyMod of this.allMods) {
+            if(polyMod.id == id) return polyMod;
+        }
+    }
+    getLoadedMod(id) {
         for(let polyMod of this.loadedMods) {
             if(polyMod.id == id) return polyMod;
         }
     }
-    get LoadedMods() {
+    get getLoadedMods() {
         return this.loadedMods;
+    }
+    get getAllMods() {
+        return this.allMods;
     }
     getFromPolyTrack = (path) => {}
     registerClassMixin = (scope, path, mixinType, accessors, func) => {}

@@ -1,22 +1,5 @@
 import { PolyModLoader, MixinType } from "./PolyModLoader.js"
-if(localStorage.getItem("polyMods")) {
-  window.polyMods = JSON.parse(localStorage.getItem("polyMods"));
-} else {
-  window.polyMods = []
-  localStorage.setItem("polyMods", JSON.stringify(window.polyMods));
-}
-if(localStorage.getItem("loadedPolyMods")) {
-    window.loadedPolyMods = JSON.parse(localStorage.getItem("loadedPolyMods"));
-  } else {
-    window.loadedPolyMods = [
-      {
-        "base": "http://localhost:63342/PolyTrackCarPickerModded/pmlcore",
-        "version": "1.0.0"
-      }
-    ]
-    localStorage.setItem("loadedPolyMods", JSON.stringify(window.loadedPolyMods));
-  }
-window.polyModLoader = new PolyModLoader("0.5.0-beta5", window.polyMods, window.loadedPolyMods) // savePoint pml
+window.polyModLoader = new PolyModLoader("0.5.0-beta5") // savePoint pml
 window.polyModLoader.importMods().then(() => {
     var e = {
         77: (e, t, n) => {

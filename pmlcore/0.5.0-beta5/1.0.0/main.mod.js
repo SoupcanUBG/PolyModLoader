@@ -1,11 +1,56 @@
 import { PolyMod, MixinType } from "../../../PolyModLoader.js";
 
+let promptUserForNewMod = (pml, n) => {
+    let menuDiv = document.getElementById("ui").children[0];
+
+    let promptDiv = document.createElement("div")
+    promptDiv.className = "nickname";
+    
+    let modUrlHead = document.createElement("h1");
+    modUrlHead.innerText = "Mod URL";
+    modUrlHead.style = "float: left;";
+    promptDiv.appendChild(modUrlHead);
+
+    let urlInput = document.createElement("input")
+    urlInput.type = "text";
+    promptDiv.appendChild(urlInput);
+
+    let modVersionHead = document.createElement("h1");
+    modVersionHead.innerText = "Mod Version";
+    modVersionHead.style = "float: left;";
+    promptDiv.appendChild(modVersionHead);
+
+    let versionInput = document.createElement("input")
+    versionInput.type = "text";
+    promptDiv.appendChild(versionInput);
+    
+    let importButton = document.createElement("button");
+    importButton.style = "float: left;"
+    importButton.className = "button";
+    importButton.innerHTML = `<img class="button-icon" src="images/import.svg"> Import`
+    promptDiv.appendChild(importButton);
+
+    let goBackButton = document.createElement("button");
+    goBackButton.className = "button right";
+    goBackButton.innerHTML = `<img class="button-icon" src="images/back.svg"> Back`
+    goBackButton.addEventListener("click", () => {
+        promptDiv.remove();
+        createModScreen(pml, n);
+    })
+    promptDiv.appendChild(goBackButton);
+
+    menuDiv.appendChild(promptDiv);
+}
+
 let createModScreen = (pml, n) => {
     let menuDiv = document.getElementById("ui").children[0];
     let hideList = [0,1,3,4,5,6]
     for(let intToHide of hideList) {
         menuDiv.children[intToHide].classList.add("hidden")
     }
+
+    let selectedMod;
+
     let modsDiv = document.createElement('div');
     modsDiv.className = "track-info";
 
@@ -33,7 +78,7 @@ let createModScreen = (pml, n) => {
 
     let unloadButton = document.createElement('button');
     unloadButton.className = "button first";
-    unloadButton.style = "margin: 10px 0; float: left;padding: 10px"
+    unloadButton.style = "margin: 10px 0; float: left;padding: 10px; margin-left:2px;"
     unloadButton.innerHTML = `<img class="button-icon" src="images/arrow_left.svg"> Unload`;
     buttonWrapper.appendChild(unloadButton);
 
@@ -51,6 +96,7 @@ let createModScreen = (pml, n) => {
 
     let applyButton = document.createElement('button');
     applyButton.className = "button first";
+    applyButton.addEventListener("click", () => {n.playUIClick();location.reload()})
     applyButton.style = "margin: 10px 0; float: right;padding: 10px"
     applyButton.innerHTML = `Apply <img class="button-icon" src="images/checkmark.svg" style="margin: 0 5">`;
     buttonWrapper.appendChild(applyButton)
@@ -59,12 +105,24 @@ let createModScreen = (pml, n) => {
     availableModsContainer.className = "container";
     availableModsList.appendChild(availableModsContainer);
 
-    for(let polyMod of pml.LoadedMods) {
+    for(let polyMod of pml.getAllMods) {
         let modDiv = document.createElement('button');
         modDiv.className = "button main";
         modDiv.style = "margin: 15px";
         modDiv.id = `mod:${polyMod.id}`;
         modDiv.innerHTML = `<img src="${polyMod.iconSrc}" style="max-width:100px;max-height=100px;">`;
+        modDiv.addEventListener("click", () => {
+            if(selectedMod === modDiv) {
+                modDiv.classList.remove("selected");
+                selectedMod = null;
+            } else {
+                if(selectedMod) {
+                    selectedMod.classList.remove("selected")
+                }
+                modDiv.classList.add("selected");
+                selectedMod = modDiv;
+            }
+        })
 
         let leftDiv = document.createElement("div");
         leftDiv.className = "left"
@@ -75,7 +133,11 @@ let createModScreen = (pml, n) => {
 
         modDiv.appendChild(leftDiv)
         modDiv.appendChild(rightDiv)
-        availableModsContainer.appendChild(modDiv);
+        if(polyMod.isLoaded) {
+            activatedModsContainer.appendChild(modDiv)
+        } else {
+            availableModsContainer.appendChild(modDiv);
+        }
     }
 
     let backButtonWrapper = document.createElement("div")
@@ -98,11 +160,16 @@ let createModScreen = (pml, n) => {
     addButton.className = "button back";
     addButton.style = "margin: 10px 0; float: left;padding: 10px"
     addButton.innerHTML = `<img class="button-icon" src="images/load.svg" style="margin: 0 5"> Add`;
+    addButton.addEventListener("click", () => {
+        n.playUIClick();
+        modsDiv.remove();
+        promptUserForNewMod(pml, n);
+    })
     backButtonWrapper.appendChild(addButton)
 
     let loadButton = document.createElement('button');
     loadButton.className = "button first";
-    loadButton.style = "margin: 10px 0; float: right;padding: 10px"
+    loadButton.style = "margin: 10px 0; float: right;padding: 10px; margin-right:2px;"
     loadButton.innerHTML = `Load <img class="button-icon" src="images/arrow_right.svg">`;
 
     backButtonWrapper.appendChild(loadButton);
@@ -142,16 +209,6 @@ class PMLCoreMod extends PolyMod {
     }
     postInit = () => {
         console.log(`Hello from ${this.name}, but postInit this time!`);
-        this.modPmlInstance.registerFuncMixin("FO", MixinType.HEAD, [], (track) => {
-            console.log("Hello from FO")
-        })
-        this.modPmlInstance.registerFuncMixin("FO", MixinType.TAIL, [], (track) => {
-            console.log("Hello from FO, but after!");
-        })
-        this.modPmlInstance.registerClassMixin("DN.prototype", "deleteCustomTrack", MixinType.HEAD, [], (track) => {
-            console.log("Hello from deleteCustomTrack!");
-            console.log(track);
-        })
     }
 }
 
