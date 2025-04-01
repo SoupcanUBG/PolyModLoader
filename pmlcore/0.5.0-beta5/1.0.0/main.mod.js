@@ -31,6 +31,12 @@ let createModScreen = (pml, n) => {
     buttonWrapper.className = "button-wapper"
     activatedModsList.appendChild(buttonWrapper)
 
+    let unloadButton = document.createElement('button');
+    unloadButton.className = "button first";
+    unloadButton.style = "margin: 10px 0; float: left;padding: 10px"
+    unloadButton.innerHTML = `<img class="button-icon" src="images/arrow_left.svg"> Unload`;
+    buttonWrapper.appendChild(unloadButton);
+
     let goUpButton = document.createElement('button');
     goUpButton.className = "button first";
     goUpButton.style = "margin: 10px; float: left;padding: 10px"
@@ -42,6 +48,12 @@ let createModScreen = (pml, n) => {
     goDownButton.style = "margin: 10px 0; float: left;padding: 10px"
     goDownButton.innerHTML = `<img class="button-icon" src="images/arrow_down.svg" style="margin: 0px 10px">`;
     buttonWrapper.appendChild(goDownButton);
+
+    let applyButton = document.createElement('button');
+    applyButton.className = "button first";
+    applyButton.style = "margin: 10px 0; float: right;padding: 10px"
+    applyButton.innerHTML = `Apply <img class="button-icon" src="images/checkmark.svg" style="margin: 0 5">`;
+    buttonWrapper.appendChild(applyButton)
 
     let availableModsContainer = document.createElement("div")
     availableModsContainer.className = "container";
@@ -91,7 +103,7 @@ let createModScreen = (pml, n) => {
     let loadButton = document.createElement('button');
     loadButton.className = "button first";
     loadButton.style = "margin: 10px 0; float: right;padding: 10px"
-    loadButton.innerHTML = `Load <img class="button-icon" src="images/play.svg">`;
+    loadButton.innerHTML = `Load <img class="button-icon" src="images/arrow_right.svg">`;
 
     backButtonWrapper.appendChild(loadButton);
     availableModsList.appendChild(backButtonWrapper)
