@@ -4,3 +4,4 @@ node_modules
 .vscode
 lib/.DS_Store
 models/.DS_Store
+__pycache__
