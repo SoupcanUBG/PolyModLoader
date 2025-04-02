@@ -1,4 +1,4 @@
-export class PolyMod {
+class PolyMod {
     constructor(id, name, author, version, ptversion) {
         this.modId = id;
         this.modName = name;
@@ -42,15 +42,16 @@ export class PolyMod {
     }
     init = (pmlInstance) => {}
     postInit = () => {}
+    simInit = () => {}
 }
 
-export const MixinType = Object.freeze({
+const MixinType = Object.freeze({
     HEAD: 0,
     TAIL: 1,
     OVERRIDE: 2
 })
 
-export class PolyModLoader {
+class PolyModLoader {
     constructor(polyVersion) {
         this.polyVersion = polyVersion
         this.allMods = []
@@ -153,6 +154,12 @@ export class PolyModLoader {
                 polyMod.postInit(this);
         }
     }
+    simInitMods = () => {
+        for(let polyMod of this.allMods) {
+            if(polyMod.isLoaded)
+                polyMod.simInit(this);
+        }
+    }
     getMod(id) {
         if(id === "pmlcore") {
             return;
@@ -174,15 +181,9 @@ export class PolyModLoader {
     registerSimWorkerFuncMixin = (path, mixinType, accessors, func) => {}
 }
 
-// let ActivePolyModLoader = () => {
-//     let setPolyModLoader = (polyModLoader) => {
-//         this.polyModLoader = polyModLoader;
-//     }
-//     let getPolyModLoader = () => {
-//         return this.polyModLoader;
-//     }
-// };
-
 let ActivePolyModLoader = new PolyModLoader("0.5.0-beta5");
 
-export { ActivePolyModLoader }
+globalThis.PolyMod = PolyMod;
+globalThis.PolyModLoader = PolyModLoader;
+globalThis.MixinType = MixinType;
+globalThis.ActivePolyModLoader = ActivePolyModLoader;
