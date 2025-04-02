@@ -1,4 +1,4 @@
-import '../../../PolyModLoader.js';
+import { PolyMod, MixinType } from "../../../PolyModLoader.js";
 
 let promptUserForNewMod = (pml, n) => {
     let menuDiv = document.getElementById("ui").children[0];
@@ -243,7 +243,7 @@ let createModScreen = (pml, n) => {
     menuDiv.appendChild(modsDiv);
 }
 
-class PMLCoreMod extends globalThis.PolyMod {
+class PMLCoreMod extends PolyMod {
     constructor() {
         super("pmlcore", "PML Core", "Orangy", "1.0.0", "0.5.0-beta5");
     }

@@ -1,3 +1,5 @@
+import { ActivePolyModLoader } from "./PolyModLoader.js"
+import { Ammo } from "./lib/ammo.wasm.js"
 (() => {
     var e = {
         1312: (e, t, n) => {
@@ -424,7 +426,6 @@
     }(),
     ( () => {
         "use strict";
-        importScripts("./PolyModLoader.js")
         ActivePolyModLoader.registerSimWorkerClassMixin = (scope, path, mixinType, accessors, func) => {
             this.physicsTouched = true;
             let originalFunc = eval(scope)[path];
@@ -28652,7 +28653,7 @@
             }
         }
         ;
-        importScripts("lib/ammo.wasm.js");
+        // importScripts("lib/ammo.wasm.js");
         const Dv = [];
         onmessage = e => {
             Dv.push(e)

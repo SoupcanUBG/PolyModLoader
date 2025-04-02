@@ -1,6 +1,7 @@
-import './PolyModLoader.js';
-globalThis.ActivePolyModLoader.initStorage(localStorage);
-globalThis.ActivePolyModLoader.importMods().then(() => {
+import { ActivePolyModLoader, MixinType } from "./PolyModLoader.js"
+console.log(ActivePolyModLoader);
+ActivePolyModLoader.initStorage(localStorage);
+ActivePolyModLoader.importMods().then(() => {
     var e = {
         77: (e, t, n) => {
             "use strict";
@@ -911,16 +912,16 @@ globalThis.ActivePolyModLoader.importMods().then(() => {
         e = e.replace(/^blob:/, "").replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/"), n.p = e
     })(), n.b = document.baseURI || self.location.href, n.nc = void 0, (() => {
         "use strict";
-        globalThis.ActivePolyModLoader.getFromPolyTrack = (path) => {
+        ActivePolyModLoader.getFromPolyTrack = (path) => {
           return eval(path);
         }
       
       
-        globalThis.ActivePolyModLoader.registerClassMixin = (scope, path, mixinType, accessors, func) => {
+        ActivePolyModLoader.registerClassMixin = (scope, path, mixinType, accessors, func) => {
           let originalFunc = eval(scope)[path];
           let newFunc;
           switch(mixinType) {
-            case globalThis.MixinType.HEAD:
+            case MixinType.HEAD:
               newFunc = function() {
                 let originalArguments = Array.prototype.slice.call(arguments);;
                 for(let accessor of accessors) {
@@ -930,7 +931,7 @@ globalThis.ActivePolyModLoader.importMods().then(() => {
                 originalFunc.apply(this, arguments);
               }
               break;
-            case globalThis.MixinType.TAIL:
+            case MixinType.TAIL:
               newFunc = function() {
                 let originalArguments = Array.prototype.slice.call(arguments);;
                 for(let accessor of accessors) {
@@ -940,7 +941,7 @@ globalThis.ActivePolyModLoader.importMods().then(() => {
                 func.apply(this, originalArguments);
               }
               break;
-            case globalThis.MixinType.OVERRIDE:
+            case MixinType.OVERRIDE:
               newFunc = function() {
                 let originalArguments = Array.prototype.slice.call(arguments);;
                 for(let accessor of accessors) {
@@ -952,11 +953,11 @@ globalThis.ActivePolyModLoader.importMods().then(() => {
           }
           eval(scope)[path] = newFunc;
         }
-        globalThis.ActivePolyModLoader.registerFuncMixin = (path, mixinType, accessors, func) => {
+        ActivePolyModLoader.registerFuncMixin = (path, mixinType, accessors, func) => {
           var originalFunc = eval(path);
           var newFunc;
           switch(mixinType) {
-            case globalThis.MixinType.HEAD:
+            case MixinType.HEAD:
               newFunc = function() {
                 let originalArguments = Array.prototype.slice.call(arguments);;
                 for(let accessor of accessors) {
@@ -966,7 +967,7 @@ globalThis.ActivePolyModLoader.importMods().then(() => {
                 originalFunc.apply(this, arguments);
               }
               break;
-            case globalThis.MixinType.TAIL:
+            case MixinType.TAIL:
               newFunc = function() {
                 let originalArguments = Array.prototype.slice.call(arguments);;
                 for(let accessor of accessors) {
@@ -976,7 +977,7 @@ globalThis.ActivePolyModLoader.importMods().then(() => {
                 func.apply(this, originalArguments);
               }
               break;
-            case globalThis.MixinType.OVERRIDE:
+            case MixinType.OVERRIDE:
               newFunc = function() {
                 let originalArguments = Array.prototype.slice.call(arguments);;
                 for(let accessor of accessors) {
@@ -24214,7 +24215,7 @@ globalThis.ActivePolyModLoader.importMods().then(() => {
                     t.href = FL(), t.textContent = FL(), yD(this, nD, "f").appendChild(t), yD(this, jL, "f").appendChild(yD(this, nD, "f"))
                 } else wD(this, nD, null, "f");
                 wD(this, XL, yD(this, WL, "m", hD).call(this, e, t, s, c, a, d, o, l, m, g), "f"), wD(this, YL, document.createElement("a"), "f"), yD(this, YL, "f").className = "discord-link", yD(this, YL, "f").href = "https://www.kodub.com/discord/polytrack", yD(this, YL, "f").target = "_blank", yD(this, YL, "f").innerHTML = '<img src="images/discord.svg">', yD(this, jL, "f").appendChild(yD(this, YL, "f")), wD(this, qL, document.createElement("div"), "f"), yD(this, qL, "f").className = "info", yD(this, jL, "f").appendChild(yD(this, qL, "f")), yD(this, WL, "m", uD).call(this, e), wD(this, iD, document.createElement("div"), "f"), yD(this, iD, "f").className = "main-buttons-container hidden", yD(this, jL, "f").appendChild(yD(this, iD, "f")), wD(this, aD, document.createElement("div"), "f"), yD(this, aD, "f").className = "bottom-buttons", yD(this, jL, "f").appendChild(yD(this, aD, "f")), yD(this, WL, "m", dD).call(this, e, t, n, h, r, c, a, s, o, l, d, p, f, m, g, v), i.hasLoaded() ? yD(this, WL, "m", fD).call(this) : (yD(this, jL, "f").classList.add("loading-screen"), wD(this, KL, new JP(yD(this, jL, "f"), e, i), "f"), i.addCompleteListener((() => {
-                    globalThis.ActivePolyModLoader.postInitMods();
+                    ActivePolyModLoader.postInitMods();
                     yD(this, jL, "f").classList.remove("loading-screen");
                     const t = yD(this, KL, "f");
                     null == t || t.fadeOut((() => {
@@ -24365,6 +24366,10 @@ globalThis.ActivePolyModLoader.importMods().then(() => {
             }
 
             getProgress() {
+              if((sN(this, iN, "f") / sN(this, nN, "f")) > 0.99){
+                console.log(sN(this, iN, "f"))
+                console.log(sN(this, nN, "f"))
+              }
               return sN(this, iN, "f") / sN(this, nN, "f") - 1
             }
 
@@ -25743,7 +25748,7 @@ globalThis.ActivePolyModLoader.importMods().then(() => {
             }
 
             submitLeaderboard(e, t, n, i, r, a) {
-                if(globalThis.ActivePolyModLoader.lbInvalid) {
+                if(ActivePolyModLoader.lbInvalid) {
                     console.log("No leaderboard for you, physics toucher!")
                     return;
                 }
@@ -25944,7 +25949,7 @@ globalThis.ActivePolyModLoader.importMods().then(() => {
         };
         const aU = class {
             constructor(e, t, n) {
-                XB.add(this), ZB.set(this, void 0), JB.set(this, void 0), $B.set(this, !1), eU.set(this, 0), tU.set(this, new Map), iU(this, JB, new Worker("simulation_worker.bundle.js"), "f"), null != t && null != n ? (iU(this, ZB, t, "f"), n.hasLoaded() ? rU(this, XB, "m", nU).call(this, e, t) : n.addCompleteListener((() => {
+                XB.add(this), ZB.set(this, void 0), JB.set(this, void 0), $B.set(this, !1), eU.set(this, 0), tU.set(this, new Map), iU(this, JB, new Worker("simulation_worker.bundle.js", { type: "module" }), "f"), null != t && null != n ? (iU(this, ZB, t, "f"), n.hasLoaded() ? rU(this, XB, "m", nU).call(this, e, t) : n.addCompleteListener((() => {
                     rU(this, XB, "m", nU).call(this, e, t)
                 }))) : iU(this, ZB, null, "f")
             }
@@ -30288,7 +30293,7 @@ globalThis.ActivePolyModLoader.importMods().then(() => {
          * @license
          * Copyright 2025 Kodub.com
          */
-        globalThis.ActivePolyModLoader.initMods();
+        ActivePolyModLoader.initMods();
         nn.enabled = !1, function () {
             const e = new lN;
             e.addResource(), K_().then((() => {
@@ -30380,6 +30385,7 @@ globalThis.ActivePolyModLoader.importMods().then(() => {
                     }))
                 };
             let L = new UD(h, x, b, A, k, f, S, m, v, y, a, c, p, g, e, !1, _, C, P, R, I), D = 0;
+            console.log("ammo");
             y.setAnimationLoop((function (e) {
                 const t = Math.max(e - D, 0) / 1e3;
                 D = e, L.update(t), E.update(t)
