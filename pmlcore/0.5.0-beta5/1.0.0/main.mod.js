@@ -28,6 +28,14 @@ let promptUserForNewMod = (pml, n) => {
     importButton.style = "float: left;"
     importButton.className = "button";
     importButton.innerHTML = `<img class="button-icon" src="images/import.svg"> Import`
+    importButton.addEventListener("click", () => {
+        let modUrl = urlInput.value;
+        let modVersion = versionInput.value;
+        pml.addMod({"base": modUrl, "version": modVersion, "loaded": false}).then(() => {
+            promptDiv.remove();
+            createModScreen(pml, n);
+        })
+    })
     promptDiv.appendChild(importButton);
 
     let goBackButton = document.createElement("button");
@@ -43,7 +51,12 @@ let promptUserForNewMod = (pml, n) => {
 }
 
 let createModScreen = (pml, n) => {
-    let menuDiv = document.getElementById("ui").children[0];
+    let menuDiv;
+    for(let elem of document.getElementById("ui").children) {
+        if(elem.classList.contains("menu")) {
+            menuDiv = elem;
+        }
+    }
     let hideList = [0,1,3,4,5,6]
     for(let intToHide of hideList) {
         menuDiv.children[intToHide].classList.add("hidden")
@@ -78,20 +91,42 @@ let createModScreen = (pml, n) => {
 
     let unloadButton = document.createElement('button');
     unloadButton.className = "button first";
+    unloadButton.disabled = true;
     unloadButton.style = "margin: 10px 0; float: left;padding: 10px; margin-left:2px;"
     unloadButton.innerHTML = `<img class="button-icon" src="images/arrow_left.svg"> Unload`;
+    unloadButton.addEventListener("click", () => {
+        let mod = pml.getMod(selectedMod.id.replace("mod:", ""));
+        pml.setModLoaded(mod, false);
+        modsDiv.remove();
+        createModScreen(pml, n);
+    })
+
     buttonWrapper.appendChild(unloadButton);
 
     let goUpButton = document.createElement('button');
     goUpButton.className = "button first";
+    goUpButton.disabled = true;
     goUpButton.style = "margin: 10px; float: left;padding: 10px"
     goUpButton.innerHTML = `<img class="button-icon" src="images/arrow_up.svg" style="margin: 0px 10px">`;
+    goUpButton.addEventListener("click", () => {
+        let mod = pml.getMod(selectedMod.id.replace("mod:", ""));
+        pml.reorderMod(mod, -1);
+        modsDiv.remove();
+        createModScreen(pml, n);
+    })
     buttonWrapper.appendChild(goUpButton);
 
     let goDownButton = document.createElement('button');
     goDownButton.className = "button first";
+    goDownButton.disabled = true;
     goDownButton.style = "margin: 10px 0; float: left;padding: 10px"
     goDownButton.innerHTML = `<img class="button-icon" src="images/arrow_down.svg" style="margin: 0px 10px">`;
+    goDownButton.addEventListener("click", () => {
+        let mod = pml.getMod(selectedMod.id.replace("mod:", ""));
+        pml.reorderMod(mod, 1);
+        modsDiv.remove();
+        createModScreen(pml, n);
+    })
     buttonWrapper.appendChild(goDownButton);
 
     let applyButton = document.createElement('button');
@@ -112,7 +147,28 @@ let createModScreen = (pml, n) => {
         modDiv.id = `mod:${polyMod.id}`;
         modDiv.innerHTML = `<img src="${polyMod.iconSrc}" style="max-width:100px;max-height=100px;">`;
         modDiv.addEventListener("click", () => {
+            if(!polyMod.isLoaded) {
+                goUpButton.disabled = true;
+                goDownButton.disabled = true;
+                unloadButton.disabled = true;
+                loadButton.disabled = false;
+            } else {
+                unloadButton.disabled = false;
+                loadButton.disabled = true;
+                goUpButton.disabled = false;
+                goDownButton.disabled = false;
+                if(activatedModsContainer.children[0] === modDiv) {
+                    goUpButton.disabled = true;
+                } 
+                if(activatedModsContainer.children[activatedModsContainer.children.length - 1] === modDiv) {
+                    goDownButton.disabled = true;
+                }
+            }
             if(selectedMod === modDiv) {
+                goUpButton.disabled = true;
+                goDownButton.disabled = true;
+                unloadButton.disabled = true;
+                loadButton.disabled = true;
                 modDiv.classList.remove("selected");
                 selectedMod = null;
             } else {
@@ -169,8 +225,15 @@ let createModScreen = (pml, n) => {
 
     let loadButton = document.createElement('button');
     loadButton.className = "button first";
+    loadButton.disabled = true;
     loadButton.style = "margin: 10px 0; float: right;padding: 10px; margin-right:2px;"
     loadButton.innerHTML = `Load <img class="button-icon" src="images/arrow_right.svg">`;
+    loadButton.addEventListener("click", () => {
+        let mod = pml.getMod(selectedMod.id.replace("mod:", ""));
+        pml.setModLoaded(mod, true);
+        modsDiv.remove();
+        createModScreen(pml, n);
+    })
 
     backButtonWrapper.appendChild(loadButton);
     availableModsList.appendChild(backButtonWrapper)
