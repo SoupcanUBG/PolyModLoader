@@ -1,0 +1,5 @@
+.DS_Store
+.idea
+.vscode
+lib/.DS_Store
+models/.DS_Store
