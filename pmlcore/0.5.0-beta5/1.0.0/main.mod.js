@@ -25,8 +25,7 @@ let promptUserForNewMod = (pml, n) => {
     promptDiv.appendChild(versionInput);
     
     let importButton = document.createElement("button");
-    importButton.style = "float: left;"
-    importButton.className = "button";
+    importButton.className = "button right";
     importButton.innerHTML = `<img class="button-icon" src="images/import.svg"> Import`
     importButton.addEventListener("click", () => {
         let modUrl = urlInput.value;
@@ -39,7 +38,8 @@ let promptUserForNewMod = (pml, n) => {
     promptDiv.appendChild(importButton);
 
     let goBackButton = document.createElement("button");
-    goBackButton.className = "button right";
+    goBackButton.style = "float: left;"
+    goBackButton.className = "button left";
     goBackButton.innerHTML = `<img class="button-icon" src="images/back.svg"> Back`
     goBackButton.addEventListener("click", () => {
         promptDiv.remove();

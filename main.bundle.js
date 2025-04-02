@@ -24362,11 +24362,15 @@ ActivePolyModLoader.importMods().then(() => {
             }
 
             hasLoaded() {
-                return sN(this, iN, "f") == sN(this, nN, "f")
+                return sN(this, iN, "f") >= sN(this, nN, "f")
             }
 
             getProgress() {
-                return sN(this, iN, "f") / sN(this, nN, "f")
+              if((sN(this, iN, "f") / sN(this, nN, "f")) > 0.99){
+                console.log(sN(this, iN, "f"))
+                console.log(sN(this, nN, "f"))
+              }
+              return sN(this, iN, "f") / sN(this, nN, "f") - 1
             }
 
             addResource() {
@@ -24384,7 +24388,7 @@ ActivePolyModLoader.importMods().then(() => {
             addProgressListener(e) {
                 sN(this, rN, "f").push(e)
             }
-
+ 
             addCompleteListener(e) {
                 sN(this, aN, "f").push(e)
             }
@@ -24398,6 +24402,7 @@ ActivePolyModLoader.importMods().then(() => {
                     console.error("Failed to preload image: " + e)
                 })), t.src = e
             }
+
         };
         var cN, hN, dN, uN, pN, fN, mN, gN, vN = function (e, t, n, i) {
             return new (n || (n = Promise))((function (r, a) {
@@ -30322,7 +30327,6 @@ ActivePolyModLoader.importMods().then(() => {
             }));
             const p = new YB(c), f = new xz(p.getSetting($o.Language)), m = new vL(c), g = new OB;
             m.syncUserProfile(g);
-            console.log("ammo");
             const v = new AN(c, g, m), w = document.getElementById("screen"), y = new bu(w, p), A = new aB(y, p, e),
                 b = new HP(y), x = new Qb(y, p, o), k = new DN(e, c), E = new MA, S = new tN(a), M = new qO, T = t => {
                     i.trigger((() => {
@@ -30381,6 +30385,7 @@ ActivePolyModLoader.importMods().then(() => {
                     }))
                 };
             let L = new UD(h, x, b, A, k, f, S, m, v, y, a, c, p, g, e, !1, _, C, P, R, I), D = 0;
+            console.log("ammo");
             y.setAnimationLoop((function (e) {
                 const t = Math.max(e - D, 0) / 1e3;
                 D = e, L.update(t), E.update(t)
