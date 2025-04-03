@@ -1,5 +1,4 @@
 import { ActivePolyModLoader, MixinType } from "./PolyModLoader.js"
-console.log(ActivePolyModLoader);
 ActivePolyModLoader.initStorage(localStorage);
 ActivePolyModLoader.importMods().then(() => {
     var e = {
@@ -24366,10 +24365,6 @@ ActivePolyModLoader.importMods().then(() => {
             }
 
             getProgress() {
-              if((sN(this, iN, "f") / sN(this, nN, "f")) > 0.99){
-                console.log(sN(this, iN, "f"))
-                console.log(sN(this, nN, "f"))
-              }
               return sN(this, iN, "f") / sN(this, nN, "f") - 1
             }
 
@@ -25949,7 +25944,7 @@ ActivePolyModLoader.importMods().then(() => {
         };
         const aU = class {
             constructor(e, t, n) {
-                XB.add(this), ZB.set(this, void 0), JB.set(this, void 0), $B.set(this, !1), eU.set(this, 0), tU.set(this, new Map), iU(this, JB, new Worker("simulation_worker.bundle.js", { type: "module" }), "f"), null != t && null != n ? (iU(this, ZB, t, "f"), n.hasLoaded() ? rU(this, XB, "m", nU).call(this, e, t) : n.addCompleteListener((() => {
+                XB.add(this), ZB.set(this, void 0), JB.set(this, void 0), $B.set(this, !1), eU.set(this, 0), tU.set(this, new Map), iU(this, JB, new Worker("simulation_worker.bundle.js"), "f"), null != t && null != n ? (iU(this, ZB, t, "f"), n.hasLoaded() ? rU(this, XB, "m", nU).call(this, e, t) : n.addCompleteListener((() => {
                     rU(this, XB, "m", nU).call(this, e, t)
                 }))) : iU(this, ZB, null, "f")
             }

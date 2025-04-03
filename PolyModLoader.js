@@ -174,15 +174,6 @@ export class PolyModLoader {
     registerSimWorkerFuncMixin = (path, mixinType, accessors, func) => {}
 }
 
-// let ActivePolyModLoader = () => {
-//     let setPolyModLoader = (polyModLoader) => {
-//         this.polyModLoader = polyModLoader;
-//     }
-//     let getPolyModLoader = () => {
-//         return this.polyModLoader;
-//     }
-// };
-
 let ActivePolyModLoader = new PolyModLoader("0.5.0-beta5");
 
 export { ActivePolyModLoader }

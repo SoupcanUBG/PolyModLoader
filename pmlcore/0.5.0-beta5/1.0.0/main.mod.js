@@ -24,7 +24,13 @@ let promptUserForNewMod = (pml, n) => {
     versionInput.type = "text";
     promptDiv.appendChild(versionInput);
     
+    let warningh2 = document.createElement("h2");
+    warningh2.style = "color: #f66;margin:5px;";
+    warningh2.innerText = "Only install mods from trusted sources!";
+    promptDiv.appendChild(warningh2);
+
     let importButton = document.createElement("button");
+    importButton.style = "float: right;"
     importButton.className = "button right";
     importButton.innerHTML = `<img class="button-icon" src="images/import.svg"> Import`
     importButton.addEventListener("click", () => {

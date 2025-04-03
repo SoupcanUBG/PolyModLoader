@@ -1,5 +1,3 @@
-import { ActivePolyModLoader } from "./PolyModLoader.js"
-import { Ammo } from "./lib/ammo.wasm.js"
 (() => {
     var e = {
         1312: (e, t, n) => {
@@ -426,80 +424,6 @@ import { Ammo } from "./lib/ammo.wasm.js"
     }(),
     ( () => {
         "use strict";
-        ActivePolyModLoader.registerSimWorkerClassMixin = (scope, path, mixinType, accessors, func) => {
-            this.physicsTouched = true;
-            let originalFunc = eval(scope)[path];
-            let newFunc;
-            switch(mixinType) {
-            case MixinType.HEAD:
-                newFunc = function() {
-                let originalArguments = Array.prototype.slice.call(arguments);;
-                for(let accessor of accessors) {
-                    originalArguments.push(eval(accessor))
-                }
-                func.apply(this, originalArguments);
-                originalFunc.apply(this, arguments);
-                }
-                break;
-            case MixinType.TAIL:
-                newFunc = function() {
-                let originalArguments = Array.prototype.slice.call(arguments);;
-                for(let accessor of accessors) {
-                    originalArguments.push(eval(accessor))
-                }
-                originalFunc.apply(this, arguments);
-                func.apply(this, originalArguments);
-                }
-                break;
-            case MixinType.OVERRIDE:
-                newFunc = function() {
-                let originalArguments = Array.prototype.slice.call(arguments);;
-                for(let accessor of accessors) {
-                    originalArguments.push(eval(accessor))
-                }
-                func.apply(this, originalArguments);
-                }
-                break;
-            }
-            eval(scope)[path] = newFunc;
-        }
-        ActivePolyModLoader.registerSimWorkerFuncMixin = (path, mixinType, accessors, func) => {
-            this.physicsTouched = true;
-            var originalFunc = eval(path);
-            var newFunc;
-            switch(mixinType) {
-            case MixinType.HEAD:
-                newFunc = function() {
-                let originalArguments = Array.prototype.slice.call(arguments);;
-                for(let accessor of accessors) {
-                    originalArguments.push(eval(accessor))
-                }
-                func.apply(this, originalArguments);
-                originalFunc.apply(this, arguments);
-                }
-                break;
-            case MixinType.TAIL:
-                newFunc = function() {
-                let originalArguments = Array.prototype.slice.call(arguments);;
-                for(let accessor of accessors) {
-                    originalArguments.push(eval(accessor))
-                }
-                originalFunc.apply(this, arguments);
-                func.apply(this, originalArguments);
-                }
-                break;
-            case MixinType.OVERRIDE:
-                newFunc = function() {
-                let originalArguments = Array.prototype.slice.call(arguments);;
-                for(let accessor of accessors) {
-                    originalArguments.push(eval(accessor))
-                }
-                func.apply(this, originalArguments);
-                }
-                break;
-            }
-            eval(`${path} = newFunc;`)
-        }
         n(6925);
         /**
          * @license
@@ -28653,7 +28577,7 @@ import { Ammo } from "./lib/ammo.wasm.js"
             }
         }
         ;
-        // importScripts("lib/ammo.wasm.js");
+        importScripts("lib/ammo.wasm.js");
         const Dv = [];
         onmessage = e => {
             Dv.push(e)
