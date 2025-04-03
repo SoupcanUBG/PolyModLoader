@@ -914,8 +914,6 @@ ActivePolyModLoader.importMods().then(() => {
         ActivePolyModLoader.getFromPolyTrack = (path) => {
           return eval(path);
         }
-      
-      
         ActivePolyModLoader.registerClassMixin = (scope, path, mixinType, accessors, func) => {
           let originalFunc = eval(scope)[path];
           let newFunc;
@@ -927,7 +925,7 @@ ActivePolyModLoader.importMods().then(() => {
                   originalArguments.push(eval(accessor))
                 }
                 func.apply(this, originalArguments);
-                originalFunc.apply(this, arguments);
+                return originalFunc.apply(this, arguments);
               }
               break;
             case MixinType.TAIL:
@@ -937,7 +935,7 @@ ActivePolyModLoader.importMods().then(() => {
                   originalArguments.push(eval(accessor))
                 }
                 originalFunc.apply(this, arguments);
-                func.apply(this, originalArguments);
+                return func.apply(this, originalArguments);
               }
               break;
             case MixinType.OVERRIDE:
@@ -946,7 +944,7 @@ ActivePolyModLoader.importMods().then(() => {
                 for(let accessor of accessors) {
                   originalArguments.push(eval(accessor))
                 }
-                func.apply(this, originalArguments);
+                return func.apply(this, originalArguments);
               }
               break;
           }
@@ -963,7 +961,7 @@ ActivePolyModLoader.importMods().then(() => {
                   originalArguments.push(eval(accessor))
                 }
                 func.apply(this, originalArguments);
-                originalFunc.apply(this, arguments);
+                return originalFunc.apply(this, arguments);
               }
               break;
             case MixinType.TAIL:
@@ -973,7 +971,7 @@ ActivePolyModLoader.importMods().then(() => {
                   originalArguments.push(eval(accessor))
                 }
                 originalFunc.apply(this, arguments);
-                func.apply(this, originalArguments);
+                return func.apply(this, originalArguments);
               }
               break;
             case MixinType.OVERRIDE:
@@ -982,7 +980,7 @@ ActivePolyModLoader.importMods().then(() => {
                 for(let accessor of accessors) {
                   originalArguments.push(eval(accessor))
                 }
-                func.apply(this, originalArguments);
+                return func.apply(this, originalArguments);
               }
               break;
           }
@@ -25947,6 +25945,12 @@ ActivePolyModLoader.importMods().then(() => {
                 XB.add(this), ZB.set(this, void 0), JB.set(this, void 0), $B.set(this, !1), eU.set(this, 0), tU.set(this, new Map), iU(this, JB, new Worker("simulation_worker.bundle.js"), "f"), null != t && null != n ? (iU(this, ZB, t, "f"), n.hasLoaded() ? rU(this, XB, "m", nU).call(this, e, t) : n.addCompleteListener((() => {
                     rU(this, XB, "m", nU).call(this, e, t)
                 }))) : iU(this, ZB, null, "f")
+                ActivePolyModLoader.simInitMods();
+                rU(this, JB, "f").postMessage({
+                  messageType: 69,
+                  classMixins: ActivePolyModLoader.simWorkerClassMixins,
+                  funcMixins: ActivePolyModLoader.simWorkerFuncMixins
+                });
             }
 
             dispose() {
@@ -25965,6 +25969,7 @@ ActivePolyModLoader.importMods().then(() => {
                         }), 10), h = e => {
                             e.data.messageType == KB.VerifyResult && e.data.carId == l && (clearInterval(c), rU(this, JB, "f").removeEventListener("message", h), i(e.data.result))
                         };
+                        console.log(KB)
                         rU(this, JB, "f").addEventListener("message", h), rU(this, JB, "f").postMessage({
                             messageType: KB.Verify,
                             mountainVertices: o.vertices,
@@ -30380,7 +30385,6 @@ ActivePolyModLoader.importMods().then(() => {
                     }))
                 };
             let L = new UD(h, x, b, A, k, f, S, m, v, y, a, c, p, g, e, !1, _, C, P, R, I), D = 0;
-            console.log("ammo");
             y.setAnimationLoop((function (e) {
                 const t = Math.max(e - D, 0) / 1e3;
                 D = e, L.update(t), E.update(t)

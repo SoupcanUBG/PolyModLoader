@@ -42,6 +42,7 @@ export class PolyMod {
     }
     init = (pmlInstance) => {}
     postInit = () => {}
+    simInit = () => {}
 }
 
 export const MixinType = Object.freeze({
@@ -55,6 +56,8 @@ export class PolyModLoader {
         this.polyVersion = polyVersion
         this.allMods = []
         this.physicsTouched = false;
+        this.simWorkerClassMixins = []
+        this.simWorkerFuncMixins = []
     }
     initStorage = (localStorage) => {
         this.localStorage = localStorage;
@@ -62,7 +65,13 @@ export class PolyModLoader {
     }
     importMods = async() =>{
         for(let polyModObject of this.polyModUrls) {
-            let polyModUrl = `${polyModObject.base}/${this.polyVersion}/${polyModObject.version}`;
+            if(polyModObject.version === "latest") {
+                const latestFile = await import(`${polyModObject.base}/latest.json`, {
+                    with: { type: "json" },
+                });
+                polyModObject.version = latestFile.default[this.polyVersion];
+            }
+            let polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
             let modImport = await import(`${polyModUrl}/main.mod.js`);
             let newMod = modImport.polyMod;
             newMod.iconSrc = `${polyModUrl}/icon.png`
@@ -83,7 +92,7 @@ export class PolyModLoader {
             this.polyModUrls = [
             {
                 "base": "http://localhost:63342/PolyTrackCarPickerModded/pmlcore",
-                "version": "1.0.0",
+                "version": "latest",
                 "loaded": true
             }
         ]
@@ -150,7 +159,13 @@ export class PolyModLoader {
     postInitMods = () => {
         for(let polyMod of this.allMods) {
             if(polyMod.isLoaded)
-                polyMod.postInit(this);
+                polyMod.postInit();
+        }
+    }
+    simInitMods = () => {
+        for(let polyMod of this.allMods) {
+            if(polyMod.isLoaded)
+                polyMod.simInit();
         }
     }
     getMod(id) {
@@ -170,8 +185,24 @@ export class PolyModLoader {
     getFromPolyTrack = (path) => {}
     registerClassMixin = (scope, path, mixinType, accessors, func) => {}
     registerFuncMixin = (path, mixinType, accessors, func) => {}
-    registerSimWorkerClassMixin = (scope, path, mixinType, accessors, func) => {}
-    registerSimWorkerFuncMixin = (path, mixinType, accessors, func) => {}
+    registerSimWorkerClassMixin = (scope, path, mixinType, accessors, func) => {
+        this.simWorkerClassMixins.push({
+            scope: scope,
+            path: path,
+            mixinType: mixinType,
+            accessors: accessors,
+            funcString: func.toString()
+        })
+    }
+    registerSimWorkerFuncMixin = (path, mixinType, accessors, func) => {
+        this.simWorkerFuncMixins.push({
+            scope: scope,
+            path: path,
+            mixinType: mixinType,
+            accessors: accessors,
+            funcString: func.toString()
+        })
+    }
 }
 
 let ActivePolyModLoader = new PolyModLoader("0.5.0-beta5");

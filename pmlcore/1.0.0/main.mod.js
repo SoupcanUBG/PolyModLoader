@@ -279,6 +279,11 @@ class PMLCoreMod extends PolyMod {
     postInit = () => {
         console.log(`Hello from ${this.name}, but postInit this time!`);
     }
+    simInit = () => {
+        this.modPmlInstance.registerSimWorkerClassMixin("Bv.prototype", "getControls", MixinType.HEAD, [], () => {
+            console.log("Hello from getControls!");
+        });
+    }
 }
 
 export let polyMod = new PMLCoreMod();
