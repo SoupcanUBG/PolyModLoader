@@ -1,12 +1,4 @@
 export class PolyMod {
-    constructor(id, name, author, version, ptversion) {
-        this.modId = id;
-        this.modName = name;
-        this.modAuthor = author;
-        this.modVersion = version;
-        this.polyVersion = ptversion;
-        this.touchingPhysics = false;
-    }
     get author() {
         return this.modAuthor;
     }
@@ -40,6 +32,18 @@ export class PolyMod {
     get touchesPhysics() {
         return this.touchingPhysics;
     }
+    get dependencies() {
+        return this.modDependencies;
+    }
+    applyManifest = (manifest) => {
+        this.modName = manifest.name;
+        this.polyVersion = manifest.target;
+        this.modVersion = manifest.version;
+        this.modId = manifest.id;
+        this.modAuthor = manifest.author;
+        this.modDependencies = manifest.dependencies;
+        this.assetFolder = manifest.assets
+    }
     init = (pmlInstance) => {}
     postInit = () => {}
     simInit = () => {}
@@ -72,8 +76,14 @@ export class PolyModLoader {
                 polyModObject.version = latestFile.default[this.polyVersion];
             }
             let polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
-            let modImport = await import(`${polyModUrl}/main.mod.js`);
+            const manifestFile = await import(`${polyModUrl}/manifest.json`, {
+                with: { type: "json" },
+            });
+            let modImport = await import(`${polyModUrl}/${manifestFile["default"]["main"]}`);
             let newMod = modImport.polyMod;
+            manifestFile["default"]["version"] = polyModObject.version;
+            newMod.applyManifest(manifestFile["default"])
+            newMod.applyManifest = (nothing) => {console.warn("Can't apply manifest after initialization!")}
             newMod.iconSrc = `${polyModUrl}/icon.png`
             newMod.baseUrl = polyModObject.base;
             if(polyModObject.loaded) {
@@ -186,6 +196,7 @@ export class PolyModLoader {
     registerClassMixin = (scope, path, mixinType, accessors, func) => {}
     registerFuncMixin = (path, mixinType, accessors, func) => {}
     registerSimWorkerClassMixin = (scope, path, mixinType, accessors, func) => {
+        this.physicsTouched = true;
         this.simWorkerClassMixins.push({
             scope: scope,
             path: path,
@@ -195,6 +206,7 @@ export class PolyModLoader {
         })
     }
     registerSimWorkerFuncMixin = (path, mixinType, accessors, func) => {
+        this.physicsTouched = true;
         this.simWorkerFuncMixins.push({
             scope: scope,
             path: path,

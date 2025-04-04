@@ -1,7 +1,7 @@
 {
-    "name": "PML Core",
-    "id": "pmlcore",
-    "author": "Orangy",
+    "name": "Example Mod",
+    "id": "examplemod",
+    "author": "Example Man",
     "target": "0.5.0-beta5",
     "main": "main.mod.js",
     "assets": "assets",

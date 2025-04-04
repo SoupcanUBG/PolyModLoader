@@ -250,9 +250,6 @@ let createModScreen = (pml, n) => {
 }
 
 class PMLCoreMod extends PolyMod {
-    constructor() {
-        super("pmlcore", "PML Core", "Orangy", "1.0.0", "0.5.0-beta5");
-    }
     init = (pmlInstance) => {
         this.modPmlInstance = pmlInstance;
         console.log(`Hello from ${this.name}!`)
@@ -271,18 +268,13 @@ class PMLCoreMod extends PolyMod {
             modButton.appendChild(modTextContainer);
 
             iD.insertBefore(modButton, iD.childNodes[0])
-            console.log(rD)
             rD.push(modButton)
-            console.log(rD);
         })
     }
     postInit = () => {
         console.log(`Hello from ${this.name}, but postInit this time!`);
     }
     simInit = () => {
-        this.modPmlInstance.registerSimWorkerClassMixin("Bv.prototype", "getControls", MixinType.HEAD, [], () => {
-            console.log("Hello from getControls!");
-        });
     }
 }
 
