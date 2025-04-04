@@ -70,29 +70,47 @@ export class PolyModLoader {
     importMods = async() =>{
         for(let polyModObject of this.polyModUrls) {
             if(polyModObject.version === "latest") {
-                const latestFile = await import(`${polyModObject.base}/latest.json`, {
-                    with: { type: "json" },
-                });
-                polyModObject.version = latestFile.default[this.polyVersion];
-            }
-            let polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
-            const manifestFile = await import(`${polyModUrl}/manifest.json`, {
-                with: { type: "json" },
-            });
-            let modImport = await import(`${polyModUrl}/${manifestFile["default"]["main"]}`);
-            let newMod = modImport.polyMod;
-            manifestFile["default"]["version"] = polyModObject.version;
-            newMod.applyManifest(manifestFile["default"])
-            newMod.applyManifest = (nothing) => {console.warn("Can't apply manifest after initialization!")}
-            newMod.iconSrc = `${polyModUrl}/icon.png`
-            newMod.baseUrl = polyModObject.base;
-            if(polyModObject.loaded) {
-                newMod.setLoaded = true;
-                if(newMod.touchesPhysics) {
-                    this.physicsTouched = true;
+                try {
+                    const latestFile = await import(`${polyModObject.base}/latest.json`, {
+                        with: { type: "json" },
+                    });
+                    polyModObject.version = latestFile.default[this.polyVersion];
+                } catch {
+                    alert(`Couldn't find latest version for ${polyModObject.base}`)
                 }
             }
-            this.allMods.push(newMod)
+            let polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
+            let manifestFile;
+            try {
+                manifestFile = await import(`${polyModUrl}/manifest.json`, {
+                    with: { type: "json" },
+                });
+                let modImport;
+                try {
+                    modImport = await import(`${polyModUrl}/${manifestFile["default"]["main"]}`);    
+
+                    let newMod = modImport.polyMod;
+                    manifestFile["default"]["version"] = polyModObject.version;
+                    if(this.getMod(manifestFile["default"]["id"])) {
+                        alert(`Duplicate mod detected: ${manifestFile["default"]["name"]}`)
+                    }
+                    newMod.applyManifest(manifestFile["default"])
+                    newMod.applyManifest = (nothing) => {console.warn("Can't apply manifest after initialization!")}
+                    newMod.iconSrc = `${polyModUrl}/icon.png`
+                    newMod.baseUrl = polyModObject.base;
+                    if(polyModObject.loaded) {
+                        newMod.setLoaded = true;
+                        if(newMod.touchesPhysics) {
+                            this.physicsTouched = true;
+                        }
+                    }
+                    this.allMods.push(newMod)
+                } catch {
+                    alert(`Mod ${manifestFile.name} failed to load.`)
+                }
+            } catch {
+                alert(`Couldn't load mod with URL ${polyModUrl}`)
+            }
         }
     }
     getPolyModsStorage = () => {
@@ -135,25 +153,42 @@ export class PolyModLoader {
         this.saveModsToLocalStorage();
     }
     addMod = async(polyModObject) => {
-        let polyModUrl = `${polyModObject.base}/${this.polyVersion}/${polyModObject.version}`;
-        console.log(polyModUrl);
-        let modImport;
+        if(polyModObject.version === "latest") {
+            try {
+                const latestFile = await import(`${polyModObject.base}/latest.json`, {
+                    with: { type: "json" },
+                });
+                polyModObject.version = latestFile.default[this.polyVersion];
+            } catch {
+                alert(`Couldn't find latest version for ${polyModObject.base}`)
+            }
+        }
+        let polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
         try {
-            modImport = await import(`${polyModUrl}/main.mod.js`);
+            manifestFile = await import(`${polyModUrl}/manifest.json`, {
+                with: { type: "json" },
+            });
+            if(this.getMod(manifestFile["default"].id)) {
+                alert("This mod is already present!");
+                return;
+            }
+            let modImport;
+            try {
+                modImport = await import(`${polyModUrl}/main.mod.js`);
+                
+                let newMod = modImport.polyMod;
+                newMod.iconSrc = `${polyModUrl}/icon.png`
+                newMod.baseUrl = polyModObject.base;
+                polyModObject.loaded = false;
+                this.allMods.push(newMod);
+                this.saveModsToLocalStorage();
+            } catch {
+                alert("Something went wrong importing this mod!")
+                return;
+            }
         } catch {
-            alert("Something went wrong importing this mod!")
-            return;
+            alert(`Couldn't find mod manifest for "${polyModObject.base}"`)
         }
-        let newMod = modImport.polyMod;
-        if(this.getMod(newMod.id)) {
-            alert("This mod is already present!");
-            return;
-        }
-        newMod.iconSrc = `${polyModUrl}/icon.png`
-        newMod.baseUrl = polyModObject.base;
-        polyModObject.loaded = false;
-        this.allMods.push(newMod);
-        this.saveModsToLocalStorage();
     }
     setModLoaded = (mod, state) => {
         if(!mod) return;
