@@ -170,6 +170,7 @@ let createModScreen = (pml, n) => {
     padding: 0;`
 
         let modMainButton = document.createElement('button');
+        console.log(polyMod)
         modMainButton.id = `mod:${polyMod.id}`;
         modMainButton.className = "button"
         modMainButton.style = `    --text-color: #fff;

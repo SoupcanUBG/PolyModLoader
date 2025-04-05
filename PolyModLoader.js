@@ -3,7 +3,7 @@ export class PolyMod {
         return this.modAuthor;
     }
     get id() {
-        return this.modId;
+        return this.modID;
     }
     get name() {
         return this.modName;
@@ -175,15 +175,14 @@ export class PolyModLoader {
     /**
      * Add a mod to the internal mod list. Added mod is given least priority.
      * 
-     * @param {PolyMod} polyModObject - The mod object to add.
+     * @param {PolyMod} polyModObject - The mod's JSON representation to add.
      */
     addMod = async (polyModObject) => {
         let latest = false;
         if (polyModObject.version === "latest") {
             try {
                 latest = true;
-                const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json());
-                console.log(latestFile)
+                const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json());        
                 polyModObject.version = latestFile[this.polyVersion];
             } catch {
                 alert(`Couldn't find latest version for ${polyModObject.base}`)
@@ -216,6 +215,10 @@ export class PolyModLoader {
             alert(`Couldn't find mod manifest for "${polyModObject.base}".`);
         }
     }
+    removeMod = (mod) => {
+        this.allMods.remove(mod);
+        this.saveModsToLocalStorage();
+    }
     /**
      * Set the loaded state of a mod.
      * 
@@ -242,6 +245,12 @@ export class PolyModLoader {
             if (polyMod.isLoaded) polyMod.simInit();
         }
     }
+    /**
+     * Function to access a mod from its ID.
+     * 
+     * @param {string} id   - The ID of the mod to get
+     * @returns {PolyMod}   - The requested mod's object;
+     */
     getMod(id) {
         if (id === "pmlcore") {
             return;
