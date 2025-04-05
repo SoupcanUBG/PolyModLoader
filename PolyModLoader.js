@@ -35,6 +35,12 @@ export class PolyMod {
     get dependencies() {
         return this.modDependencies;
     }
+    get savedLatest() {
+        return this.latestSaved;
+    }
+    set savedLatest(latest) {
+        this.latestSaved = latest;
+    }
     applyManifest = (manifest) => {
         // this.modName = manifest.name;
         // this.polyVersion = manifest.target;
@@ -79,22 +85,19 @@ export class PolyModLoader {
     }
     importMods = async () => {
         for (let polyModObject of this.polyModUrls) {
+            let latest = false;
             if (polyModObject.version === "latest") {
                 try {
-                    const latestFile = await import(`${polyModObject.base}/latest.json`, {
-                        with: { type: "json" },
-                    });
-                    polyModObject.version = latestFile.default[this.polyVersion];
+                    latest = true;
+                    const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json())
+                    polyModObject.version = latestFile[this.polyVersion];
                 } catch {
                     alert(`Couldn't find latest version for ${polyModObject.base}`)
                 }
             }
             const polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
             try {
-                let manifestFile = await import(`${polyModUrl}/manifest.json`, {
-                    with: { type: "json" },
-                });
-                manifestFile = manifestFile["default"];
+                const manifestFile = await fetch(`${polyModUrl}/manifest.json`).then(r => r.json())
                 try {
                     let mod = manifestFile.polymod;
                     const modImport = await import(`${polyModUrl}/${mod.main}`);
@@ -106,6 +109,7 @@ export class PolyModLoader {
                     }
                     newMod.applyManifest(manifestFile)
                     newMod.applyManifest = (nothing) => { console.warn("Can't apply manifest after initialization!") }
+                    newMod.savedLatest = latest;
                     newMod.iconSrc = `${polyModUrl}/icon.png`
                     newMod.baseUrl = polyModObject.base;
                     if (polyModObject.loaded) {
@@ -114,12 +118,12 @@ export class PolyModLoader {
                             this.physicsTouched = true;
                         }
                     }
-                    this.allMods.push(newMod)
+                    this.allMods.push(newMod);
                 } catch {
-                    alert(`Mod ${mod.name} failed to load.`)
+                    alert(`Mod ${mod.name} failed to load.`);
                 }
             } catch {
-                alert(`Couldn't load mod with URL ${polyModUrl}.`)
+                alert(`Couldn't load mod with URL ${polyModUrl}.`);
             }
         }
     }
@@ -139,7 +143,7 @@ export class PolyModLoader {
         return this.polyModUrls;
     }
     serializeMod = (mod) => {
-        return { "base": mod.baseUrl, "version": mod.version, "loaded": mod.isLoaded }
+        return { "base": mod.baseUrl, "version": mod.savedLatest ? "latest" : mod.version, "loaded": mod.isLoaded };
     }
     saveModsToLocalStorage = () => {
         let savedMods = []
@@ -174,32 +178,32 @@ export class PolyModLoader {
      * @param {PolyMod} polyModObject - The mod object to add.
      */
     addMod = async (polyModObject) => {
+        let latest = false;
         if (polyModObject.version === "latest") {
             try {
-                const latestFile = await import(`${polyModObject.base}/latest.json`, {
-                    with: { type: "json" },
-                });
-                polyModObject.version = latestFile.default[this.polyVersion];
+                latest = true;
+                const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json());
+                console.log(latestFile)
+                polyModObject.version = latestFile[this.polyVersion];
             } catch {
                 alert(`Couldn't find latest version for ${polyModObject.base}`)
             }
         }
         const polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
         try {
-            let manifestFile = await import(`${polyModUrl}/manifest.json`, {
-                with: { type: "json" },
-            });
-            manifestFile = manifestFile["default"];
-            const mod = manifestFile.mod;
+            const manifestFile = await fetch(`${polyModUrl}/manifest.json`).then(r => r.json());
+            const mod = manifestFile.polymod;
             if (this.getMod(mod.id)) {
                 alert("This mod is already present!");
                 return;
             }
             try {
                 const modImport = await import(`${polyModUrl}/${mod.main}`);
-
                 let newMod = modImport.polyMod;
                 newMod.iconSrc = `${polyModUrl}/icon.png`;
+                mod.version = polyModObject.version;
+                newMod.applyManifest(manifestFile);
+                newMod.savedLatest = latest;
                 newMod.baseUrl = polyModObject.base;
                 polyModObject.loaded = false;
                 this.allMods.push(newMod);
