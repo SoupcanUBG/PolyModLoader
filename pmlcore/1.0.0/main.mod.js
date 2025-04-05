@@ -147,12 +147,62 @@ let createModScreen = (pml, n) => {
     availableModsList.appendChild(availableModsContainer);
 
     for(let polyMod of pml.getAllMods) {
-        let modDiv = document.createElement('button');
-        modDiv.className = "button main";
-        modDiv.style = "margin: 15px";
-        modDiv.id = `mod:${polyMod.id}`;
-        modDiv.innerHTML = `<img src="${polyMod.iconSrc}" style="max-width:100px;max-height=100px;">`;
-        modDiv.addEventListener("click", () => {
+        let modDiv = document.createElement('div');
+        modDiv.style = `--text-color: #fff;
+    --text-disabled-color: #5d6a7c;
+    --surface-color: #28346a;
+    --surface-secondary-color: #212b58;
+    --surface-tertiary-color: #192042;
+    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+    --button-color: #112052;
+    --button-hover-color: #334b77;
+    --button-active-color: #151f41;
+    --button-disabled-color: #313d53;
+    scrollbar-color: #7272c2 #223;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    text-align: left;
+    pointer-events: auto;
+    font-family: ForcedSquare, Arial, sans-serif;
+    line-height: 1;
+    position: relative;
+    margin: 10px 10px 0 10px;
+    padding: 0;`
+
+        let modMainButton = document.createElement('button');
+        modMainButton.id = `mod:${polyMod.id}`;
+        modMainButton.className = "button"
+        modMainButton.style = `    --text-color: #fff;
+    --text-disabled-color: #5d6a7c;
+    --surface-color: #28346a;
+    --surface-secondary-color: #212b58;
+    --surface-tertiary-color: #192042;
+    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+    --button-color: #112052;
+    --button-hover-color: #334b77;
+    --button-active-color: #151f41;
+    --button-disabled-color: #313d53;
+    scrollbar-color: #7272c2 #223;
+    -webkit-tap-highlight-color: transparent;
+    font-family: ForcedSquare, Arial, sans-serif;
+    line-height: 1;
+    position: relative;
+    border: none;
+    color: var(--text-color);
+    font-size: 32px;
+    pointer-events: auto;
+    user-select: none;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+    width: 100%;
+    height: 100px;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    text-align: left;
+    white-space: nowrap;`;
+        modMainButton.innerHTML = `<img src="${polyMod.iconSrc}" style="max-width:100px;max-height=100px;">`;
+        modMainButton.addEventListener("click", () => {
             if(!polyMod.isLoaded) {
                 goUpButton.disabled = true;
                 goDownButton.disabled = true;
@@ -163,38 +213,244 @@ let createModScreen = (pml, n) => {
                 loadButton.disabled = true;
                 goUpButton.disabled = false;
                 goDownButton.disabled = false;
-                if(activatedModsContainer.children[0] === modDiv) {
+                if(activatedModsContainer.children[0] === modMainButton) {
                     goUpButton.disabled = true;
                 } 
-                if(activatedModsContainer.children[activatedModsContainer.children.length - 1] === modDiv) {
+                if(activatedModsContainer.children[activatedModsContainer.children.length - 1] === modMainButton) {
                     goDownButton.disabled = true;
                 }
             }
-            if(selectedMod === modDiv) {
+            if(selectedMod === modMainButton) {
                 goUpButton.disabled = true;
                 goDownButton.disabled = true;
                 unloadButton.disabled = true;
                 loadButton.disabled = true;
-                modDiv.classList.remove("selected");
+                modMainButton.style = `    --text-color: #fff;
+    --text-disabled-color: #5d6a7c;
+    --surface-color: #28346a;
+    --surface-secondary-color: #212b58;
+    --surface-tertiary-color: #192042;
+    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+    --button-color: #112052;
+    --button-hover-color: #334b77;
+    --button-active-color: #151f41;
+    --button-disabled-color: #313d53;
+    scrollbar-color: #7272c2 #223;
+    -webkit-tap-highlight-color: transparent;
+    font-family: ForcedSquare, Arial, sans-serif;
+    line-height: 1;
+    position: relative;
+    border: none;
+    color: var(--text-color);
+    font-size: 32px;
+    pointer-events: auto;
+    user-select: none;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+    width: 100%;
+    height: 100px;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    text-align: left;
+    white-space: nowrap;`
                 selectedMod = null;
             } else {
                 if(selectedMod) {
-                    selectedMod.classList.remove("selected")
+                    selectedMod.style = `    --text-color: #fff;
+                    --text-disabled-color: #5d6a7c;
+                    --surface-color: #28346a;
+                    --surface-secondary-color: #212b58;
+                    --surface-tertiary-color: #192042;
+                    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+                    --button-color: #112052;
+                    --button-hover-color: #334b77;
+                    --button-active-color: #151f41;
+                    --button-disabled-color: #313d53;
+                    scrollbar-color: #7272c2 #223;
+                    -webkit-tap-highlight-color: transparent;
+                    font-family: ForcedSquare, Arial, sans-serif;
+                    line-height: 1;
+                    position: relative;
+                    border: none;
+                    color: var(--text-color);
+                    font-size: 32px;
+                    pointer-events: auto;
+                    user-select: none;
+                    cursor: pointer;
+                    margin: 0;
+                    padding: 0;
+                    vertical-align: top;
+                    width: 100%;
+                    height: 100px;
+                    clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+                    text-align: left;
+                    white-space: nowrap;`
                 }
-                modDiv.classList.add("selected");
-                selectedMod = modDiv;
+                modMainButton.style = `    --text-color: #fff;
+                --text-disabled-color: #5d6a7c;
+                --surface-color: #28346a;
+                --surface-secondary-color: #212b58;
+                --surface-tertiary-color: #192042;
+                --surface-transparent-color: rgba(40, 52, 106, 0.5);
+                --button-color: #112052;
+                --button-hover-color: #334b77;
+                --button-active-color: #151f41;
+                --button-disabled-color: #313d53;
+                scrollbar-color: #7272c2 #223;
+                -webkit-tap-highlight-color: transparent;
+                font-family: ForcedSquare, Arial, sans-serif;
+                background: var(--button-hover-color);
+                line-height: 1;
+                position: relative;
+                border: none;
+                color: var(--text-color);
+                font-size: 32px;
+                pointer-events: auto;
+                user-select: none;
+                cursor: pointer;
+                margin: 0;
+                padding: 0;
+                vertical-align: top;
+                width: 100%;
+                height: 100px;
+                clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+                text-align: left;
+                white-space: nowrap;`
+                selectedMod = modMainButton;
             }
         })
 
         let leftDiv = document.createElement("div");
-        leftDiv.className = "left"
-        leftDiv.innerHTML = `<p class="name">  ${polyMod.name} <u>${polyMod.version}</u></p><p>  By ${polyMod.author}</p>`
+        leftDiv.style = `    --text-color: #fff;
+    --text-disabled-color: #5d6a7c;
+    --surface-color: #28346a;
+    --surface-secondary-color: #212b58;
+    --surface-tertiary-color: #192042;
+    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+    --button-color: #112052;
+    --button-hover-color: #334b77;
+    --button-active-color: #151f41;
+    --button-disabled-color: #313d53;
+    scrollbar-color: #7272c2 #223;
+    -webkit-tap-highlight-color: transparent;
+    color: var(--text-color);
+    font-size: 32px;
+    pointer-events: auto;
+    user-select: none;
+    cursor: pointer;
+    text-align: left;
+    white-space: nowrap;
+    font-family: ForcedSquare, Arial, sans-serif;
+    line-height: 1;
+    display: inline-block;
+    vertical-align: top;`
+        leftDiv.innerHTML = `<p style="    --text-color: #fff;
+    --text-disabled-color: #5d6a7c;
+    --surface-color: #28346a;
+    --surface-secondary-color: #212b58;
+    --surface-tertiary-color: #192042;
+    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+    --button-color: #112052;
+    --button-hover-color: #334b77;
+    --button-active-color: #151f41;
+    --button-disabled-color: #313d53;
+    scrollbar-color: #7272c2 #223;
+    -webkit-tap-highlight-color: transparent;
+    pointer-events: auto;
+    user-select: none;
+    cursor: pointer;
+    text-align: left;
+    white-space: nowrap;
+    font-family: ForcedSquare, Arial, sans-serif;
+    line-height: 1;
+    margin: 0;
+    padding: 12px;
+    font-size: 28px;
+    color: var(--text-color);">  ${polyMod.name} <u>${polyMod.version}</u></p><p style="    --text-color: #fff;
+    --text-disabled-color: #5d6a7c;
+    --surface-color: #28346a;
+    --surface-secondary-color: #212b58;
+    --surface-tertiary-color: #192042;
+    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+    --button-color: #112052;
+    --button-hover-color: #334b77;
+    --button-active-color: #151f41;
+    --button-disabled-color: #313d53;
+    scrollbar-color: #7272c2 #223;
+    -webkit-tap-highlight-color: transparent;
+    pointer-events: auto;
+    user-select: none;
+    cursor: pointer;
+    text-align: left;
+    white-space: nowrap;
+    font-family: ForcedSquare, Arial, sans-serif;
+    line-height: 1;
+    margin: 0;
+    padding: 12px;
+    font-size: 28px;
+    color: var(--text-color);">  By ${polyMod.author}</p>`
         
         let rightDiv = document.createElement("div");
-        rightDiv.className = "right"
+        rightDiv.style = `    --text-color: #fff;
+    --text-disabled-color: #5d6a7c;
+    --surface-color: #28346a;
+    --surface-secondary-color: #212b58;
+    --surface-tertiary-color: #192042;
+    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+    --button-color: #112052;
+    --button-hover-color: #334b77;
+    --button-active-color: #151f41;
+    --button-disabled-color: #313d53;
+    scrollbar-color: #7272c2 #223;
+    -webkit-tap-highlight-color: transparent;
+    color: var(--text-color);
+    font-size: 32px;
+    pointer-events: auto;
+    user-select: none;
+    cursor: pointer;
+    text-align: left;
+    white-space: nowrap;
+    font-family: ForcedSquare, Arial, sans-serif;
+    line-height: 1;
+    display: inline-block;
+    vertical-align: top;`
 
-        modDiv.appendChild(leftDiv)
-        modDiv.appendChild(rightDiv)
+        modMainButton.appendChild(leftDiv);
+        modMainButton.appendChild(rightDiv);
+        modDiv.appendChild(modMainButton);
+        let infoButton = document.createElement("button");
+        infoButton.innerHTML = `<img src="images/help.svg">`;
+        infoButton.className = "button";
+        infoButton.style = `    --text-color: #fff;
+    --text-disabled-color: #5d6a7c;
+    --surface-color: #28346a;
+    --surface-secondary-color: #212b58;
+    --surface-tertiary-color: #192042;
+    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+    --button-color: #112052;
+    --button-hover-color: #334b77;
+    --button-active-color: #151f41;
+    --button-disabled-color: #313d53;
+    scrollbar-color: #7272c2 #223;
+    -webkit-tap-highlight-color: transparent;
+    font-family: ForcedSquare, Arial, sans-serif;
+    line-height: 1;
+    border: none;
+    color: var(--text-color);
+    font-size: 32px;
+    pointer-events: auto;
+    user-select: none;
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 8px;
+    padding: 0 9px;
+    background-color: var(--surface-color);
+    clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%);`;
+
+        modDiv.appendChild(infoButton);
         if(polyMod.isLoaded) {
             activatedModsContainer.appendChild(modDiv)
         } else {
