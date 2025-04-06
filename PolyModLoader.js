@@ -361,7 +361,7 @@ export class PolyModLoader {
     /**
      * Access a mod by its mod ID.
      * 
-     * @param {string} id   - The ID of the mod to get
+     * @param   {string} id - The ID of the mod to get
      * @returns {PolyMod}   - The requested mod's object.
      */
     getMod(id) {
