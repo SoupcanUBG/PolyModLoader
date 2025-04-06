@@ -114,7 +114,8 @@ export class PolyMod {
         this.modDependencies = manifest.dependencies;
     }
     /**
-     * Function to run during initialization of mods. Note that this is called *before* polytrack itself is loaded.
+     * Function to run during initialization of mods. Note that this is called *before* polytrack itself is loaded, 
+     * but *after* everything has been declared.
      * 
      * @param {PolyModLoader} pmlInstance - The instance of {@link PolyModLoader}.
      */
@@ -127,6 +128,11 @@ export class PolyMod {
      * Function to run before initialization of `simulation_worker.bundle.js`.
      */
     simInit = () => { }
+    /**
+     * Function that gets called *after* a mod dependency gets initialized.
+     * @param {PolyMod} modDependency - The {@link PolyMod} instance of the dependency.
+     */
+    dependencyInit = function(modDependency) { }
 }
 
 /**
@@ -174,6 +180,7 @@ export class PolyModLoader {
         *  }}
         */
         this.simWorkerFuncMixins = [];
+        this.modDependencies = {};
     }
     initStorage = (localStorage) => {
         /** @type {WindowLocalStorage} */
@@ -212,6 +219,11 @@ export class PolyModLoader {
                     if (polyModObject.loaded) {
                         newMod.setLoaded = true;
                         if (newMod.touchesPhysics) this.physicsTouched = true;
+                        for(let dependency of newMod.dependencies) {
+                            if(!this.modDependencies[`${dependency.id}-${dependency.version}`])
+                                this.modDependencies[`${dependency.id}-${dependency.version}`] = [];
+                            this.modDependencies[`${dependency.id}-${dependency.version}`].push(newMod.id);
+                        }
                     }
                     this.allMods.push(newMod);
                 } catch (err) {
@@ -304,6 +316,7 @@ export class PolyModLoader {
                 newMod.iconSrc = `${polyModUrl}/icon.png`;
                 mod.version = polyModObject.version;
                 newMod.applyManifest(manifestFile);
+                newMod.applyManifest = (nothing) => { console.warn("Can't apply manifest after initialization!") }
                 newMod.savedLatest = latest;
                 newMod.baseUrl = polyModObject.base;
                 polyModObject.loaded = false;
@@ -345,7 +358,13 @@ export class PolyModLoader {
     }
     initMods = () => {
         for (let polyMod of this.allMods) {
-            if (polyMod.isLoaded) polyMod.init(this);
+            if (polyMod.isLoaded) {
+                polyMod.init(this);
+                if(this.modDependencies[`${polyMod.id}-${polyMod.version}`]) {
+                    for(let dependantId of this.modDependencies[`${polyMod.id}-${polyMod.version}`])
+                        this.getMod(dependantId).dependencyInit(polyMod);
+                }
+            }
         }
     }
     postInitMods = () => {
