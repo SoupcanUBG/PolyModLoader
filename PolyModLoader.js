@@ -1,40 +1,92 @@
+/**
+ * Base class for all polytrack mods. Mods should export an instance of their mod class named `polyMod` in their main file.
+ */
 export class PolyMod {
+    /**
+     * The author of the mod.
+     * 
+     * @type {string}
+     */
     get author() {
         return this.modAuthor;
     }
+    /**
+     * The mod ID.
+     * 
+     * @type {string}
+     */
     get id() {
         return this.modID;
     }
+    /**
+     * The mod name.
+     * 
+     * @type {string}
+     */
     get name() {
         return this.modName;
     }
+    /**
+     * The mod version.
+     * 
+     * @type {string}
+     */
     get version() {
         return this.modVersion;
     }
+    /**
+     * The the mod's icon file URL.
+     * 
+     * @type {string}
+     */
     get iconSrc() {
         return this.IconSrc;
     }
     set iconSrc(src) {
         this.IconSrc = src;
     }
+    /**
+     * The mod's loaded state.
+     * 
+     * @type {boolean}
+     */
     get isLoaded() {
         return this.loaded;
     }
     set setLoaded(status) {
         this.loaded = status;
     }
+    /**
+     * The mod's base URL.
+     * 
+     * @type {string}
+     */
     get baseUrl() {
         return this.modBaseUrl;
     }
     set baseUrl(url) {
         this.modBaseUrl = url;
     }
+    /**
+     * Whether the mod has changed the game physics in some way.
+     * 
+     * @type {boolean}
+     */
     get touchesPhysics() {
         return this.touchingPhysics;
     }
+    /**
+     * Other mods that this mod depends on.
+     */
     get dependencies() {
         return this.modDependencies;
     }
+    /**
+     * Whether the mod is saved as to always fetch latest version (`true`)
+     * or to fetch a specific version (`false`, with version defined by {@link PolyMod.version}).
+     * 
+     * @type {boolean}
+     */
     get savedLatest() {
         return this.latestSaved;
     }
@@ -42,45 +94,91 @@ export class PolyMod {
         this.latestSaved = latest;
     }
     applyManifest = (manifest) => {
-        // this.modName = manifest.name;
-        // this.polyVersion = manifest.target;
-        // this.modVersion = manifest.version;
-        // this.modId = manifest.id;
-        // this.modAuthor = manifest.author;
-        // this.modDependencies = manifest.dependencies;
-        // this.assetFolder = manifest.assets;
         const mod = manifest.polymod;
+        /** @type {string} */
         this.modName = mod.name;
+        /** @type {string} */
         this.modID = mod.id;
+        /** @type {string} */
         this.modAuthor = mod.author;
+        /** @type {string} */
         this.modVersion = mod.version;
-        this.modDescription = mod.description;
+        /** @type {string} */
+        this.modDescription = `${this.baseUrl}/description.html`;
 
+        /** @type {string} */
         this.polyVersion = mod.target;
         this.assetFolder = "assets";
+        // no idea how to type annotate this
+        // /** @type {{string: string}[]} */
         this.modDependencies = manifest.dependencies;
     }
+    /**
+     * Function to run during initialization of mods. Note that this is called *before* polytrack itself is loaded.
+     * 
+     * @param {PolyModLoader} pmlInstance - The instance of {@link PolyModLoader}.
+     */
     init = (pmlInstance) => { }
+    /**
+     * Function to run after all mods and polytrack have been initialized and loaded.
+     */
     postInit = () => { }
+    /**
+     * Function to run before initialization of `simulation_worker.bundle.js`.
+     */
     simInit = () => { }
 }
 
+/**
+ * This class is used in {@link PolyModLoader}'s register mixin functions to set where functions should be injected into the target function.
+ */
 export const MixinType = Object.freeze({
+    /**
+     * Inject at the start of the target function.
+     */
     HEAD: 0,
+    /**
+     * Inject at the end of the target function.
+     */
     TAIL: 1,
-    OVERRIDE: 2
+    /**
+     * Override the target function with the new function.
+     */
+    OVERRIDE: 2,
 })
 
 export class PolyModLoader {
     constructor(polyVersion) {
-        this.polyVersion = polyVersion
-        this.allMods = []
+        /** @type {string} */
+        this.polyVersion = polyVersion;
+        /** @type {PolyMod[]} */
+        this.allMods = [];
+        /** @type {boolean} */
         this.physicsTouched = false;
-        this.simWorkerClassMixins = []
-        this.simWorkerFuncMixins = []
+        /** 
+         * @type {{
+         *      scope: string,
+         *      path: string,
+         *      mixinType: MixinType,
+         *      accessors: string[],
+         *      funcString: string,
+         *  }}
+         */
+        this.simWorkerClassMixins = [];
+        /** 
+         * @type {{
+        *      path: string,
+        *      mixinType: MixinType,
+        *      accessors: string[],
+        *      funcString: string,
+        *  }}
+        */
+        this.simWorkerFuncMixins = [];
     }
     initStorage = (localStorage) => {
+        /** @type {WindowLocalStorage} */
         this.localStorage = localStorage;
+        /** @type {{base: string, version: string, loaded: bool}[]} */
         this.polyModUrls = this.getPolyModsStorage();
     }
     importMods = async () => {
@@ -88,25 +186,24 @@ export class PolyModLoader {
             let latest = false;
             if (polyModObject.version === "latest") {
                 try {
-                    latest = true;
-                    const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json())
+                    const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json());
                     polyModObject.version = latestFile[this.polyVersion];
-                } catch {
-                    alert(`Couldn't find latest version for ${polyModObject.base}`)
+                    latest = true;
+                } catch (err) {
+                    alert(`Couldn't find latest version for ${polyModObject.base}`);
+                    console.error("Error in fetching latest version json:", err);
                 }
             }
             const polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
             try {
-                const manifestFile = await fetch(`${polyModUrl}/manifest.json`).then(r => r.json())
+                const manifestFile = await fetch(`${polyModUrl}/manifest.json`).then(r => r.json());
                 let mod = manifestFile.polymod;
                 try {
                     const modImport = await import(`${polyModUrl}/${mod.main}`);
 
                     let newMod = modImport.polyMod;
                     mod.version = polyModObject.version;
-                    if (this.getMod(mod.id)) {
-                        alert(`Duplicate mod detected: ${mod.name}`)
-                    }
+                    if (this.getMod(mod.id)) alert(`Duplicate mod detected: ${mod.name}`);
                     newMod.applyManifest(manifestFile)
                     newMod.applyManifest = (nothing) => { console.warn("Can't apply manifest after initialization!") }
                     newMod.savedLatest = latest;
@@ -114,16 +211,16 @@ export class PolyModLoader {
                     newMod.baseUrl = polyModObject.base;
                     if (polyModObject.loaded) {
                         newMod.setLoaded = true;
-                        if (newMod.touchesPhysics) {
-                            this.physicsTouched = true;
-                        }
+                        if (newMod.touchesPhysics) this.physicsTouched = true;
                     }
                     this.allMods.push(newMod);
-                } catch {
+                } catch (err) {
                     alert(`Mod ${mod.name} failed to load.`);
+                    console.error("Error in loading mod:", err);
                 }
-            } catch {
+            } catch (err) {
                 alert(`Couldn't load mod with URL ${polyModUrl}.`);
+                console.error("Error in loading mod URL:", err);
             }
         }
     }
@@ -137,7 +234,7 @@ export class PolyModLoader {
                     "version": "latest",
                     "loaded": true
                 }
-            ]
+            ];
             this.localStorage.setItem("polyMods", JSON.stringify(this.polyModUrls));
         }
         return this.polyModUrls;
@@ -146,10 +243,8 @@ export class PolyModLoader {
         return { "base": mod.baseUrl, "version": mod.savedLatest ? "latest" : mod.version, "loaded": mod.isLoaded };
     }
     saveModsToLocalStorage = () => {
-        let savedMods = []
-        for (let mod of this.allMods) {
-            savedMods.push(this.serializeMod(mod));
-        }
+        let savedMods = [];
+        for (let mod of this.allMods) savedMods.push(this.serializeMod(mod));
         this.polyModUrls = savedMods;
         this.localStorage.setItem("polyMods", JSON.stringify(this.polyModUrls));
     }
@@ -175,17 +270,17 @@ export class PolyModLoader {
     /**
      * Add a mod to the internal mod list. Added mod is given least priority.
      * 
-     * @param {PolyMod} polyModObject - The mod's JSON representation to add.
+     * @param {{base: string, version: string, loaded: bool}} polyModObject - The mod's JSON representation to add.
      */
     addMod = async (polyModObject) => {
         let latest = false;
         if (polyModObject.version === "latest") {
             try {
-                latest = true;
-                const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json());        
+                const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json());
                 polyModObject.version = latestFile[this.polyVersion];
+                latest = true;
             } catch {
-                alert(`Couldn't find latest version for ${polyModObject.base}`)
+                alert(`Couldn't find latest version for ${polyModObject.base}`);
             }
         }
         const polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
@@ -194,6 +289,13 @@ export class PolyModLoader {
             const mod = manifestFile.polymod;
             if (this.getMod(mod.id)) {
                 alert("This mod is already present!");
+                return;
+            }
+            if (mod.target !== this.polyVersion) {
+                alert(
+                    `Mod target version does not match polytrack version!
+                    Note: ${mod.name} version ${mod.version} targets polytrack version ${mod.target}, but current polytrack version is ${this.polyVersion}.`
+                );
                 return;
             }
             try {
@@ -207,16 +309,23 @@ export class PolyModLoader {
                 polyModObject.loaded = false;
                 this.allMods.push(newMod);
                 this.saveModsToLocalStorage();
-            } catch {
+            } catch (err) {
                 alert("Something went wrong importing this mod!");
+                console.error("Error in importing mod:", err);
                 return;
             }
-        } catch {
+        } catch (err) {
             alert(`Couldn't find mod manifest for "${polyModObject.base}".`);
+            console.error("Error in getting mod manifest:", err);
         }
     }
+    /**
+     * Remove a mod from the internal list.
+     * 
+     * @param {PolyMod} mod - The mod to remove.
+     */
     removeMod = (mod) => {
-        if(!mod) return;
+        if (!mod) return;
         const index = this.allMods.indexOf(mod);
         if (index > -1) {
             this.allMods.splice(index, 1);
@@ -250,10 +359,10 @@ export class PolyModLoader {
         }
     }
     /**
-     * Function to access a mod from its ID.
+     * Access a mod by its mod ID.
      * 
-     * @param {string} id   - The ID of the mod to get
-     * @returns {PolyMod}   - The requested mod's object;
+     * @param   {string} id - The ID of the mod to get
+     * @returns {PolyMod}   - The requested mod's object.
      */
     getMod(id) {
         if (id === "pmlcore") {
@@ -263,9 +372,17 @@ export class PolyModLoader {
             if (polyMod.id == id) return polyMod;
         }
     }
+    /**
+     * Get the list of all mods.
+     * 
+     * @type {PolyMod[]}
+     */
     get getAllMods() {
         return this.allMods;
     }
+    /**
+     * Whether uploading runs to leaderboard is invalid or not.
+     */
     get lbInvalid() {
         return this.physicsTouched;
     }
@@ -308,7 +425,7 @@ export class PolyModLoader {
             path: path,
             mixinType: mixinType,
             accessors: accessors,
-            funcString: func.toString()
+            funcString: func.toString(),
         })
     }
     /**
@@ -323,11 +440,10 @@ export class PolyModLoader {
     registerSimWorkerFuncMixin = (path, mixinType, accessors, func) => {
         this.physicsTouched = true;
         this.simWorkerFuncMixins.push({
-            scope: scope,
             path: path,
             mixinType: mixinType,
             accessors: accessors,
-            funcString: func.toString()
+            funcString: func.toString(),
         })
     }
 }
