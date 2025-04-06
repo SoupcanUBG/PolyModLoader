@@ -82,9 +82,10 @@ export class PolyMod {
         return this.modDependencies;
     }
     /**
-     * The latest version of the mod that is saved.
+     * Whether the mod is saved as to always fetch latest version (`true`)
+     * or to fetch a specific version (`false`, with version defined by {@link PolyMod.version}).
      * 
-     * @type {string}
+     * @type {boolean}
      */
     get savedLatest() {
         return this.latestSaved;
