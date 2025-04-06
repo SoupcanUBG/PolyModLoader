@@ -1,3 +1,6 @@
+/**
+ * Base class for all polytrack mods. Mods should export an instance of their mod class named `polyMod` in their main file.
+ */
 export class PolyMod {
     get author() {
         return this.modAuthor;
@@ -42,45 +45,91 @@ export class PolyMod {
         this.latestSaved = latest;
     }
     applyManifest = (manifest) => {
-        // this.modName = manifest.name;
-        // this.polyVersion = manifest.target;
-        // this.modVersion = manifest.version;
-        // this.modId = manifest.id;
-        // this.modAuthor = manifest.author;
-        // this.modDependencies = manifest.dependencies;
-        // this.assetFolder = manifest.assets;
         const mod = manifest.polymod;
+        /** @type {string} */
         this.modName = mod.name;
+        /** @type {string} */
         this.modID = mod.id;
+        /** @type {string} */
         this.modAuthor = mod.author;
+        /** @type {string} */
         this.modVersion = mod.version;
+        /** @type {string} */
         this.modDescription = mod.description;
 
+        /** @type {string} */
         this.polyVersion = mod.target;
         this.assetFolder = "assets";
+        // no idea how to type annotate this
+        // /** @type {{string: string}[]} */
         this.modDependencies = manifest.dependencies;
     }
+    /**
+     * Function to run during initialization of mods. Note that this is called *before* polytrack itself is loaded.
+     * 
+     * @param {PolyMod} pmlInstance - The current mod's instance.
+     */
     init = (pmlInstance) => { }
+    /**
+     * Function to run after all mods and polytrack have been initialized and loaded.
+     */
     postInit = () => { }
+    /**
+     * Function to run before initialization of `simulation_worker.bundle.js`.
+     */
     simInit = () => { }
 }
 
+/**
+ * This class is used in {@link PolyModLoader}'s register mixin functions to set how functions should be injected into the target function.
+ */
 export const MixinType = Object.freeze({
+    /**
+     * Inject at the start of the target function.
+     */
     HEAD: 0,
+    /**
+     * Inject at the end of the target function.
+     */
     TAIL: 1,
-    OVERRIDE: 2
+    /**
+     * Override the target function with the new function.
+     */
+    OVERRIDE: 2,
 })
 
 export class PolyModLoader {
     constructor(polyVersion) {
-        this.polyVersion = polyVersion
-        this.allMods = []
+        /** @type {string} */
+        this.polyVersion = polyVersion;
+        /** @type {PolyMod[]} */
+        this.allMods = [];
+        /** @type {boolean} */
         this.physicsTouched = false;
-        this.simWorkerClassMixins = []
-        this.simWorkerFuncMixins = []
+        /** 
+         * @type {{
+         *      scope: string,
+         *      path: string,
+         *      mixinType: MixinType,
+         *      accessors: string[],
+         *      funcString: string,
+         *  }}
+         */
+        this.simWorkerClassMixins = [];
+        /** 
+         * @type {{
+        *      path: string,
+        *      mixinType: MixinType,
+        *      accessors: string[],
+        *      funcString: string,
+        *  }}
+        */
+        this.simWorkerFuncMixins = [];
     }
     initStorage = (localStorage) => {
+        /** @type {WindowLocalStorage} */
         this.localStorage = localStorage;
+        /** @type {{base: string, version: string, loaded: bool}[]} */
         this.polyModUrls = this.getPolyModsStorage();
     }
     importMods = async () => {
@@ -89,24 +138,22 @@ export class PolyModLoader {
             if (polyModObject.version === "latest") {
                 try {
                     latest = true;
-                    const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json())
+                    const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json());
                     polyModObject.version = latestFile[this.polyVersion];
                 } catch {
-                    alert(`Couldn't find latest version for ${polyModObject.base}`)
+                    alert(`Couldn't find latest version for ${polyModObject.base}`);
                 }
             }
             const polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
             try {
-                const manifestFile = await fetch(`${polyModUrl}/manifest.json`).then(r => r.json())
+                const manifestFile = await fetch(`${polyModUrl}/manifest.json`).then(r => r.json());
                 let mod = manifestFile.polymod;
                 try {
                     const modImport = await import(`${polyModUrl}/${mod.main}`);
 
                     let newMod = modImport.polyMod;
                     mod.version = polyModObject.version;
-                    if (this.getMod(mod.id)) {
-                        alert(`Duplicate mod detected: ${mod.name}`)
-                    }
+                    if (this.getMod(mod.id)) alert(`Duplicate mod detected: ${mod.name}`);
                     newMod.applyManifest(manifestFile)
                     newMod.applyManifest = (nothing) => { console.warn("Can't apply manifest after initialization!") }
                     newMod.savedLatest = latest;
@@ -114,9 +161,7 @@ export class PolyModLoader {
                     newMod.baseUrl = polyModObject.base;
                     if (polyModObject.loaded) {
                         newMod.setLoaded = true;
-                        if (newMod.touchesPhysics) {
-                            this.physicsTouched = true;
-                        }
+                        if (newMod.touchesPhysics) this.physicsTouched = true;
                     }
                     this.allMods.push(newMod);
                 } catch {
@@ -137,7 +182,7 @@ export class PolyModLoader {
                     "version": "latest",
                     "loaded": true
                 }
-            ]
+            ];
             this.localStorage.setItem("polyMods", JSON.stringify(this.polyModUrls));
         }
         return this.polyModUrls;
@@ -146,10 +191,8 @@ export class PolyModLoader {
         return { "base": mod.baseUrl, "version": mod.savedLatest ? "latest" : mod.version, "loaded": mod.isLoaded };
     }
     saveModsToLocalStorage = () => {
-        let savedMods = []
-        for (let mod of this.allMods) {
-            savedMods.push(this.serializeMod(mod));
-        }
+        let savedMods = [];
+        for (let mod of this.allMods) savedMods.push(this.serializeMod(mod));
         this.polyModUrls = savedMods;
         this.localStorage.setItem("polyMods", JSON.stringify(this.polyModUrls));
     }
@@ -175,17 +218,17 @@ export class PolyModLoader {
     /**
      * Add a mod to the internal mod list. Added mod is given least priority.
      * 
-     * @param {PolyMod} polyModObject - The mod's JSON representation to add.
+     * @param {{base: string, version: string, loaded: bool}} polyModObject - The mod's JSON representation to add.
      */
     addMod = async (polyModObject) => {
         let latest = false;
         if (polyModObject.version === "latest") {
             try {
                 latest = true;
-                const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json());        
+                const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json());
                 polyModObject.version = latestFile[this.polyVersion];
             } catch {
-                alert(`Couldn't find latest version for ${polyModObject.base}`)
+                alert(`Couldn't find latest version for ${polyModObject.base}`);
             }
         }
         const polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
@@ -215,8 +258,13 @@ export class PolyModLoader {
             alert(`Couldn't find mod manifest for "${polyModObject.base}".`);
         }
     }
+    /**
+     * Remove a mod from the internal list.
+     * 
+     * @param {PolyMod} mod - The mod to remove.
+     */
     removeMod = (mod) => {
-        if(!mod) return;
+        if (!mod) return;
         const index = this.allMods.indexOf(mod);
         if (index > -1) {
             this.allMods.splice(index, 1);
@@ -253,7 +301,7 @@ export class PolyModLoader {
      * Function to access a mod from its ID.
      * 
      * @param {string} id   - The ID of the mod to get
-     * @returns {PolyMod}   - The requested mod's object;
+     * @returns {PolyMod}   - The requested mod's object.
      */
     getMod(id) {
         if (id === "pmlcore") {
@@ -308,7 +356,7 @@ export class PolyModLoader {
             path: path,
             mixinType: mixinType,
             accessors: accessors,
-            funcString: func.toString()
+            funcString: func.toString(),
         })
     }
     /**
@@ -323,11 +371,10 @@ export class PolyModLoader {
     registerSimWorkerFuncMixin = (path, mixinType, accessors, func) => {
         this.physicsTouched = true;
         this.simWorkerFuncMixins.push({
-            scope: scope,
             path: path,
             mixinType: mixinType,
             accessors: accessors,
-            funcString: func.toString()
+            funcString: func.toString(),
         })
     }
 }
