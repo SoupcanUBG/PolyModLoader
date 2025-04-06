@@ -137,11 +137,12 @@ export class PolyModLoader {
             let latest = false;
             if (polyModObject.version === "latest") {
                 try {
-                    latest = true;
                     const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json());
                     polyModObject.version = latestFile[this.polyVersion];
-                } catch {
+                    latest = true;
+                } catch (err) {
                     alert(`Couldn't find latest version for ${polyModObject.base}`);
+                    console.error("Error in fetching latest version json: ", err);
                 }
             }
             const polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
@@ -164,11 +165,13 @@ export class PolyModLoader {
                         if (newMod.touchesPhysics) this.physicsTouched = true;
                     }
                     this.allMods.push(newMod);
-                } catch {
+                } catch (err) {
                     alert(`Mod ${mod.name} failed to load.`);
+                    console.error("Error in loading mod: ", err);
                 }
-            } catch {
+            } catch (err) {
                 alert(`Couldn't load mod with URL ${polyModUrl}.`);
+                console.error("Error in loading mod URL: ", err);
             }
         }
     }
@@ -250,12 +253,14 @@ export class PolyModLoader {
                 polyModObject.loaded = false;
                 this.allMods.push(newMod);
                 this.saveModsToLocalStorage();
-            } catch {
+            } catch (err) {
                 alert("Something went wrong importing this mod!");
+                console.error("Error in importing mod: ", err);
                 return;
             }
-        } catch {
+        } catch (err) {
             alert(`Couldn't find mod manifest for "${polyModObject.base}".`);
+            console.error("Error in getting mod manifest: ", err);
         }
     }
     /**
