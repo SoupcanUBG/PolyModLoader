@@ -98,8 +98,8 @@ export class PolyModLoader {
             const polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
             try {
                 const manifestFile = await fetch(`${polyModUrl}/manifest.json`).then(r => r.json())
+                let mod = manifestFile.polymod;
                 try {
-                    let mod = manifestFile.polymod;
                     const modImport = await import(`${polyModUrl}/${mod.main}`);
 
                     let newMod = modImport.polyMod;
@@ -216,7 +216,11 @@ export class PolyModLoader {
         }
     }
     removeMod = (mod) => {
-        this.allMods.remove(mod);
+        if(!mod) return;
+        const index = this.allMods.indexOf(mod);
+        if (index > -1) {
+            this.allMods.splice(index, 1);
+        }
         this.saveModsToLocalStorage();
     }
     /**

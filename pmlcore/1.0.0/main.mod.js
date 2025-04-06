@@ -22,8 +22,254 @@ let promptUserForNewMod = (pml, n) => {
 
     let versionInput = document.createElement("input")
     versionInput.type = "text";
+    versionInput.placeholder = "latest";
     promptDiv.appendChild(versionInput);
     
+    let autoUpdateDiv = document.createElement('div');
+    autoUpdateDiv.style = `    interpolate-size: allow-keywords;
+    --text-color: #fff;
+    --text-disabled-color: #5d6a7c;
+    --surface-color: #28346a;
+    --surface-secondary-color: #212b58;
+    --surface-tertiary-color: #192042;
+    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+    --button-color: #112052;
+    --button-hover-color: #334b77;
+    --button-active-color: #151f41;
+    --button-disabled-color: #313d53;
+    scrollbar-color: #7272c2 #223;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    text-align: left;
+    pointer-events: auto;
+    font-style: italic;
+    font-family: ForcedSquare, Arial, sans-serif;
+    line-height: 1;
+    margin: 10px;
+    display: flex;`;
+    autoUpdateDiv.innerHTML = `<p style="    interpolate-size: allow-keywords;
+    --text-color: #fff;
+    --text-disabled-color: #5d6a7c;
+    --surface-color: #28346a;
+    --surface-secondary-color: #212b58;
+    --surface-tertiary-color: #192042;
+    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+    --button-color: #112052;
+    --button-hover-color: #334b77;
+    --button-active-color: #151f41;
+    --button-disabled-color: #313d53;
+    scrollbar-color: #7272c2 #223;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    pointer-events: auto;
+    font-style: italic;
+    font-family: ForcedSquare, Arial, sans-serif;
+    line-height: 1;
+    display: inline-block;
+    margin: 10px;
+    padding: 0;
+    min-width: 0;
+    white-space: wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+    font-size: 24px;
+    text-align: left;
+    color: var(--text-color);">Auto Update \n(Only if on latest)`;
+
+    let autoUpdateVar = true;
+    let updateOnButton = document.createElement('button');
+    updateOnButton.innerText = "On";
+    updateOnButton.className = "button";
+    updateOnButton.addEventListener('click', () => {
+        autoUpdateVar = true;
+        updateOnButton.style = `    interpolate-size: allow-keywords;
+    --text-color: #fff;
+    --text-disabled-color: #5d6a7c;
+    --surface-color: #28346a;
+    --surface-secondary-color: #212b58;
+    --surface-tertiary-color: #192042;
+    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+    --button-color: #112052;
+    --button-hover-color: #334b77;
+    --button-active-color: #151f41;
+    --button-disabled-color: #313d53;
+    scrollbar-color: #7272c2 #223;
+    -webkit-tap-highlight-color: transparent;
+    font-style: italic;
+    font-family: ForcedSquare, Arial, sans-serif;
+    line-height: 1;
+    position: relative;
+    margin: 0;
+    padding: 8px 18px;
+    border: none;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    color: var(--text-color);
+    font-size: 32px;
+    pointer-events: auto;
+    user-select: none;
+    cursor: pointer;
+    height: 48px;
+    white-space: nowrap;
+    background-color: var(--button-hover-color);`;
+        updateOffButton.style = `    interpolate-size: allow-keywords;
+    --text-color: #fff;
+    --text-disabled-color: #5d6a7c;
+    --surface-color: #28346a;
+    --surface-secondary-color: #212b58;
+    --surface-tertiary-color: #192042;
+    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+    --button-color: #112052;
+    --button-hover-color: #334b77;
+    --button-active-color: #151f41;
+    --button-disabled-color: #313d53;
+    scrollbar-color: #7272c2 #223;
+    -webkit-tap-highlight-color: transparent;
+    font-style: italic;
+    font-family: ForcedSquare, Arial, sans-serif;
+    line-height: 1;
+    position: relative;
+    margin: 0;
+    padding: 8px 18px;
+    background-color: var(--button-color);
+    border: none;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    color: var(--text-color);
+    font-size: 32px;
+    pointer-events: auto;
+    user-select: none;
+    cursor: pointer;
+    height: 48px;
+    white-space: nowrap;`;
+    })
+    updateOnButton.style = `    interpolate-size: allow-keywords;
+    --text-color: #fff;
+    --text-disabled-color: #5d6a7c;
+    --surface-color: #28346a;
+    --surface-secondary-color: #212b58;
+    --surface-tertiary-color: #192042;
+    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+    --button-color: #112052;
+    --button-hover-color: #334b77;
+    --button-active-color: #151f41;
+    --button-disabled-color: #313d53;
+    scrollbar-color: #7272c2 #223;
+    -webkit-tap-highlight-color: transparent;
+    font-style: italic;
+    font-family: ForcedSquare, Arial, sans-serif;
+    line-height: 1;
+    position: relative;
+    margin: 0;
+    padding: 8px 18px;
+    border: none;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    color: var(--text-color);
+    font-size: 32px;
+    pointer-events: auto;
+    user-select: none;
+    cursor: pointer;
+    height: 48px;
+    white-space: nowrap;
+    background-color: var(--button-hover-color);`;
+    
+
+    let updateOffButton = document.createElement('button');
+    updateOffButton.innerText = "Off";
+    updateOffButton.className = "button";
+    updateOffButton.addEventListener('click', () => {
+        autoUpdateVar = false;
+        updateOnButton.style = `    interpolate-size: allow-keywords;
+    --text-color: #fff;
+    --text-disabled-color: #5d6a7c;
+    --surface-color: #28346a;
+    --surface-secondary-color: #212b58;
+    --surface-tertiary-color: #192042;
+    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+    --button-color: #112052;
+    --button-hover-color: #334b77;
+    --button-active-color: #151f41;
+    --button-disabled-color: #313d53;
+    scrollbar-color: #7272c2 #223;
+    -webkit-tap-highlight-color: transparent;
+    font-style: italic;
+    font-family: ForcedSquare, Arial, sans-serif;
+    line-height: 1;
+    position: relative;
+    margin: 0;
+    padding: 8px 18px;
+    border: none;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    color: var(--text-color);
+    font-size: 32px;
+    pointer-events: auto;
+    user-select: none;
+    cursor: pointer;
+    height: 48px;
+    white-space: nowrap;
+    background-color: var(--button-color);`;
+        updateOffButton.style = `    interpolate-size: allow-keywords;
+    --text-color: #fff;
+    --text-disabled-color: #5d6a7c;
+    --surface-color: #28346a;
+    --surface-secondary-color: #212b58;
+    --surface-tertiary-color: #192042;
+    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+    --button-color: #112052;
+    --button-hover-color: #334b77;
+    --button-active-color: #151f41;
+    --button-disabled-color: #313d53;
+    scrollbar-color: #7272c2 #223;
+    -webkit-tap-highlight-color: transparent;
+    font-style: italic;
+    font-family: ForcedSquare, Arial, sans-serif;
+    line-height: 1;
+    position: relative;
+    margin: 0;
+    padding: 8px 18px;
+    background-color: var(--button-hover-color);
+    border: none;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    color: var(--text-color);
+    font-size: 32px;
+    pointer-events: auto;
+    user-select: none;
+    cursor: pointer;
+    height: 48px;
+    white-space: nowrap;`;
+    })
+    updateOffButton.style = `    interpolate-size: allow-keywords;
+    --text-color: #fff;
+    --text-disabled-color: #5d6a7c;
+    --surface-color: #28346a;
+    --surface-secondary-color: #212b58;
+    --surface-tertiary-color: #192042;
+    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+    --button-color: #112052;
+    --button-hover-color: #334b77;
+    --button-active-color: #151f41;
+    --button-disabled-color: #313d53;
+    scrollbar-color: #7272c2 #223;
+    -webkit-tap-highlight-color: transparent;
+    font-style: italic;
+    font-family: ForcedSquare, Arial, sans-serif;
+    line-height: 1;
+    position: relative;
+    margin: 0;
+    padding: 8px 18px;
+    background-color: var(--button-color);
+    border: none;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    color: var(--text-color);
+    font-size: 32px;
+    pointer-events: auto;
+    user-select: none;
+    cursor: pointer;
+    height: 48px;
+    white-space: nowrap;`;
+    autoUpdateDiv.appendChild(updateOffButton);
+    autoUpdateDiv.appendChild(updateOnButton);
+    promptDiv.appendChild(autoUpdateDiv);
+
     let warningh2 = document.createElement("h2");
     warningh2.style = "color: #f66;margin:5px;";
     warningh2.innerText = "Only install mods from trusted sources!";
@@ -35,7 +281,7 @@ let promptUserForNewMod = (pml, n) => {
     importButton.innerHTML = `<img class="button-icon" src="images/import.svg"> Import`
     importButton.addEventListener("click", () => {
         let modUrl = urlInput.value;
-        let modVersion = versionInput.value;
+        let modVersion = versionInput.value === "" ? "latest" : versionInput.value;
         pml.addMod({"base": modUrl, "version": modVersion, "loaded": false}).then(() => {
             promptDiv.remove();
             createModScreen(pml, n);
@@ -170,7 +416,6 @@ let createModScreen = (pml, n) => {
     padding: 0;`
 
         let modMainButton = document.createElement('button');
-        console.log(polyMod)
         modMainButton.id = `mod:${polyMod.id}`;
         modMainButton.className = "button"
         modMainButton.style = `    --text-color: #fff;
@@ -209,7 +454,9 @@ let createModScreen = (pml, n) => {
                 goDownButton.disabled = true;
                 unloadButton.disabled = true;
                 loadButton.disabled = false;
+                removeButton.disabled = false;
             } else {
+                removeButton.disabled = true;
                 unloadButton.disabled = false;
                 loadButton.disabled = true;
                 goUpButton.disabled = false;
@@ -226,6 +473,7 @@ let createModScreen = (pml, n) => {
                 goDownButton.disabled = true;
                 unloadButton.disabled = true;
                 loadButton.disabled = true;
+                removeButton.disabled = true;
                 modMainButton.style = `    --text-color: #fff;
     --text-disabled-color: #5d6a7c;
     --surface-color: #28346a;
@@ -464,7 +712,7 @@ let createModScreen = (pml, n) => {
     
     let backButton = document.createElement('button');
     backButton.className = "button back";
-    backButton.style = "margin: 10px; float: left;padding: 10px"
+    backButton.style = "margin: 10px 0; float: left;padding: 10px"
     backButton.innerHTML = `<img class="button-icon" src="images/back.svg" style="margin: 0 5"> Back`;
     backButton.addEventListener("click", () => {
         n.playUIClick();
@@ -485,6 +733,19 @@ let createModScreen = (pml, n) => {
         promptUserForNewMod(pml, n);
     })
     backButtonWrapper.appendChild(addButton)
+
+    let removeButton = document.createElement('button');
+    removeButton.className = "button back";
+    removeButton.style = "margin: 10px 0; float: left;padding: 10px; margin-left: 0px;"
+    removeButton.innerHTML = `<img class="button-icon" src="images/erase.svg" style="margin: 0 5"> Remove`;
+    removeButton.addEventListener("click", () => {
+        n.playUIClick();
+        pml.removeMod(pml.getMod(selectedMod.id.replace("mod:", "")));
+        modsDiv.remove();
+        createModScreen(pml, n);
+    })
+    removeButton.disabled = true;
+    backButtonWrapper.appendChild(removeButton)
 
     let loadButton = document.createElement('button');
     loadButton.className = "button first";
