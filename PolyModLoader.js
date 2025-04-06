@@ -303,10 +303,10 @@ export class PolyModLoader {
                 alert("This mod is already present!");
                 return;
             }
-            if (mod.target !== this.polyVersion) {
+            if (mod.target.indexOf(this.polyVersion) === -1) {
                 alert(
                     `Mod target version does not match polytrack version!
-                    Note: ${mod.name} version ${mod.version} targets polytrack version ${mod.target}, but current polytrack version is ${this.polyVersion}.`
+                    Note: ${mod.name} version ${mod.version} targets polytrack versions ${mod.target.join(', ')}, but current polytrack version is ${this.polyVersion}.`
                 );
                 return;
             }
