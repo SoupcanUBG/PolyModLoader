@@ -438,7 +438,8 @@
         const MixinType = Object.freeze({
             HEAD: 0,
             TAIL: 1,
-            OVERRIDE: 2
+            OVERRIDE: 2,
+            INSERT: 3,
         })
         console.log(mixinData);
         let registerClassMixin = (scope, path, mixinType, accessors, _func) => {
@@ -449,42 +450,6 @@
             console.log(func);
 
             switch(mixinType) {
-            case MixinType.HEAD:
-                newFunc = function() {
-                let originalArguments = Array.prototype.slice.call(arguments);;
-                for(let accessor of accessors) {
-                    originalArguments.push(eval(accessor))
-                }
-                func.apply(this, originalArguments);
-                return originalFunc.apply(this, arguments);
-                }
-                break;
-            case MixinType.TAIL:
-                newFunc = function() {
-                let originalArguments = Array.prototype.slice.call(arguments);;
-                for(let accessor of accessors) {
-                    originalArguments.push(eval(accessor))
-                }
-                originalFunc.apply(this, arguments);
-                return func.apply(this, originalArguments);
-                }
-                break;
-            case MixinType.OVERRIDE:
-                newFunc = function() {
-                    let originalArguments = Array.prototype.slice.call(arguments);;
-                    for(let accessor of accessors) {
-                        originalArguments.push(eval(accessor))
-                    }
-                    return func.apply(this, originalArguments);
-                    }
-                    break;
-                }
-                eval(scope)[path] = newFunc;
-            }
-            let registerFuncMixin = (path, mixinType, accessors, func) => {
-                var originalFunc = eval(path);
-                var newFunc;
-                switch(mixinType) {
                 case MixinType.HEAD:
                     newFunc = function() {
                     let originalArguments = Array.prototype.slice.call(arguments);;
@@ -514,6 +479,78 @@
                         return func.apply(this, originalArguments);
                         }
                         break;
+                case MixinType.INSERT:
+                    const funcStr = originalFunc.toString();
+        
+                    const tokenIndex = funcStr.indexOf(accessors);
+                    if (tokenIndex === -1) {
+                        throw new Error(`Token "${accessors}" not found in function "${path}".`);
+                    }
+        
+                    const injectedCode = func.toString()
+                        .replace(/^.*?{([\s\S]*)}$/, '$1')
+                        .trim();
+        
+                    const newFuncStr =
+                        funcStr.slice(0, tokenIndex + accessors.length) +
+                        injectedCode +
+                        funcStr.slice(tokenIndex + accessors.length);
+        
+                    newFunc = eval(`(${newFuncStr})`);
+                }
+                eval(scope)[path] = newFunc;
+            }
+            let registerFuncMixin = (path, mixinType, accessors, func) => {
+                var originalFunc = eval(path);
+                var newFunc;
+                switch(mixinType) {
+                    case MixinType.HEAD:
+                        newFunc = function() {
+                        let originalArguments = Array.prototype.slice.call(arguments);;
+                        for(let accessor of accessors) {
+                            originalArguments.push(eval(accessor))
+                        }
+                        func.apply(this, originalArguments);
+                        return originalFunc.apply(this, arguments);
+                        }
+                        break;
+                    case MixinType.TAIL:
+                        newFunc = function() {
+                        let originalArguments = Array.prototype.slice.call(arguments);;
+                        for(let accessor of accessors) {
+                            originalArguments.push(eval(accessor))
+                        }
+                        originalFunc.apply(this, arguments);
+                        return func.apply(this, originalArguments);
+                        }
+                        break;
+                    case MixinType.OVERRIDE:
+                        newFunc = function() {
+                            let originalArguments = Array.prototype.slice.call(arguments);;
+                            for(let accessor of accessors) {
+                                originalArguments.push(eval(accessor))
+                            }
+                            return func.apply(this, originalArguments);
+                            }
+                            break;
+                    case MixinType.INSERT:
+                        const funcStr = originalFunc.toString();
+            
+                        const tokenIndex = funcStr.indexOf(accessors);
+                        if (tokenIndex === -1) {
+                            throw new Error(`Token "${accessors}" not found in function "${path}".`);
+                        }
+            
+                        const injectedCode = func.toString()
+                            .replace(/^.*?{([\s\S]*)}$/, '$1')
+                            .trim();
+            
+                        const newFuncStr =
+                            funcStr.slice(0, tokenIndex + accessors.length) +
+                            injectedCode +
+                            funcStr.slice(tokenIndex + accessors.length);
+            
+                        newFunc = eval(`(${newFuncStr})`);
                     }
                     eval(`${path} = newFunc;`)
                 }
