@@ -152,6 +152,10 @@ export const MixinType = Object.freeze({
      * Override the target function with the new function.
      */
     OVERRIDE: 2,
+    /**
+     * Insert code after a given token.
+     */
+    INSERT: 3,
 })
 
 export class PolyModLoader {

@@ -1646,6 +1646,24 @@ ActivePolyModLoader.importMods().then(() => {
               return func.apply(this, originalArguments);
             }
             break;
+          case MixinType.INSERT:
+            const funcStr = originalFunc.toString();
+
+            const tokenIndex = funcStr.indexOf(accessors);
+            if (tokenIndex === -1) {
+                throw new Error(`Token "${accessors}" not found in function "${path}".`);
+            }
+
+            const injectedCode = func.toString()
+                .replace(/^.*?{([\s\S]*)}$/, '$1')
+                .trim();
+
+            const newFuncStr =
+                funcStr.slice(0, tokenIndex + accessors.length) +
+                injectedCode +
+                funcStr.slice(tokenIndex + accessors.length);
+
+            newFunc = eval(`(${newFuncStr})`);
         }
         eval(scope)[path] = newFunc;
       }
@@ -1682,6 +1700,24 @@ ActivePolyModLoader.importMods().then(() => {
               return func.apply(this, originalArguments);
             }
             break;
+          case MixinType.INSERT:
+            const funcStr = originalFunc.toString();
+
+            const tokenIndex = funcStr.indexOf(accessors);
+            if (tokenIndex === -1) {
+                throw new Error(`Token "${accessors}" not found in function "${path}".`);
+            }
+
+            const injectedCode = func.toString()
+                .replace(/^.*?{([\s\S]*)}$/, '$1')
+                .trim();
+
+            const newFuncStr =
+                funcStr.slice(0, tokenIndex + accessors.length) +
+                injectedCode +
+                funcStr.slice(tokenIndex + accessors.length);
+
+            newFunc = eval(`(${newFuncStr})`);
         }
         eval(`${path} = newFunc;`)
       }

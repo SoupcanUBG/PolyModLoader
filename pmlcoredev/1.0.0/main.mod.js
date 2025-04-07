@@ -882,6 +882,10 @@ class PMLCoreMod extends PolyMod {
             nD.insertBefore(modButton, nD.childNodes[0])
             iD.push(modButton)
         })
+        this.modPmlInstance.registerFuncMixin("pP", MixinType.INSERT, `yP(this, eP, "f").addCheckpointCallback((e => {`, () => {
+            console.log("Hello from addCheckpointCallback!");
+        })
+        console.log(pmlInstance.getFromPolyTrack('pP').toString());
     }
     postInit = () => {
         console.log(`Hello from ${this.name}, but postInit this time!`);
