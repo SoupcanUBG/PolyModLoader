@@ -1,4 +1,4 @@
-import { ActivePolyModLoader, MixinType } from "http://cdn.jsdelivr.net/gh/0rangy/PolyModLoader@0.5.0-beta5/PolyModLoader.js"
+import { ActivePolyModLoader, MixinType } from "https://cdn.jsdelivr.net/gh/0rangy/PolyModLoader@0.5.0-beta5/PolyModLoader.js"
 ActivePolyModLoader.initStorage(localStorage);
 ActivePolyModLoader.importMods().then(() => {
   var e = {
@@ -43362,7 +43362,7 @@ ActivePolyModLoader.importMods().then(() => {
               iU.set(this, !1),
               rU.set(this, 0),
               aU.set(this, new Map),
-              oU(this, nU, new Worker("http://cdn.jsdelivr.net/gh/0rangy/PolyModLoade@0.5.0/simulation_worker.bundle.js"), "f"),
+              oU(this, nU, new Worker("https://cdn.jsdelivr.net/gh/0rangy/PolyModLoade@0.5.0/simulation_worker.bundle.js"), "f"),
               null != t && null != n ? (oU(this, tU, t, "f"),
               n.hasLoaded() ? lU(this, eU, "m", sU).call(this, e, t) : n.addCompleteListener(( () => {
                   lU(this, eU, "m", sU).call(this, e, t)
