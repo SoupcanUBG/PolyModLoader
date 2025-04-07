@@ -108,7 +108,7 @@ export class PolyMod {
         this.modVersion = mod.version;
 
         /** @type {string} */
-        this.polyVersion = mod.target;
+        this.polyVersion = mod.targets;
         this.assetFolder = "assets";
         // no idea how to type annotate this
         // /** @type {{string: string}[]} */
@@ -307,10 +307,10 @@ export class PolyModLoader {
                 alert("This mod is already present!");
                 return;
             }
-            if (mod.target.indexOf(this.polyVersion) === -1) {
+            if (mod.targets.indexOf(this.polyVersion) === -1) {
                 alert(
                     `Mod target version does not match polytrack version!
-                    Note: ${mod.name} version ${mod.version} targets polytrack versions ${mod.target.join(', ')}, but current polytrack version is ${this.polyVersion}.`
+                    Note: ${mod.name} version ${PolyModObject.version} targets polytrack versions ${mod.targets.join(', ')}, but current polytrack version is ${this.polyVersion}.`
                 );
                 return;
             }
