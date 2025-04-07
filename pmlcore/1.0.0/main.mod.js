@@ -1,5 +1,92 @@
 import { PolyMod, MixinType } from "../../../PolyModLoader.js";
 
+let openDescription = function(pml, n, mod) {
+    let menuDiv = document.getElementById("ui").children[0];
+    let trackInfoDiv = document.createElement('div');
+    trackInfoDiv.style = `    interpolate-size: allow-keywords;
+    --text-color: #fff;
+    --text-disabled-color: #5d6a7c;
+    --surface-color: #28346a;
+    --surface-secondary-color: #212b58;
+    --surface-tertiary-color: #192042;
+    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+    --button-color: #112052;
+    --button-hover-color: #334b77;
+    --button-active-color: #151f41;
+    --button-disabled-color: #313d53;
+    scrollbar-color: #7272c2 #223;
+    pointer-events: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    text-align: center;
+    font-style: italic;
+    font-family: ForcedSquare, Arial, sans-serif;
+    line-height: 1;
+    position: absolute;
+    left: calc(50% - 1050px / 2);
+    top: 0;
+    z-index: 2;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    width: 1000px;
+    height: 100%;`;
+    let containerDiv = document.createElement("div");
+    containerDiv.style = `    interpolate-size: allow-keywords;
+    --text-color: #fff;
+    --text-disabled-color: #5d6a7c;
+    --surface-color: #28346a;
+    --surface-secondary-color: #212b58;
+    --surface-tertiary-color: #192042;
+    --surface-transparent-color: rgba(40, 52, 106, 0.5);
+    --button-color: #112052;
+    --button-hover-color: #334b77;
+    --button-active-color: #151f41;
+    --button-disabled-color: #313d53;
+    scrollbar-color: #7272c2 #223;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    text-align: left;
+    font-style: italic;
+    font-family: ForcedSquare, Arial, sans-serif;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+    flex-grow: 1;
+    background-color: var(--surface-secondary-color);
+    overflow-x: hidden;
+    overflow-y: scroll;
+    pointer-events: auto;`;
+    let goBackButton = document.createElement("button");
+    goBackButton.style = "float: left;"
+    goBackButton.className = "button left";
+    goBackButton.innerHTML = `<img class="button-icon" src="images/back.svg"> Back`
+    goBackButton.addEventListener("click", () => {
+        n.playUIClick();
+        trackInfoDiv.remove();
+        createModScreen(pml, n);
+    })
+    containerDiv.appendChild(goBackButton);
+    let infoDiv = document.createElement('div');
+    infoDiv.innerHTML = `<h2> Loading... </h2>`;
+    fetch(`${mod.baseUrl}/${mod.version}/description.html`).then(res => {
+        if(res.status !== 200){
+            trackInfoDiv.remove();
+            createModScreen(pml, n);
+            alert("This mod doesn't have a description file.");
+            return;
+        } else {
+            return res.text();
+        }
+    }).then((response) => {
+        console.log(response);
+        infoDiv.innerHTML = response;
+    })
+    containerDiv.appendChild(infoDiv);
+    trackInfoDiv.appendChild(containerDiv);
+    menuDiv.appendChild(trackInfoDiv);
+}
+
 let promptUserForNewMod = (pml, n) => {
     let menuDiv = document.getElementById("ui").children[0];
 
@@ -82,6 +169,7 @@ let promptUserForNewMod = (pml, n) => {
     updateOnButton.innerText = "On";
     updateOnButton.className = "button";
     updateOnButton.addEventListener('click', () => {
+        n.playUIClick();
         autoUpdateVar = true;
         updateOnButton.style = `    interpolate-size: allow-keywords;
     --text-color: #fff;
@@ -177,6 +265,7 @@ let promptUserForNewMod = (pml, n) => {
     updateOffButton.innerText = "Off";
     updateOffButton.className = "button";
     updateOffButton.addEventListener('click', () => {
+        n.playUIClick();
         autoUpdateVar = false;
         updateOnButton.style = `    interpolate-size: allow-keywords;
     --text-color: #fff;
@@ -280,12 +369,13 @@ let promptUserForNewMod = (pml, n) => {
     importButton.className = "button right";
     importButton.innerHTML = `<img class="button-icon" src="images/import.svg"> Import`
     importButton.addEventListener("click", () => {
+        n.playUIClick();
         let modUrl = urlInput.value;
         let modVersion = versionInput.value === "" ? "latest" : versionInput.value;
         pml.addMod({"base": modUrl, "version": modVersion, "loaded": false}).then(() => {
             promptDiv.remove();
             createModScreen(pml, n);
-        })
+        }, autoUpdateVar)
     })
     promptDiv.appendChild(importButton);
 
@@ -294,6 +384,7 @@ let promptUserForNewMod = (pml, n) => {
     goBackButton.className = "button left";
     goBackButton.innerHTML = `<img class="button-icon" src="images/back.svg"> Back`
     goBackButton.addEventListener("click", () => {
+        n.playUIClick();
         promptDiv.remove();
         createModScreen(pml, n);
     })
@@ -391,8 +482,7 @@ let createModScreen = (pml, n) => {
     let availableModsContainer = document.createElement("div")
     availableModsContainer.className = "container";
     availableModsList.appendChild(availableModsContainer);
-
-    for(let polyMod of pml.getAllMods) {
+    for(let polyMod of pml.getAllMods()) {
         let modDiv = document.createElement('div');
         modDiv.style = `--text-color: #fff;
     --text-disabled-color: #5d6a7c;
@@ -698,7 +788,11 @@ let createModScreen = (pml, n) => {
     padding: 0 9px;
     background-color: var(--surface-color);
     clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%);`;
-
+        infoButton.addEventListener("click", () => {
+            modsDiv.remove();
+            n.playUIClick();
+            openDescription(pml, n, polyMod);
+        })
         modDiv.appendChild(infoButton);
         if(polyMod.isLoaded) {
             activatedModsContainer.appendChild(modDiv)

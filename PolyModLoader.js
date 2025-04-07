@@ -81,6 +81,9 @@ export class PolyMod {
     get dependencies() {
         return this.modDependencies;
     }
+    get descriptionUrl() {
+        return this.modDescription;
+    }
     /**
      * Whether the mod is saved as to always fetch latest version (`true`)
      * or to fetch a specific version (`false`, with version defined by {@link PolyMod.version}).
@@ -103,8 +106,6 @@ export class PolyMod {
         this.modAuthor = mod.author;
         /** @type {string} */
         this.modVersion = mod.version;
-        /** @type {string} */
-        this.modDescription = `${this.baseUrl}/description.html`;
 
         /** @type {string} */
         this.polyVersion = mod.target;
@@ -212,14 +213,15 @@ export class PolyModLoader {
                     mod.version = polyModObject.version;
                     if (this.getMod(mod.id)) alert(`Duplicate mod detected: ${mod.name}`);
                     newMod.applyManifest(manifestFile)
+                    newMod.baseUrl = polyModObject.base;
                     newMod.applyManifest = (nothing) => { console.warn("Can't apply manifest after initialization!") }
                     newMod.savedLatest = latest;
                     newMod.iconSrc = `${polyModUrl}/icon.png`
-                    newMod.baseUrl = polyModObject.base;
+                    console.log(newMod.baseUrl)
                     if (polyModObject.loaded) {
                         newMod.setLoaded = true;
                         if (newMod.touchesPhysics) this.physicsTouched = true;
-                        for(let dependency of newMod.dependencies) {
+                        for(let dependency in newMod.dependencies) {
                             if(!this.modDependencies[`${dependency.id}-${dependency.version}`])
                                 this.modDependencies[`${dependency.id}-${dependency.version}`] = [];
                             this.modDependencies[`${dependency.id}-${dependency.version}`].push(newMod.id);
@@ -284,12 +286,15 @@ export class PolyModLoader {
      * 
      * @param {{base: string, version: string, loaded: bool}} polyModObject - The mod's JSON representation to add.
      */
-    addMod = async (polyModObject) => {
+    addMod = async (polyModObject, autoUpdate) => {
         let latest = false;
         if (polyModObject.version === "latest") {
             try {
                 const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json());
                 polyModObject.version = latestFile[this.polyVersion];
+                if(autoUpdate){
+                    latest = true;
+                }
                 latest = true;
             } catch {
                 alert(`Couldn't find latest version for ${polyModObject.base}`);
@@ -316,9 +321,9 @@ export class PolyModLoader {
                 newMod.iconSrc = `${polyModUrl}/icon.png`;
                 mod.version = polyModObject.version;
                 newMod.applyManifest(manifestFile);
+                newMod.baseUrl = polyModObject.base;
                 newMod.applyManifest = (nothing) => { console.warn("Can't apply manifest after initialization!") }
                 newMod.savedLatest = latest;
-                newMod.baseUrl = polyModObject.base;
                 polyModObject.loaded = false;
                 this.allMods.push(newMod);
                 this.saveModsToLocalStorage();
@@ -396,7 +401,7 @@ export class PolyModLoader {
      * 
      * @type {PolyMod[]}
      */
-    get getAllMods() {
+    getAllMods = function() {
         return this.allMods;
     }
     /**
