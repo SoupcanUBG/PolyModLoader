@@ -471,6 +471,6 @@ export class PolyModLoader {
     }
 }
 
-let ActivePolyModLoader = new PolyModLoader("0.5.0-beta5");
+let ActivePolyModLoader = new PolyModLoader("0.5.0");
 
 export { ActivePolyModLoader }
