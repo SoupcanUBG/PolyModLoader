@@ -1,4 +1,4 @@
-(() => {
+( () => {
     var e = {
         1312: (e, t, n) => {
             var i;
@@ -422,6 +422,7 @@
                 return window
         }
     }();
+
     let waitForMixins = new Promise((resolve) => {
         const handler = (e) => {
             resolve(e);
@@ -430,9 +431,10 @@
 
         self.addEventListener("message", handler);
     });
-    
+
     waitForMixins.then((mixinData) => {
         "use strict";
+
         const MixinType = Object.freeze({
             HEAD: 0,
             TAIL: 1,
@@ -469,52 +471,52 @@
                 break;
             case MixinType.OVERRIDE:
                 newFunc = function() {
-                let originalArguments = Array.prototype.slice.call(arguments);;
-                for(let accessor of accessors) {
-                    originalArguments.push(eval(accessor))
+                    let originalArguments = Array.prototype.slice.call(arguments);;
+                    for(let accessor of accessors) {
+                        originalArguments.push(eval(accessor))
+                    }
+                    return func.apply(this, originalArguments);
+                    }
+                    break;
                 }
-                return func.apply(this, originalArguments);
-                }
-                break;
+                eval(scope)[path] = newFunc;
             }
-            eval(scope)[path] = newFunc;
-        }
-        let registerFuncMixin = (path, mixinType, accessors, func) => {
-            var originalFunc = eval(path);
-            var newFunc;
-            switch(mixinType) {
-            case MixinType.HEAD:
-                newFunc = function() {
-                let originalArguments = Array.prototype.slice.call(arguments);;
-                for(let accessor of accessors) {
-                    originalArguments.push(eval(accessor))
+            let registerFuncMixin = (path, mixinType, accessors, func) => {
+                var originalFunc = eval(path);
+                var newFunc;
+                switch(mixinType) {
+                case MixinType.HEAD:
+                    newFunc = function() {
+                    let originalArguments = Array.prototype.slice.call(arguments);;
+                    for(let accessor of accessors) {
+                        originalArguments.push(eval(accessor))
+                    }
+                    func.apply(this, originalArguments);
+                    return originalFunc.apply(this, arguments);
+                    }
+                    break;
+                case MixinType.TAIL:
+                    newFunc = function() {
+                    let originalArguments = Array.prototype.slice.call(arguments);;
+                    for(let accessor of accessors) {
+                        originalArguments.push(eval(accessor))
+                    }
+                    originalFunc.apply(this, arguments);
+                    return func.apply(this, originalArguments);
+                    }
+                    break;
+                case MixinType.OVERRIDE:
+                    newFunc = function() {
+                        let originalArguments = Array.prototype.slice.call(arguments);;
+                        for(let accessor of accessors) {
+                            originalArguments.push(eval(accessor))
+                        }
+                        return func.apply(this, originalArguments);
+                        }
+                        break;
+                    }
+                    eval(`${path} = newFunc;`)
                 }
-                func.apply(this, originalArguments);
-                return originalFunc.apply(this, arguments);
-                }
-                break;
-            case MixinType.TAIL:
-                newFunc = function() {
-                let originalArguments = Array.prototype.slice.call(arguments);;
-                for(let accessor of accessors) {
-                    originalArguments.push(eval(accessor))
-                }
-                originalFunc.apply(this, arguments);
-                return func.apply(this, originalArguments);
-                }
-                break;
-            case MixinType.OVERRIDE:
-                newFunc = function() {
-                let originalArguments = Array.prototype.slice.call(arguments);;
-                for(let accessor of accessors) {
-                    originalArguments.push(eval(accessor))
-                }
-                return func.apply(this, originalArguments);
-                }
-                break;
-            }
-            eval(`${path} = newFunc;`)
-        }
         n(6925);
         /**
          * @license
@@ -24619,7 +24621,6 @@
         if (!Number.isSafeInteger(am) || am < 1)
             throw new Error("package.json beta version property must be a positive integer");
         let sm = "";
-        sm = "-beta" + am.toString();
         im.rE;
         const om = im.l$.M;
         if (!Number.isSafeInteger(om) || om < 1)
@@ -28668,22 +28669,16 @@
             }
         }
         ;
-        for(let classMixin of mixinData.data.classMixins) {
-            registerClassMixin(classMixin.scope, classMixin.path, classMixin.mixinType, classMixin.accessors, new Function(`return (${classMixin.funcString})`))
-        }
-        for(let functionMixin of mixinData.data.funcMixins) {
-            registerFuncMixin(functionMixin.path, functionMixin.mixinType, functionMixin.accessors, new Function(`return (${classMixin.funcString})`))
-        }
         importScripts("lib/ammo.wasm.js");
         const Dv = [];
         onmessage = e => {
             Dv.push(e)
-        },
+        }
+        ,
         Ammo().then((function(e) {
             let t = new p_([]);
             const n = [];
             function i(e) {
-                if(e.data === null || e.data === undefined) return;
                 switch (e.data.messageType) {
                 case g_.Init:
                     {

@@ -212,12 +212,11 @@ export class PolyModLoader {
                     let newMod = modImport.polyMod;
                     mod.version = polyModObject.version;
                     if (this.getMod(mod.id)) alert(`Duplicate mod detected: ${mod.name}`);
-                    newMod.applyManifest(manifestFile)
+                    newMod.applyManifest(manifestFile);
                     newMod.baseUrl = polyModObject.base;
                     newMod.applyManifest = (nothing) => { console.warn("Can't apply manifest after initialization!") }
                     newMod.savedLatest = latest;
-                    newMod.iconSrc = `${polyModUrl}/icon.png`
-                    console.log(newMod.baseUrl)
+                    newMod.iconSrc = `${polyModUrl}/icon.png`;
                     if (polyModObject.loaded) {
                         newMod.setLoaded = true;
                         if (newMod.touchesPhysics) this.physicsTouched = true;

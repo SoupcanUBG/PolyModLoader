@@ -865,7 +865,7 @@ class PMLCoreMod extends PolyMod {
     init = (pmlInstance) => {
         this.modPmlInstance = pmlInstance;
         console.log(`Hello from ${this.name}!`)
-        this.modPmlInstance.registerFuncMixin("dD", MixinType.TAIL, [`yD(this, iD, "f")`, `yD(this, rD, "f")`], (t, n, i, r, a, s, o, l, c, h, d, u, p, f, m, g, iD, rD) => {
+        this.modPmlInstance.registerFuncMixin("hD", MixinType.TAIL, [`wD(this, nD, "f")`, `wD(this, iD, "f")`], (t, n, i, r, a, s, o, l, c, h, d, u, p, f, m, g, nD, iD) => {
             const modButton = document.createElement("button");
             modButton.className = "button button-image button-spawn";
             modButton.style = "animation-delay: 0s";
@@ -879,8 +879,8 @@ class PMLCoreMod extends PolyMod {
             modTextContainer.textContent = "Mods"
             modButton.appendChild(modTextContainer);
 
-            iD.insertBefore(modButton, iD.childNodes[0])
-            rD.push(modButton)
+            nD.insertBefore(modButton, nD.childNodes[0])
+            iD.push(modButton)
         })
     }
     postInit = () => {
