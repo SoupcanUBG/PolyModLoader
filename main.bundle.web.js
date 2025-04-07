@@ -1,4 +1,4 @@
-import { ActivePolyModLoader, MixinType } from "https://cdn.jsdelivr.net/gh/0rangy/PolyModLoader@0.5.0-beta5/PolyModLoader.js"
+import { ActivePolyModLoader, MixinType } from "https://cdn.jsdelivr.net/gh/0rangy/PolyModLoader@0.5.0/PolyModLoader.js"
 ActivePolyModLoader.initStorage(localStorage);
 ActivePolyModLoader.importMods().then(() => {
   var e = {
