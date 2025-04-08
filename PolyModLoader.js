@@ -446,7 +446,9 @@ export class PolyModLoader {
      * @param {function} func       - The new function to be injected.
      */
     registerSimWorkerClassMixin = (scope, path, mixinType, accessors, func) => {
-        this.physicsTouched = true;
+        this.registerClassMixin("HB.prototype","submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => {
+            console.log("nuh uh");
+        })
         this.simWorkerClassMixins.push({
             scope: scope,
             path: path,
@@ -465,7 +467,9 @@ export class PolyModLoader {
      * @param {function} func       - The new function to be injected.
      */
     registerSimWorkerFuncMixin = (path, mixinType, accessors, func) => {
-        this.physicsTouched = true;
+        this.registerClassMixin("HB.prototype","submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => {
+            console.log("nuh uh");
+        })
         this.simWorkerFuncMixins.push({
             path: path,
             mixinType: mixinType,
