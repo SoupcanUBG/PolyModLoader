@@ -867,8 +867,7 @@ class PMLCoreMod extends PolyMod {
         console.log(`Hello from ${this.name}!`)
         this.modPmlInstance.registerFuncMixin("hD", MixinType.INSERT, `vD(this, aD, [], "f");`, () => {
             const modButton = document.createElement("button");
-            modButton.className = "button button-image button-spawn";
-            modButton.style = "animation-delay: 0s";
+            modButton.className = "button button-image";
             modButton.innerHTML = '<img src="images/load.svg">';
             modButton.addEventListener("click", () => {
                 n.playUIClick();
