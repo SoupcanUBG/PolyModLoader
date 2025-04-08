@@ -1,6 +1,5 @@
 import { PolyMod, MixinType } from "../../../PolyModLoader.js";
 
-
 class PMLCoreMod extends PolyMod {
     openDescription = function(n, mod) {
         let menuDiv = document.getElementById("ui").children[0];
@@ -66,7 +65,7 @@ class PMLCoreMod extends PolyMod {
         goBackButton.addEventListener("click", () => {
             n.playUIClick();
             trackInfoDiv.remove();
-            createModScreen(n);
+           this.createModScreen(n);
         })
         containerDiv.appendChild(goBackButton);
         let infoDiv = document.createElement('div');
@@ -74,7 +73,7 @@ class PMLCoreMod extends PolyMod {
         fetch(`${mod.baseUrl}/${mod.version}/description.html`).then(res => {
             if(res.status !== 200){
                 trackInfoDiv.remove();
-                createModScreen(n);
+               this.createModScreen(n);
                 alert("This mod doesn't have a description file.");
                 return;
             } else {
@@ -376,7 +375,7 @@ class PMLCoreMod extends PolyMod {
             let modVersion = versionInput.value === "" ? "latest" : versionInput.value;
             this.modPmlInstance.addMod({"base": modUrl, "version": modVersion, "loaded": false}).then(() => {
                 promptDiv.remove();
-                createModScreen(pml, n);
+               this.createModScreen(n);
             }, autoUpdateVar)
         })
         promptDiv.appendChild(importButton);
@@ -388,7 +387,7 @@ class PMLCoreMod extends PolyMod {
         goBackButton.addEventListener("click", () => {
             n.playUIClick();
             promptDiv.remove();
-            createModScreen(pml, n);
+           this.createModScreen(n);
         })
         promptDiv.appendChild(goBackButton);
     
@@ -443,7 +442,7 @@ class PMLCoreMod extends PolyMod {
             let mod = this.modPmlInstance.getMod(selectedMod.id.replace("mod:", ""));
             this.modPmlInstance.setModLoaded(mod, false);
             modsDiv.remove();
-            createModScreen(pml, n);
+           this.createModScreen(n);
         })
     
         buttonWrapper.appendChild(unloadButton);
@@ -457,7 +456,7 @@ class PMLCoreMod extends PolyMod {
             let mod = this.modPmlInstance.getMod(selectedMod.id.replace("mod:", ""));
             this.modPmlInstance.reorderMod(mod, -1);
             modsDiv.remove();
-            createModScreen(pml, n);
+           this.createModScreen(n);
         })
         buttonWrapper.appendChild(goUpButton);
     
@@ -470,7 +469,7 @@ class PMLCoreMod extends PolyMod {
             let mod = this.modPmlInstance.getMod(selectedMod.id.replace("mod:", ""));
             this.modPmlInstance.reorderMod(mod, 1);
             modsDiv.remove();
-            createModScreen(n);
+           this.createModScreen(n);
         })
         buttonWrapper.appendChild(goDownButton);
     
@@ -826,7 +825,7 @@ class PMLCoreMod extends PolyMod {
         addButton.addEventListener("click", () => {
             n.playUIClick();
             modsDiv.remove();
-            promptUserForNewMod(pml, n);
+            this.promptUserForNewMod(n);
         })
         backButtonWrapper.appendChild(addButton)
     
@@ -838,7 +837,7 @@ class PMLCoreMod extends PolyMod {
             n.playUIClick();
             this.modPmlInstance.removeMod(this.modPmlInstance.getMod(selectedMod.id.replace("mod:", "")));
             modsDiv.remove();
-            createModScreen(pml, n);
+           this.createModScreen(n);
         })
         removeButton.disabled = true;
         backButtonWrapper.appendChild(removeButton)
@@ -852,7 +851,7 @@ class PMLCoreMod extends PolyMod {
             let mod = this.modPmlInstance.getMod(selectedMod.id.replace("mod:", ""));
             this.modPmlInstance.setModLoaded(mod, true);
             modsDiv.remove();
-            createModScreen(n);
+           this.createModScreen(n);
         })
     
         backButtonWrapper.appendChild(loadButton);
@@ -888,10 +887,6 @@ class PMLCoreMod extends PolyMod {
             wD(this, nD, "f").appendChild(modButton);
             wD(this, iD, "f").push(modButton);
         })
-        this.modPmlInstance.registerFuncMixin("pP", MixinType.INSERT, `yP(this, eP, "f").addCheckpointCallback((e => {`, () => {
-            console.log("Hello from addCheckpointCallback!");
-        })
-        console.log(pmlInstance.getFromPolyTrack('hD').toString());
     }
     postInit = () => {
         console.log(`Hello from ${this.name}, but postInit this time!`);
