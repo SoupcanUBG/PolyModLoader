@@ -9,7 +9,7 @@ async function createWorkerFromURL(url) {
     ActivePolyModLoader.workerUrl = blobUrl;
 }
 
-ActivePolyModLoader.importMods().then(() => createWorkerFromURL("https://cdn.jsdelivr.net/gh/0rangy/PolyModLoader@0.5.0/simulation_worker.bundle.js")).then(() => {
+ActivePolyModLoader.importMods().then(() => createWorkerFromURL("https://musical-shortbread-3e3554.netlify.app/simulation_worker.bundle.web.js")).then(() => {
   var e = {
       77: (e, t, n) => {
           "use strict";
