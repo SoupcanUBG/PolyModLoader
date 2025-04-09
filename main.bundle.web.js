@@ -43391,15 +43391,23 @@ ActivePolyModLoader.importMods().then(() => {
           })
       }
       ;
+      async function createWorkerFromURL(url) {
+        const res = await fetch(url);
+        const code = await res.text();
+        const blob = new Blob([code], { type: "application/javascript" });
+        const blobUrl = URL.createObjectURL(blob);
+        return new Worker(blobUrl);
+      }
       const cU = class {
           constructor(e, t, n) {
+
               eU.add(this),
               tU.set(this, void 0),
               nU.set(this, void 0),
               iU.set(this, !1),
               rU.set(this, 0),
               aU.set(this, new Map),
-              oU(this, nU, new Worker("https://cdn.jsdelivr.net/gh/0rangy/PolyModLoader@0.5.0/simulation_worker.bundle.js"), "f"),
+              oU(this, nU, createWorkerFromURL("https://cdn.jsdelivr.net/gh/0rangy/PolyModLoader@0.5.0/simulation_worker.bundle.js"), "f"),
               null != t && null != n ? (oU(this, tU, t, "f"),
               n.hasLoaded() ? lU(this, eU, "m", sU).call(this, e, t) : n.addCompleteListener(( () => {
                   lU(this, eU, "m", sU).call(this, e, t)
