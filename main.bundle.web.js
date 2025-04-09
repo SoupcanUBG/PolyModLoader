@@ -1,5 +1,6 @@
 import { ActivePolyModLoader, MixinType } from "https://cdn.jsdelivr.net/gh/0rangy/PolyModLoader@0.5.0/PolyModLoader.js"
 ActivePolyModLoader.initStorage(localStorage);
+window.polyModLoader = ActivePolyModLoader;
 ActivePolyModLoader.importMods().then(() => {
   var e = {
       77: (e, t, n) => {
@@ -1646,6 +1647,24 @@ ActivePolyModLoader.importMods().then(() => {
               return func.apply(this, originalArguments);
             }
             break;
+          case MixinType.INSERT:
+            const funcStr = originalFunc.toString();
+
+            const tokenIndex = funcStr.indexOf(accessors);
+            if (tokenIndex === -1) {
+                throw new Error(`Token "${accessors}" not found in function "${path}".`);
+            }
+
+            const injectedCode = func.toString()
+                .replace(/^.*?{([\s\S]*)}$/, '$1')
+                .trim();
+
+            const newFuncStr =
+                funcStr.slice(0, tokenIndex + accessors.length) +
+                injectedCode +
+                funcStr.slice(tokenIndex + accessors.length);
+
+            newFunc = eval(`(${newFuncStr})`);
         }
         eval(scope)[path] = newFunc;
       }
@@ -1682,6 +1701,24 @@ ActivePolyModLoader.importMods().then(() => {
               return func.apply(this, originalArguments);
             }
             break;
+          case MixinType.INSERT:
+            const funcStr = originalFunc.toString();
+
+            const tokenIndex = funcStr.indexOf(accessors);
+            if (tokenIndex === -1) {
+                throw new Error(`Token "${accessors}" not found in function "${path}".`);
+            }
+
+            const injectedCode = func.toString()
+                .replace(/^.*?{([\s\S]*)}$/, '$1')
+                .trim();
+
+            const newFuncStr =
+                funcStr.slice(0, tokenIndex + accessors.length) +
+                injectedCode +
+                funcStr.slice(tokenIndex + accessors.length);
+
+            newFunc = eval(`(${newFuncStr})`);
         }
         eval(`${path} = newFunc;`)
       }
@@ -43362,7 +43399,7 @@ ActivePolyModLoader.importMods().then(() => {
               iU.set(this, !1),
               rU.set(this, 0),
               aU.set(this, new Map),
-              oU(this, nU, new Worker("https://cdn.jsdelivr.net/gh/0rangy/PolyModLoade@0.5.0/simulation_worker.bundle.js"), "f"),
+              oU(this, nU, new Worker("https://cdn.jsdelivr.net/gh/0rangy/PolyModLoader@0.5.0/simulation_worker.bundle.js"), "f"),
               null != t && null != n ? (oU(this, tU, t, "f"),
               n.hasLoaded() ? lU(this, eU, "m", sU).call(this, e, t) : n.addCompleteListener(( () => {
                   lU(this, eU, "m", sU).call(this, e, t)

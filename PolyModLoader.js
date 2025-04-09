@@ -223,7 +223,13 @@ export class PolyModLoader {
                     newMod.iconSrc = `${polyModUrl}/icon.png`;
                     if (polyModObject.loaded) {
                         newMod.setLoaded = true;
-                        if (newMod.touchesPhysics) this.physicsTouched = true;
+                        if (newMod.touchesPhysics) {
+                            this.physicsTouched = true;
+                            this.registerClassMixin("HB.prototype","submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => {
+                                console.log("nuh uh");
+                            })
+                        } 
+                            
                         for(let dependency in newMod.dependencies) {
                             if(!this.modDependencies[`${dependency.id}-${dependency.version}`])
                                 this.modDependencies[`${dependency.id}-${dependency.version}`] = [];

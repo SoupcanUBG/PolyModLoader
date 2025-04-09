@@ -1,5 +1,6 @@
 import { ActivePolyModLoader, MixinType } from "./PolyModLoader.js"
 ActivePolyModLoader.initStorage(localStorage);
+window.polyModLoader = ActivePolyModLoader;
 ActivePolyModLoader.importMods().then(() => {
   var e = {
       77: (e, t, n) => {
