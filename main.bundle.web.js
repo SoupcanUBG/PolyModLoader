@@ -43408,7 +43408,7 @@ ActivePolyModLoader.importMods().then(() => createWorkerFromURL("https://cdn.jsd
               iU.set(this, !1),
               rU.set(this, 0),
               aU.set(this, new Map),
-              oU(this, nU, ActivePolyModLoader.workerUrl, "f"),
+              oU(this, nU, new Worker(ActivePolyModLoader.workerUrl), "f"),
               null != t && null != n ? (oU(this, tU, t, "f"),
               n.hasLoaded() ? lU(this, eU, "m", sU).call(this, e, t) : n.addCompleteListener(( () => {
                   lU(this, eU, "m", sU).call(this, e, t)
