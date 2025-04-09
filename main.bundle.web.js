@@ -1,4 +1,4 @@
-import { ActivePolyModLoader, MixinType } from "https://cdn.jsdelivr.net/gh/0rangy/PolyModLoader@0.5.0/PolyModLoader.js"
+import { ActivePolyModLoader, MixinType } from "https://musical-shortbread-3e3554.netlify.app/PolyModLoader.js"
 ActivePolyModLoader.initStorage(localStorage);
 window.polyModLoader = ActivePolyModLoader;
 async function createWorkerFromURL(url) {
