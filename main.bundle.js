@@ -14,7 +14,7 @@ ActivePolyModLoader.importMods().then(() => {
       }
       ,
       516: (e, t, n) => {
-          "use strict";
+          "use strict"; 
           e.exports = n.p + "images/arrow_down.svg"
       }
       ,
