@@ -80,7 +80,6 @@ class PMLCoreMod extends PolyMod {
                 return res.text();
             }
         }).then((response) => {
-            console.log(response);
             infoDiv.innerHTML = response;
         })
         containerDiv.appendChild(infoDiv);
