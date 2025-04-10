@@ -28706,7 +28706,7 @@
             }
         }
         ;
-        importScripts("https://musical-shortbread-3e3554.netlify.app/lib/ammo.wasm.web.js");
+        importScripts("https://pml.orangy.cfd/0rang/PolyModLoader/0.5.0/lib/ammo.wasm.web.js");
         const Dv = [];
         onmessage = e => {
             Dv.push(e)
