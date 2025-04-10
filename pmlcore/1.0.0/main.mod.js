@@ -792,7 +792,7 @@ class PMLCoreMod extends PolyMod {
             infoButton.addEventListener("click", () => {
                 modsDiv.remove();
                 n.playUIClick();
-                openDescription(pml, n, polyMod);
+                this.openDescription(n, polyMod);
             })
             modDiv.appendChild(infoButton);
             if(polyMod.isLoaded) {
