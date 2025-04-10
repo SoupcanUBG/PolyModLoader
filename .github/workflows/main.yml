@@ -1,0 +1,22 @@
+name: Compile ASAR
+on: [push]
+jobs:
+   
+   compile-asar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install ASAR Utility
+        run: npm install --engine-strict @electron/asar
+      - name: Compile ASAR
+        if: always()
+        run: npx asar p . app.asar
+      - name: Upload ASAR
+        uses: actions/upload-artifact@v4
+        with:
+            name: app.asar
+            path: app.asar
+            overwrite: true
