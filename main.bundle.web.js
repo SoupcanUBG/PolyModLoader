@@ -1,4 +1,4 @@
-import { ActivePolyModLoader, MixinType } from "https://pml.orangy.cfd/0rang/PolyModLoader/0.5.0/PolyModLoader.js"
+import { ActivePolyModLoader, MixinType } from "https://pml.orangy.cfd/0rangy/PolyModLoader/0.5.0/PolyModLoader.js"
 ActivePolyModLoader.initStorage(localStorage);
 window.polyModLoader = ActivePolyModLoader;
 async function createWorkerFromURL(url) {
@@ -9,7 +9,7 @@ async function createWorkerFromURL(url) {
     ActivePolyModLoader.workerUrl = blobUrl;
 }
 
-ActivePolyModLoader.importMods().then(() => createWorkerFromURL("https://pml.orangy.cfd/0rang/PolyModLoader/0.5.0/simulation_worker.bundle.web.js")).then(() => {
+ActivePolyModLoader.importMods().then(() => createWorkerFromURL("https://pml.orangy.cfd/0rangy/PolyModLoader/0.5.0/simulation_worker.bundle.web.js")).then(() => {
   var e = {
       77: (e, t, n) => {
           "use strict";
