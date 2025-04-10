@@ -69,7 +69,7 @@ export class PolyMod {
     }
     /**
      * Whether the mod has changed the game physics in some way.
-     * 
+     *  
      * @type {boolean}
      */
     get touchesPhysics() {
