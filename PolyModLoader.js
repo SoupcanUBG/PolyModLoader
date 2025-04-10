@@ -253,7 +253,7 @@ export class PolyModLoader {
         } else {
             this.polyModUrls = [
                 {
-                    "base": "https://cdn.jsdelivr.net/gh/0rangy/PolyModLoader@0.5.0/pmlcore",
+                    "base": "https://pml.orangy.cfd/0rangy/PolyModLoader/0.5.0/pmlcore",
                     "version": "latest",
                     "loaded": true
                 }
