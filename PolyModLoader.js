@@ -156,6 +156,14 @@ export const MixinType = Object.freeze({
      * Insert code after a given token.
      */
     INSERT: 3,
+    /**
+     * Replace code between 2 given tokens. Inclusive.
+     */
+    REPLACEBETWEEN: 5,
+    /**
+     * Remove code between 2 given tokens. Inclusive.
+     */
+    REMOVEBETWEEN: 6
 })
 
 export class PolyModLoader {
@@ -225,9 +233,7 @@ export class PolyModLoader {
                         newMod.setLoaded = true;
                         if (newMod.touchesPhysics) {
                             this.physicsTouched = true;
-                            this.registerClassMixin("HB.prototype","submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => {
-                                console.log("nuh uh");
-                            })
+                            this.registerClassMixin("HB.prototype","submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => {})
                         } 
                             
                         for(let dependency in newMod.dependencies) {
@@ -430,7 +436,7 @@ export class PolyModLoader {
      * @param {string[]} accessors  - A list of strings to evaluate to access private variables.
      * @param {function} func       - The new function to be injected.
      */
-    registerClassMixin = (scope, path, mixinType, accessors, func) => { }
+    registerClassMixin = (scope, path, mixinType, accessors, func, extraOptinonal) => { }
     /**
      * Inject mixin with target function name defined by {@link path}.
      * This only injects functions in `main.bundle.js`.
@@ -440,7 +446,7 @@ export class PolyModLoader {
      * @param {string[]} accessors  - A list of strings to evaluate to access private variables.
      * @param {function} func       - The new function to be injected.
      */
-    registerFuncMixin = (path, mixinType, accessors, func) => { }
+    registerFuncMixin = (path, mixinType, accessors, func, extraOptinonal) => { }
     /**
      * Inject mixin under scope {@link scope} with target function name defined by {@link path}.
      * This only injects functions in `simulation_worker.bundle.js`.
@@ -451,16 +457,15 @@ export class PolyModLoader {
      * @param {string[]} accessors  - A list of strings to evaluate to access private variables.
      * @param {function} func       - The new function to be injected.
      */
-    registerSimWorkerClassMixin = (scope, path, mixinType, accessors, func) => {
-        this.registerClassMixin("HB.prototype","submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => {
-            console.log("nuh uh");
-        })
+    registerSimWorkerClassMixin = (scope, path, mixinType, accessors, func, extraOptinonal) => {
+        this.registerClassMixin("HB.prototype","submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => {})
         this.simWorkerClassMixins.push({
             scope: scope,
             path: path,
             mixinType: mixinType,
             accessors: accessors,
-            funcString: func.toString(),
+            funcString: mixinType < 5 ? func.toString() : func,
+            func2Sstring: extraOptinonal.toString()
         })
     }
     /**
@@ -472,15 +477,14 @@ export class PolyModLoader {
      * @param {string[]} accessors  - A list of strings to evaluate to access private variables.
      * @param {function} func       - The new function to be injected.
      */
-    registerSimWorkerFuncMixin = (path, mixinType, accessors, func) => {
-        this.registerClassMixin("HB.prototype","submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => {
-            console.log("nuh uh");
-        })
+    registerSimWorkerFuncMixin = (path, mixinType, accessors, func, extraOptinonal) => {
+        this.registerClassMixin("HB.prototype","submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => {})
         this.simWorkerFuncMixins.push({
             path: path,
             mixinType: mixinType,
             accessors: accessors,
-            funcString: func.toString(),
+            funcString: mixinType < 5 ? func.toString() : func,
+            func2Sstring: extraOptinonal.toString()
         })
     }
 }
