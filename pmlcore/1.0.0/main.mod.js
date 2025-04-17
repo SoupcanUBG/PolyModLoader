@@ -886,10 +886,6 @@ class PMLCoreMod extends PolyMod {
             wD(this, nD, "f").appendChild(modButton);
             wD(this, iD, "f").push(modButton);
         })
-        this.modPmlInstance.registerSimWorkerClassMixin("c_.prototype", "getPosition", MixinType.REPLACEBETWEEN, `return l_(this, VA, "f")`, `return l_(this, VA, "f")`, () => {
-            console.log(l_(this, VA, "f"));
-            return l_(this, VA, "f");
-        })
     }
     postInit = () => {
         console.log(`Hello from ${this.name}, but postInit this time!`);
