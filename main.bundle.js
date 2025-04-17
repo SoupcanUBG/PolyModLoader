@@ -1618,55 +1618,60 @@ ActivePolyModLoader.importMods().then(() => {
         let originalFunc = eval(scope)[path];
         let newFunc;
         switch(mixinType) {
-          case MixinType.HEAD:
+            case MixinType.HEAD:
+                newFunc = function() {
+                let originalArguments = Array.prototype.slice.call(arguments);;
+                for(let accessor of accessors) {
+                    originalArguments.push(eval(accessor))
+                }
+                func.apply(this, originalArguments);
+                return originalFunc.apply(this, arguments);
+                }
+                break;
+            case MixinType.TAIL:
+                newFunc = function() {
+                let originalArguments = Array.prototype.slice.call(arguments);;
+                for(let accessor of accessors) {
+                    originalArguments.push(eval(accessor))
+                }
+                originalFunc.apply(this, arguments);
+                return func.apply(this, originalArguments);
+                }
+                break;
+            case MixinType.OVERRIDE:
             newFunc = function() {
               let originalArguments = Array.prototype.slice.call(arguments);;
               for(let accessor of accessors) {
                 originalArguments.push(eval(accessor))
               }
-              func.apply(this, originalArguments);
-              return originalFunc.apply(this, arguments);
-            }
-            break;
-          case MixinType.TAIL:
-            newFunc = function() {
-              let originalArguments = Array.prototype.slice.call(arguments);;
-              for(let accessor of accessors) {
-                originalArguments.push(eval(accessor))
-              }
-              originalFunc.apply(this, arguments);
               return func.apply(this, originalArguments);
             }
             break;
-          case MixinType.OVERRIDE:
-            newFunc = function() {
-              let originalArguments = Array.prototype.slice.call(arguments);;
-              for(let accessor of accessors) {
-                originalArguments.push(eval(accessor))
-              }
-              return func.apply(this, originalArguments);
-            }
-            break;
-          case MixinType.INSERT:
-            const funcStr = originalFunc.toString();
+            case MixinType.INSERT:
+                const funcStr = originalFunc.toString();
 
-            const tokenIndex = funcStr.indexOf(accessors);
-            if (tokenIndex === -1) {
-                throw new Error(`Token "${accessors}" not found in function "${path}".`);
-            }
+                const tokenIndex = funcStr.indexOf(accessors);
+                if (tokenIndex === -1) {
+                    throw new Error(`Token "${accessors}" not found in function "${path}".`);
+                }
 
-            let injectedCode = func.toString()
-                .replace(/^.*?{([\s\S]*)}$/, '$1')
-                .trim();
+                
+                let injectedCode = typeof func == "function" ?  func.toString()
+                    .replace(/^.*?{([\s\S]*)}$/, '$1')
+                    .trim() : func;
 
-            let newFuncStr =
-                funcStr.slice(0, tokenIndex + accessors.length) +
-                injectedCode +
-                funcStr.slice(tokenIndex + accessors.length);
+                let newFuncStr =
+                    funcStr.slice(0, tokenIndex + accessors.length) +
+                    injectedCode +
+                    funcStr.slice(tokenIndex + accessors.length);
 
-            newFunc = eval(`(${newFuncStr})`);
-            break;
-        case MixinType.REMOVEBETWEEN:
+                    const match1 = newFuncStr.match(/^[\w$]+\s*\(([^)]*)\)\s*{([\s\S]*)}$/);
+
+                    const args1 = match1[1].trim();
+                    const body1 = match1[2].trim();
+                    newFunc = eval(`(function(${args1}) {${body1}})`);
+                break;
+            case MixinType.REMOVEBETWEEN:
             const funcStr2 = originalFunc.toString();
             console.log(funcStr2);
             const firstTokenIndex = funcStr2.indexOf(accessors);
@@ -1679,8 +1684,34 @@ ActivePolyModLoader.importMods().then(() => {
             }
 
             let newFuncStr2 = funcStr2.split(funcStr2.substring(firstTokenIndex, secondTokenIndex + func.length)).join("");
-            console.log(newFuncStr2);
-            newFunc = eval(`(${newFuncStr2})`);
+            const match2 = newFuncStr2.match(/^[\w$]+\s*\(([^)]*)\)\s*{([\s\S]*)}$/);
+
+            const args2 = match2[1].trim();
+            const body2 = match2[2].trim();
+            newFunc = eval(`(function(${args2}) {${body2}})`);
+            break;
+            case MixinType.REPLACEBETWEEN:
+            const funcStr3 = originalFunc.toString();
+
+            const firstTokenIndex1 = funcStr3.indexOf(accessors);
+            const secondTokenIndex1 = funcStr3.indexOf(func);
+            if (firstTokenIndex1 === -1) {
+                throw new Error(`Token "${accessors}" not found in function "${path}".`);
+            }
+            if (secondTokenIndex1 === -1) {
+                throw new Error(`Token "${func}" not found in function "${path}".`);
+            }
+            let injectedCode2 = typeof func1 == "function" ?  func1.toString()
+                    .replace(/^.*?{([\s\S]*)}$/, '$1')
+                    .trim() : func1;
+
+            let newFuncStr3 = funcStr3.split(funcStr3.substring(firstTokenIndex1, secondTokenIndex1 + func.length)).join(injectedCode2);
+            
+            const match = newFuncStr3.match(/^[\w$]+\s*\(([^)]*)\)\s*{([\s\S]*)}$/);
+
+            const args = match[1].trim();
+            const body = match[2].trim();
+            newFunc = eval(`(function(${args}) {${body}})`);
             break;
         }
         eval(scope)[path] = newFunc;
@@ -1766,12 +1797,12 @@ ActivePolyModLoader.importMods().then(() => {
                 console.log(typeof func);
                 if(typeof func1 === "function") {
                     injectedCode2 = func1.toString()
+                    injectedCode2 = injectedCode2
+                    .replace(/^.*?{([\s\S]*)}$/, '$1')
+                    .trim();
                 } else {
                     injectedCode2 = func1;
                 }
-                injectedCode2 = injectedCode2
-                    .replace(/^.*?{([\s\S]*)}$/, '$1')
-                    .trim();
     
                 let newFuncStr3 = funcStr3.split(funcStr3.substring(firstTokenIndex1, secondTokenIndex1 + func.length)).join(injectedCode2);
                 newFunc = eval(`(${newFuncStr3})`);

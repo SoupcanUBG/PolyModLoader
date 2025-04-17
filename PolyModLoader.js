@@ -464,8 +464,8 @@ export class PolyModLoader {
             path: path,
             mixinType: mixinType,
             accessors: accessors,
-            funcString: mixinType < 5 ? func.toString() : func,
-            func2Sstring: extraOptinonal.toString()
+            funcString: typeof func === "function" ? func.toString() : func,
+            func2Sstring: extraOptinonal ? extraOptinonal.toString() : null
         })
     }
     /**
@@ -483,8 +483,8 @@ export class PolyModLoader {
             path: path,
             mixinType: mixinType,
             accessors: accessors,
-            funcString: mixinType < 5 ? func.toString() : func,
-            func2Sstring: extraOptinonal.toString()
+            funcString: typeof func === "function" ? func.toString() : func,
+            func2Sstring: extraOptinonal ? extraOptinonal.toString() : null
         })
     }
 }

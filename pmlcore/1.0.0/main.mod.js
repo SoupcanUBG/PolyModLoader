@@ -878,12 +878,17 @@ class PMLCoreMod extends PolyMod {
                 }
             });
             
+            
             const modTextContainer = document.createElement("p");
             modTextContainer.textContent = "Mods"
             modButton.appendChild(modTextContainer);
 
             wD(this, nD, "f").appendChild(modButton);
             wD(this, iD, "f").push(modButton);
+        })
+        this.modPmlInstance.registerSimWorkerClassMixin("c_.prototype", "getPosition", MixinType.REPLACEBETWEEN, `return l_(this, VA, "f")`, `return l_(this, VA, "f")`, () => {
+            console.log(l_(this, VA, "f"));
+            return l_(this, VA, "f");
         })
     }
     postInit = () => {
