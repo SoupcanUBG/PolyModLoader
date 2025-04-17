@@ -28748,7 +28748,7 @@
         for(let data of mixinData.data.funcMixins) {
             registerFuncMixin(data.path, data.mixinType, data.accessors, data.funcString, data.func2Sstring);
         }
-        importScripts("https://pml.orangy.cfd/PolyTrackMods/PolyModLoader/0.5.0lib/ammo.wasm.web.js");
+        importScripts("https://pml.orangy.cfd/PolyTrackMods/PolyModLoader/0.5.0/lib/ammo.wasm.web.js");
         const Dv = [];
         onmessage = e => {
             Dv.push(e)
