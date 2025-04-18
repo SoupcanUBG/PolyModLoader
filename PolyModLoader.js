@@ -236,7 +236,7 @@ export class PolyModLoader {
                             this.registerClassMixin("HB.prototype","submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => {})
                         } 
                             
-                        for(let dependency in newMod.dependencies) {
+                        for(let dependency of newMod.dependencies) {
                             if(!this.modDependencies[`${dependency.id}-${dependency.version}`])
                                 this.modDependencies[`${dependency.id}-${dependency.version}`] = [];
                             this.modDependencies[`${dependency.id}-${dependency.version}`].push(newMod.id);
