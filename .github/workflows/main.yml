@@ -1,6 +1,8 @@
 name: Compile & Release ASAR
 on: 
   push:
+permissions:
+   contents: write
 jobs:
    compile-asar:
     if: "contains(github.event.head_commit.message, 'release')"
