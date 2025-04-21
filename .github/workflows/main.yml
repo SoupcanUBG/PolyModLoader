@@ -5,7 +5,7 @@ permissions:
    contents: write
 jobs:
    compile-asar:
-    if: "contains(github.event.head_commit.message, 'release')"
+    if: "contains(github.event.head_commit.message, '[v')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
