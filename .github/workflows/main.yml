@@ -15,7 +15,7 @@ jobs:
       - name: Install ASAR Utility
         run: npm install --engine-strict @electron/asar
       - name: Compile ASAR
-        run: npx asar p . app.asar
+        run: npx asar p . app.asar --unpack-dir "{.git}"
       - uses: actions-ecosystem/action-regex-match@v2
         id: regex-match
         with:
