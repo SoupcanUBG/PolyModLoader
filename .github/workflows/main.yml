@@ -20,7 +20,7 @@ jobs:
         id: regex-match
         with:
           text: ${{ github.event.head_commit.message }}
-          regex: '[^\]]*'
+          regex: '(?<=\[)[^\[\]]+(?=\])'
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
