@@ -96,6 +96,12 @@ export class PolyMod {
     set savedLatest(latest) {
         this.latestSaved = latest;
     }
+    get initialized() {
+        return this.modInitialized;
+    }
+    set initialized(initState) {
+        this.modInitialized = initState;
+    }
     applyManifest = (manifest) => {
         const mod = manifest.polymod;
         /** @type {string} */
@@ -129,11 +135,6 @@ export class PolyMod {
      * Function to run before initialization of `simulation_worker.bundle.js`.
      */
     simInit = () => { }
-    /**
-     * Function that gets called *after* a mod dependency gets initialized.
-     * @param {PolyMod} modDependency - The {@link PolyMod} instance of the dependency.
-     */
-    dependencyInit = function(modDependency) { }
 }
 
 /**
@@ -193,7 +194,6 @@ export class PolyModLoader {
         *  }}
         */
         this.simWorkerFuncMixins = [];
-        this.modDependencies = {};
     }
     initStorage = (localStorage) => {
         /** @type {WindowLocalStorage} */
@@ -234,12 +234,6 @@ export class PolyModLoader {
                         if (newMod.touchesPhysics) {
                             this.physicsTouched = true;
                             this.registerClassMixin("HB.prototype","submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => {})
-                        } 
-                            
-                        for(let dependency of newMod.dependencies) {
-                            if(!this.modDependencies[`${dependency.id}-${dependency.version}`])
-                                this.modDependencies[`${dependency.id}-${dependency.version}`] = [];
-                            this.modDependencies[`${dependency.id}-${dependency.version}`].push(newMod.id);
                         }
                     }
                     this.allMods.push(newMod);
@@ -285,6 +279,9 @@ export class PolyModLoader {
      */
     reorderMod = (mod, delta) => {
         if (!mod) return;
+        if(mod.id === "pmlcore") {
+            return;
+        }
         const currentIndex = this.allMods.indexOf(mod);
         if ((currentIndex === 1) || delta > 0) return;
         if (currentIndex === null || currentIndex === undefined) {
@@ -359,6 +356,9 @@ export class PolyModLoader {
      */
     removeMod = (mod) => {
         if (!mod) return;
+        if(mod.id === "pmlcore") {
+            return;
+        }
         const index = this.allMods.indexOf(mod);
         if (index > -1) {
             this.allMods.splice(index, 1);
@@ -373,18 +373,53 @@ export class PolyModLoader {
      */
     setModLoaded = (mod, state) => {
         if (!mod) return;
+        if(mod.id === "pmlcore") {
+            return;
+        }
         mod.loaded = state;
         this.saveModsToLocalStorage();
     }
     initMods = () => {
+        let initList = []
         for (let polyMod of this.allMods) {
-            if (polyMod.isLoaded) {
-                polyMod.init(this);
-                if(this.modDependencies[`${polyMod.id}-${polyMod.version}`]) {
-                    for(let dependantId of this.modDependencies[`${polyMod.id}-${polyMod.version}`])
-                        this.getMod(dependantId).dependencyInit(polyMod);
+            initList.push(polyMod.id);
+        }
+        if(initList.length === 0) return; // no mods to initialize lol
+        let allModsInit = false;
+        while(!allModsInit) {
+            let currentMod = this.getMod(initList[0]);
+            console.log(initList[0]);
+            let initCheck = true;
+            for(let dependency of currentMod.dependencies) {
+                let curDependency = this.getMod(dependency.id)
+                if(!curDependency) {
+                    initCheck = false;
+                    initList.splice(0, 1);
+                    alert(`Mod ${currentMod.name} is missing mod ${curDependency.id} ${curDependency.version} and will not be initialized.`);
+                    console.warn(`Mod ${currentMod.name} is missing mod ${curDependency.id} ${curDependency.version} and will not be initialized.`);
+                    break;
+                }
+                if(curDependency.version !== dependency.version) {
+                    initCheck = false;
+                    initList.splice(0, 1);
+                    alert(`Mod ${currentMod.name} needs version ${dependency.version} of ${curDependency.name} but ${curDependency.version} is present.`);
+                    console.warn(`Mod ${currentMod.name} needs version ${dependency.version} of ${curDependency.name} but ${curDependency.version} is present.`);
+                    break;
+                }
+                if(!curDependency.initialized) {
+                    initCheck = false;
+                    initList.splice(0, 1);
+                    initList.push(currentMod.id);
+                    break;
                 }
             }
+            if(initCheck) {
+                currentMod.init(this);
+                currentMod.initialized = true;
+                initList.splice(0, 1);
+            }
+            if(initList.length === 0)
+                allModsInit = true;
         }
     }
     postInitMods = () => {
@@ -404,9 +439,6 @@ export class PolyModLoader {
      * @returns {PolyMod}   - The requested mod's object.
      */
     getMod(id) {
-        if (id === "pmlcore") {
-            return;
-        }
         for (let polyMod of this.allMods) {
             if (polyMod.id == id) return polyMod;
         }
