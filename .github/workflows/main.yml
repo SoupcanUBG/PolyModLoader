@@ -19,15 +19,15 @@ jobs:
       - uses: actions-ecosystem/action-regex-match@v2
         id: regex-match
         with:
-          text: ${{ github.event.comment.body }}
-          regex: '\[.*\]'
+          text: ${{ github.event.head_commit.message }}
+          regex: '(?<=\[)[^\[\]]+(?=\])'
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.regex-match.outputs.group1 }}
+          tag_name: ${{ steps.regex-match.outputs.match }}
           release_name: ${{ github.event.head_commit.message }}
           draft: false
           prerelease: false
