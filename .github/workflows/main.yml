@@ -21,6 +21,7 @@ jobs:
         with:
           text: ${{ github.event.comment.body }}
           regex: '\[.*\]'
+      - run: echo ${{ steps.regex-match.outputs.match }}
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
