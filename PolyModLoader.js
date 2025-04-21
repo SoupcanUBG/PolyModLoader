@@ -307,7 +307,6 @@ export class PolyModLoader {
                 if(autoUpdate){
                     latest = true;
                 }
-                latest = true;
             } catch {
                 alert(`Couldn't find latest version for ${polyModObject.base}`);
             }
