@@ -1648,16 +1648,15 @@ ActivePolyModLoader.importMods().then(() => createWorkerFromURL("https://pml.ora
                         break;
                     case MixinType.OVERRIDE:
                     newFunc = function() {
-                    let originalArguments = Array.prototype.slice.call(arguments);;
-                    for(let accessor of accessors) {
+                      let originalArguments = Array.prototype.slice.call(arguments);;
+                      for(let accessor of accessors) {
                         originalArguments.push(eval(accessor))
-                    }
-                    return func.apply(this, originalArguments);
+                      }
+                      return func.apply(this, originalArguments);
                     }
                     break;
                     case MixinType.INSERT:
                         const funcStr = originalFunc.toString();
-        
                         const tokenIndex = funcStr.indexOf(accessors);
                         if (tokenIndex === -1) {
                             throw new Error(`Token "${accessors}" not found in function "${path}".`);
@@ -1723,102 +1722,102 @@ ActivePolyModLoader.importMods().then(() => createWorkerFromURL("https://pml.ora
                     break;
                 }
                 eval(scope)[path] = newFunc;
-        }
-        ActivePolyModLoader.registerFuncMixin = (path, mixinType, accessors, func, func1) => {
-        var originalFunc = eval(path);
-        var newFunc;
-        switch(mixinType) {
-            case MixinType.HEAD:
-            newFunc = function() {
-                let originalArguments = Array.prototype.slice.call(arguments);;
-                for(let accessor of accessors) {
-                originalArguments.push(eval(accessor))
+              }
+              ActivePolyModLoader.registerFuncMixin = (path, mixinType, accessors, func, func1) => {
+                var originalFunc = eval(path);
+                var newFunc;
+                switch(mixinType) {
+                  case MixinType.HEAD:
+                    newFunc = function() {
+                      let originalArguments = Array.prototype.slice.call(arguments);;
+                      for(let accessor of accessors) {
+                        originalArguments.push(eval(accessor))
+                      }
+                      func.apply(this, originalArguments);
+                      return originalFunc.apply(this, arguments);
+                    }
+                    break;
+                  case MixinType.TAIL:
+                    newFunc = function() {
+                      let originalArguments = Array.prototype.slice.call(arguments);;
+                      for(let accessor of accessors) {
+                        originalArguments.push(eval(accessor))
+                      }
+                      originalFunc.apply(this, arguments);
+                      return func.apply(this, originalArguments);
+                    }
+                    break;
+                  case MixinType.OVERRIDE:
+                    newFunc = function() {
+                      let originalArguments = Array.prototype.slice.call(arguments);;
+                      for(let accessor of accessors) {
+                        originalArguments.push(eval(accessor))
+                      }
+                      return func.apply(this, originalArguments);
+                    }
+                    break;
+                  case MixinType.INSERT:
+                    const funcStr = originalFunc.toString();
+        
+                    const tokenIndex = funcStr.indexOf(accessors);
+                    if (tokenIndex === -1) {
+                        throw new Error(`Token "${accessors}" not found in function "${path}".`);
+                    }
+        
+                    const injectedCode = typeof func === "function" ? func.toString()
+                        .replace(/^.*?{([\s\S]*)}$/, '$1')
+                        .trim() : func;
+        
+                    const newFuncStr =
+                        funcStr.slice(0, tokenIndex + accessors.length) +
+                        injectedCode +
+                        funcStr.slice(tokenIndex + accessors.length);
+        
+                    newFunc = eval(`(${newFuncStr})`);
+                    break;
+                  case MixinType.REMOVEBETWEEN:
+                    const funcStr2 = originalFunc.toString();
+                    const firstTokenIndex = funcStr2.indexOf(accessors);
+                    const secondTokenIndex = funcStr2.indexOf(func);
+                    if (firstTokenIndex === -1) {
+                        throw new Error(`Token "${accessors}" not found in function "${path}".`);
+                    }
+                    if (secondTokenIndex === -1) {
+                        throw new Error(`Token "${func}" not found in function "${path}".`);
+                    }
+        
+                    let newFuncStr2 = funcStr2.split(funcStr2.substring(firstTokenIndex, secondTokenIndex + func.length)).join("");
+                    newFunc = eval(`(${newFuncStr2})`);
+                    break;
+                  case MixinType.REPLACEBETWEEN:
+                        const funcStr3 = originalFunc.toString();
+        
+                        const firstTokenIndex1 = funcStr3.indexOf(accessors);
+                        const secondTokenIndex1 = funcStr3.indexOf(func);
+                        if (firstTokenIndex1 === -1) {
+                            throw new Error(`Token "${accessors}" not found in function "${path}".`);
+                        }
+                        if (secondTokenIndex1 === -1) {
+                            throw new Error(`Token "${func}" not found in function "${path}".`);
+                        }
+                        let injectedCode2 = null;
+                        console.log(typeof func);
+                        if(typeof func1 === "function") {
+                            injectedCode2 = func1.toString()
+                            injectedCode2 = injectedCode2
+                            .replace(/^.*?{([\s\S]*)}$/, '$1')
+                            .trim();
+                        } else {
+                            injectedCode2 = func1;
+                        }
+            
+                        let newFuncStr3 = funcStr3.split(funcStr3.substring(firstTokenIndex1, secondTokenIndex1 + func.length)).join(injectedCode2);
+                        newFunc = eval(`(${newFuncStr3})`);
+                        break;
                 }
-                func.apply(this, originalArguments);
-                return originalFunc.apply(this, arguments);
-            }
-            break;
-            case MixinType.TAIL:
-            newFunc = function() {
-                let originalArguments = Array.prototype.slice.call(arguments);;
-                for(let accessor of accessors) {
-                originalArguments.push(eval(accessor))
-                }
-                originalFunc.apply(this, arguments);
-                return func.apply(this, originalArguments);
-            }
-            break;
-            case MixinType.OVERRIDE:
-            newFunc = function() {
-                let originalArguments = Array.prototype.slice.call(arguments);;
-                for(let accessor of accessors) {
-                originalArguments.push(eval(accessor))
-                }
-                return func.apply(this, originalArguments);
-            }
-            break;
-            case MixinType.INSERT:
-            const funcStr = originalFunc.toString();
-
-            const tokenIndex = funcStr.indexOf(accessors);
-            if (tokenIndex === -1) {
-                throw new Error(`Token "${accessors}" not found in function "${path}".`);
-            }
-
-            const injectedCode = func.toString()
-                .replace(/^.*?{([\s\S]*)}$/, '$1')
-                .trim();
-
-            const newFuncStr =
-                funcStr.slice(0, tokenIndex + accessors.length) +
-                injectedCode +
-                funcStr.slice(tokenIndex + accessors.length);
-
-            newFunc = eval(`(${newFuncStr})`);
-            break;
-            case MixinType.REMOVEBETWEEN:
-            const funcStr2 = originalFunc.toString();
-            const firstTokenIndex = funcStr2.indexOf(accessors);
-            const secondTokenIndex = funcStr2.indexOf(func);
-            if (firstTokenIndex === -1) {
-                throw new Error(`Token "${accessors}" not found in function "${path}".`);
-            }
-            if (secondTokenIndex === -1) {
-                throw new Error(`Token "${func}" not found in function "${path}".`);
-            }
-
-            let newFuncStr2 = funcStr2.split(funcStr2.substring(firstTokenIndex, secondTokenIndex + func.length)).join("");
-            newFunc = eval(`(${newFuncStr2})`);
-            break;
-            case MixinType.REPLACEBETWEEN:
-                const funcStr3 = originalFunc.toString();
-
-                const firstTokenIndex1 = funcStr3.indexOf(accessors);
-                const secondTokenIndex1 = funcStr3.indexOf(func);
-                if (firstTokenIndex1 === -1) {
-                    throw new Error(`Token "${accessors}" not found in function "${path}".`);
-                }
-                if (secondTokenIndex1 === -1) {
-                    throw new Error(`Token "${func}" not found in function "${path}".`);
-                }
-                let injectedCode2 = null;
-                console.log(typeof func);
-                if(typeof func1 === "function") {
-                    injectedCode2 = func1.toString()
-                    injectedCode2 = injectedCode2
-                    .replace(/^.*?{([\s\S]*)}$/, '$1')
-                    .trim();
-                } else {
-                    injectedCode2 = func1;
-                }
-
-                let newFuncStr3 = funcStr3.split(funcStr3.substring(firstTokenIndex1, secondTokenIndex1 + func.length)).join(injectedCode2);
-                newFunc = eval(`(${newFuncStr3})`);
-                break;
-        }
-        eval(`${path} = newFunc;`)
-        }
-        ActivePolyModLoader.registerClassWideMixin = (path, mixinType, firstToken, funcOrSecondToken, funcOptional) => {
+                eval(`${path} = newFunc;`)
+              }
+            ActivePolyModLoader.registerClassWideMixin = (path, mixinType, firstToken, funcOrSecondToken, funcOptional) => {
                 let originalClassStr = eval(path).toString();
                 let newClassStr = originalClassStr;
                 switch(mixinType) {
@@ -1832,9 +1831,9 @@ ActivePolyModLoader.importMods().then(() => createWorkerFromURL("https://pml.ora
                             .replace(/^.*?{([\s\S]*)}$/, '$1')
                             .trim();
                         
-                        newClassStr.slice(0, tokenIndex + accessors.length) +
+                        newClassStr.slice(0, tokenIndex + firstToken.length) +
                         injectedCode +
-                        newClassStr.slice(tokenIndex + accessors.length);
+                        newClassStr.slice(tokenIndex + firstToken.length);
                         break;
                     case MixinType.CLASSREMOVE:
                         const firstTokenIndex = originalClassStr.indexOf(firstToken);

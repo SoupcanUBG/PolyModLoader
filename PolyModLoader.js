@@ -179,6 +179,12 @@ export const MixinType = Object.freeze({
     CLASSREPLACE: 7
 })
 
+export const SettingType = Object.freeze({
+    BOOL: "boolean",
+    SLIDER: "slider",
+    CUSTOM: "custom"
+})
+
 export class PolyModLoader {
     constructor(polyVersion) {
         /** @type {string} */
@@ -206,10 +212,16 @@ export class PolyModLoader {
         *  }}
         */
         this.simWorkerFuncMixins = [];
+
         this.settings = [];
-        this.settingContainer = {
-            boolean: {}
-        };
+        this.settingConstructor = [];
+        this.defaultSettings = [];
+        this.latestSetting = 18;
+
+        this.keybindings = []
+        this.defaultBinds = []
+        this.bindConstructor = []
+        this.latestBinding = 31
     }
     initStorage = (localStorage) => {
         /** @type {WindowLocalStorage} */
@@ -365,11 +377,16 @@ export class PolyModLoader {
         }
     }
     registerSettingCategory = (name) => {
-        this.settings.push(`xI(this, eI, "m", gI).call(this, xI(this, nI, "f").get("${name}")),`)
+        this.settings.push(`xI(this, eI, "m", gI).call(this, xI(this, nI, "f").get("${name}")),`);
     }
-    registerSetting = (name, id, type, optionsOptional) => {
+    registerBindCategory = (name) => {
+        this.keybindings.push(`,xI(this, eI, "m", vI).call(this, xI(this, nI, "f").get("${name}"))`);
+    }
+    registerSetting = (name, id, type, defaultOption, optionsOptional) => {
+        this.latestSetting++
+        this.settingConstructor.push(`$o[$o.${id} = ${this.latestSetting}] = "${id}";`);
         if(type === "boolean") {
-            // this.settingContainer["boolean"][id] = "true";
+            this.defaultSettings.push(`, [$o.${id}, "${defaultOption ? "true" : "false"}"]`)
             this.settings.push(`
                 xI(this, eI, "m", wI).call(this, xI(this, nI, "f").get("${name}"), [{
                     title: xI(this, nI, "f").get("Off"),
@@ -379,11 +396,40 @@ export class PolyModLoader {
                     value: "true"
                 }], $o.${id}),
                 `)
+        } else if(type === "slider") {
+            this.defaultSettings.push(`, [$o.${id}, "${defaultOption}"]`)
+            this.settings.push(`
+                 xI(this, eI, "m", yI).call(this, xI(this, nI, "f").get("${name}"), $o.${id}),`)
+        } else if(type === "custom") {
+            this.defaultSettings.push(`, [$o.${id}, "${defaultOption}"]`)
+            this.settings.push(`
+                xI(this, eI, "m", wI).call(this, xI(this, nI, "f").get("${name}"), ${JSON.stringify(optionsOptional)}, $o.${id}),
+                `)
         }
     }
+    registerKeybind = (name, id, event, defaultBind, secondBindOptional, callback) => {
+        this.keybindings.push(`,xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("${name}"), Ix.${id})`);
+        this.defaultBinds.push(`, [Ix.${id}, ["${defaultBind}", ${secondBindOptional ? `"${secondBindOptional}"` : "null"}]]`);
+        this.bindConstructor.push(`Ix[Ix.${id} = ${this.latestBinding}] = "${id}"`)
+        this.latestBinding++;
+        window.addEventListener(event, (e) => {
+            if(this.settingClass.checkKeyBinding(e, this.getFromPolyTrack(`Ix.${id}`))) {
+                callback(e)
+            }
+        });
+    }
     applySettings = () => {
-        console.log(this.settings.join(""))
+        this.registerClassMixin("ZB.prototype", "defaultSettings", MixinType.INSERT, `defaultSettings() {`, `ActivePolyModLoader.settingClass = this;${this.settingConstructor.join("")}`)
+        this.registerClassMixin("ZB.prototype", "defaultSettings", MixinType.INSERT, `[$o.CheckpointVolume, "1"]`, this.defaultSettings.join(""))
         this.registerFuncMixin("mI", MixinType.INSERT, "), $o.CheckpointVolume),",this.settings.join(""))
+    }
+
+    applyKeybinds = () => {
+        this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `[Ix.SpectatorSpeedModifier, ["ShiftLeft", "ShiftRight"]]`, this.defaultBinds.join(""))
+        this.registerFuncMixin("mI", MixinType.INSERT, "), Ix.ToggleFpsCounter)",this.keybindings.join(""))
+    }
+    getSetting = (id) => {
+        return this.getFromPolyTrack(`ActivePolyModLoader.settingClass.getSetting($o.${id})`);
     }
     /**
      * Remove a mod from the internal list.
@@ -418,7 +464,8 @@ export class PolyModLoader {
     initMods = () => {
         let initList = []
         for (let polyMod of this.allMods) {
-            initList.push(polyMod.id);
+            if(polyMod.loaded)
+                initList.push(polyMod.id);
         }
         if(initList.length === 0) return; // no mods to initialize lol
         let allModsInit = false;
@@ -458,6 +505,7 @@ export class PolyModLoader {
                 allModsInit = true;
         }
         this.applySettings();
+        this.applyKeybinds();
     }
     postInitMods = () => {
         for (let polyMod of this.allMods) {
