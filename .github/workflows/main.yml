@@ -1,7 +1,7 @@
 name: Compile & Release ASAR
 on:
   push:
-permissions:
+permissions: 
    contents: write
 jobs:
    compile-asar:
