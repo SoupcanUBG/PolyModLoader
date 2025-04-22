@@ -1810,6 +1810,59 @@ ActivePolyModLoader.importMods().then(() => {
         }
         eval(`${path} = newFunc;`)
       }
+    ActivePolyModLoader.registerClassWideMixin = (path, mixinType, firstToken, funcOrSecondToken, funcOptional) => {
+        let originalClassStr = eval(path).toString();
+        let newClassStr = originalClassStr;
+        switch(mixinType) {
+            case MixinType.CLASSINSERT:
+                const tokenIndex = originalClassStr.indexOf(firstToken);
+                if (tokenIndex === -1) {
+                    throw new Error(`Token "${firstToken}" not found in class "${path}".`);
+                }
+
+                const injectedCode = funcOrSecondToken.toString()
+                    .replace(/^.*?{([\s\S]*)}$/, '$1')
+                    .trim();
+                
+                newClassStr.slice(0, tokenIndex + accessors.length) +
+                injectedCode +
+                newClassStr.slice(tokenIndex + accessors.length);
+                break;
+            case MixinType.CLASSREMOVE:
+                const firstTokenIndex = originalClassStr.indexOf(firstToken);
+                const secondTokenIndex = originalClassStr.indexOf(funcOrSecondToken);
+                if (firstTokenIndex === -1) {
+                    throw new Error(`Token "${firstToken}" not found in function "${path}".`);
+                }
+                if (secondTokenIndex === -1) {
+                    throw new Error(`Token "${funcOrSecondToken}" not found in function "${path}".`);
+                }
+
+                newClassStr = originalClassStr.split(originalClassStr.substring(firstTokenIndex, secondTokenIndex + funcOrSecondToken.length)).join("");
+            case MixinType.CLASSREPLACE:
+                const firstTokenIndex1 = originalClassStr.indexOf(firstToken);
+                const secondTokenIndex1 = originalClassStr.indexOf(funcOrSecondToken);
+                if (firstTokenIndex1 === -1) {
+                    throw new Error(`Token "${firstToken}" not found in function "${path}".`);
+                }
+                if (secondTokenIndex1 === -1) {
+                    throw new Error(`Token "${funcOrSecondToken}" not found in function "${path}".`);
+                }
+                let injectedCode2 = null;
+                if(typeof funcOptional === "function") {
+                    injectedCode2 = funcOptional.toString()
+                    injectedCode2 = injectedCode2
+                    .replace(/^.*?{([\s\S]*)}$/, '$1')
+                    .trim();
+                } else {
+                    injectedCode2 = funcOptional;
+                }
+                console.log(newClassStr);
+                newClassStr = originalClassStr.split(originalClassStr.substring(firstTokenIndex1, secondTokenIndex1 + funcOrSecondToken.length)).join(injectedCode2);                     
+                console.log(newClassStr);
+        }
+        eval(`${path} = ${newClassStr}`);
+    }
       n(6925);
       var e = n(5072)
         , t = n.n(e)

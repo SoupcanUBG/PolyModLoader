@@ -164,7 +164,19 @@ export const MixinType = Object.freeze({
     /**
      * Remove code between 2 given tokens. Inclusive.
      */
-    REMOVEBETWEEN: 6
+    REMOVEBETWEEN: 6,
+    /**
+     * Inserts code after a given token, but class wide.
+     */
+    CLASSINSERT: 8,
+    /**
+     * Replace code between 2 given tokens, but class wide. Inclusive.
+     */
+    CLASSREMOVE: 4,
+    /**
+     * Remove code between 2 given tokens, but class wide. Inclusive.
+     */
+    CLASSREPLACE: 7
 })
 
 export class PolyModLoader {
@@ -478,6 +490,7 @@ export class PolyModLoader {
      * @param {function} func       - The new function to be injected.
      */
     registerFuncMixin = (path, mixinType, accessors, func, extraOptinonal) => { }
+    registerClassWideMixin = (path, mixinType, firstToken, funcOrSecondToken, funcOptional) => {}
     /**
      * Inject mixin under scope {@link scope} with target function name defined by {@link path}.
      * This only injects functions in `simulation_worker.bundle.js`.
