@@ -1757,9 +1757,9 @@ ActivePolyModLoader.importMods().then(() => {
                 throw new Error(`Token "${accessors}" not found in function "${path}".`);
             }
 
-            const injectedCode = func.toString()
+            const injectedCode = typeof func === "function" ? func.toString()
                 .replace(/^.*?{([\s\S]*)}$/, '$1')
-                .trim();
+                .trim() : func;
 
             const newFuncStr =
                 funcStr.slice(0, tokenIndex + accessors.length) +

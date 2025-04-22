@@ -206,6 +206,10 @@ export class PolyModLoader {
         *  }}
         */
         this.simWorkerFuncMixins = [];
+        this.settings = [];
+        this.settingContainer = {
+            boolean: {}
+        };
     }
     initStorage = (localStorage) => {
         /** @type {WindowLocalStorage} */
@@ -360,6 +364,27 @@ export class PolyModLoader {
             console.error("Error in getting mod manifest:", err);
         }
     }
+    registerSettingCategory = (name) => {
+        this.settings.push(`xI(this, eI, "m", gI).call(this, xI(this, nI, "f").get("${name}")),`)
+    }
+    registerSetting = (name, id, type, optionsOptional) => {
+        if(type === "boolean") {
+            // this.settingContainer["boolean"][id] = "true";
+            this.settings.push(`
+                xI(this, eI, "m", wI).call(this, xI(this, nI, "f").get("${name}"), [{
+                    title: xI(this, nI, "f").get("Off"),
+                    value: "false"
+                }, {
+                    title: xI(this, nI, "f").get("On"),
+                    value: "true"
+                }], $o.${id}),
+                `)
+        }
+    }
+    applySettings = () => {
+        console.log(this.settings.join(""))
+        this.registerFuncMixin("mI", MixinType.INSERT, "), $o.CheckpointVolume),",this.settings.join(""))
+    }
     /**
      * Remove a mod from the internal list.
      * 
@@ -432,6 +457,7 @@ export class PolyModLoader {
             if(initList.length === 0)
                 allModsInit = true;
         }
+        this.applySettings();
     }
     postInitMods = () => {
         for (let polyMod of this.allMods) {
