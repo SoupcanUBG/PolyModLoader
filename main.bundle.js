@@ -38488,13 +38488,13 @@ ActivePolyModLoader.importMods().then(() => {
           xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("Move forwards"), Ix.SpectatorMoveForwards),
           xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("Move backwards"), Ix.SpectatorMoveBackwards),
           xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("Move left"), Ix.SpectatorMoveLeft),
-          xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("Toggle spectator camer"), Ix.ToggleSpectatorCamera)
           xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("Move right"), Ix.SpectatorMoveRight),
           xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("Speed modifier"), Ix.SpectatorSpeedModifier),
           xI(this, eI, "m", vI).call(this, xI(this, nI, "f").get("Other")),
           xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("Hide UI"), Ix.ToggleUI),
           xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("Pause"), Ix.Pause),
-          xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("Toggle FPS counter"), Ix.ToggleFpsCounter)
+          xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("Toggle FPS counter"), Ix.ToggleFpsCounter),
+          xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("Toggle spectator camera"), Ix.ToggleSpectatorCamera)
       }
       ,
       gI = function(e) {

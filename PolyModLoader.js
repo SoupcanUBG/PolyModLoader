@@ -427,7 +427,7 @@ export class PolyModLoader {
     applyKeybinds = () => {
         this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `defaultKeyBindings() {`, `${this.bindConstructor.join("")};`)
         this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `[Ix.SpectatorSpeedModifier, ["ShiftLeft", "ShiftRight"]]`, this.defaultBinds.join(""))
-        this.registerFuncMixin("mI", MixinType.INSERT, "), Ix.ToggleFpsCounter)",this.keybindings.join(""))
+        this.registerFuncMixin("mI", MixinType.INSERT, "), Ix.ToggleSpectatorCamera)",this.keybindings.join(""))
     }
     getSetting = (id) => {
         return this.getFromPolyTrack(`ActivePolyModLoader.settingClass.getSetting($o.${id})`);
