@@ -1673,7 +1673,7 @@ ActivePolyModLoader.importMods().then(() => createWorkerFromURL("https://pml.ora
                             funcStr.slice(tokenIndex + accessors.length);
         
                             const match1 = newFuncStr.match(/^[\w$]+\s*\(([^)]*)\)\s*{([\s\S]*)}$/);
-        
+                            console.log(newFuncStr)
                             const args1 = match1[1].trim();
                             const body1 = match1[2].trim();
                             newFunc = eval(`(function(${args1}) {${body1}})`);
