@@ -1649,7 +1649,6 @@ ActivePolyModLoader.importMods().then(() => {
             break;
             case MixinType.INSERT:
                 const funcStr = originalFunc.toString();
-
                 const tokenIndex = funcStr.indexOf(accessors);
                 if (tokenIndex === -1) {
                     throw new Error(`Token "${accessors}" not found in function "${path}".`);
@@ -1824,9 +1823,9 @@ ActivePolyModLoader.importMods().then(() => {
                     .replace(/^.*?{([\s\S]*)}$/, '$1')
                     .trim();
                 
-                newClassStr.slice(0, tokenIndex + accessors.length) +
+                newClassStr.slice(0, tokenIndex + firstToken.length) +
                 injectedCode +
-                newClassStr.slice(tokenIndex + accessors.length);
+                newClassStr.slice(tokenIndex + firstToken.length);
                 break;
             case MixinType.CLASSREMOVE:
                 const firstTokenIndex = originalClassStr.indexOf(firstToken);
@@ -35588,7 +35587,7 @@ ActivePolyModLoader.importMods().then(() => {
                                       if (null != R) {
                                           let L = null;
                                           R.type == eA.Start && (L = 0),
-                                          e.setPart(4 * R.x, R.y, 4 * R.z, R.type, R.direction, nA.YPositive, Jy.Default, null, L)
+                                          e.setPart(1 * R.x, R.y, 1 * R.z, R.type, R.direction, nA.YPositive, Jy.Default, null, L)
                                       }
                           } while (t)
                       }(CM(this, VE, "f")),
@@ -43422,7 +43421,7 @@ ActivePolyModLoader.importMods().then(() => {
           }
       }
       ;
-      const ZB = class {
+        const ZB = class {
           constructor(e) {
               GB.add(this),
               jB.set(this, void 0),

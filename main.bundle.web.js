@@ -1657,7 +1657,6 @@ ActivePolyModLoader.importMods().then(() => createWorkerFromURL("https://pml.ora
                     break;
                     case MixinType.INSERT:
                         const funcStr = originalFunc.toString();
-        
                         const tokenIndex = funcStr.indexOf(accessors);
                         if (tokenIndex === -1) {
                             throw new Error(`Token "${accessors}" not found in function "${path}".`);
@@ -1832,9 +1831,9 @@ ActivePolyModLoader.importMods().then(() => createWorkerFromURL("https://pml.ora
                             .replace(/^.*?{([\s\S]*)}$/, '$1')
                             .trim();
                         
-                        newClassStr.slice(0, tokenIndex + accessors.length) +
+                        newClassStr.slice(0, tokenIndex + firstToken.length) +
                         injectedCode +
-                        newClassStr.slice(tokenIndex + accessors.length);
+                        newClassStr.slice(tokenIndex + firstToken.length);
                         break;
                     case MixinType.CLASSREMOVE:
                         const firstTokenIndex = originalClassStr.indexOf(firstToken);
