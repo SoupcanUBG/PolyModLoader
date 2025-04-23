@@ -409,8 +409,8 @@ export class PolyModLoader {
     }
     registerKeybind = (name, id, event, defaultBind, secondBindOptional, callback) => {
         this.keybindings.push(`,xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("${name}"), Ix.${id})`);
-        this.defaultBinds.push(`, [Ix.${id}, ["${defaultBind}", ${secondBindOptional ? `"${secondBindOptional}"` : "null"}]]`);
         this.bindConstructor.push(`Ix[Ix.${id} = ${this.latestBinding}] = "${id}"`)
+        this.defaultBinds.push(`, [Ix.${id}, ["${defaultBind}", ${secondBindOptional ? `"${secondBindOptional}"` : "null"}]]`);
         this.latestBinding++;
         window.addEventListener(event, (e) => {
             if(this.settingClass.checkKeyBinding(e, this.getFromPolyTrack(`Ix.${id}`))) {
@@ -425,6 +425,7 @@ export class PolyModLoader {
     }
 
     applyKeybinds = () => {
+        this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `defaultKeyBindings() {`, `${this.bindConstructor.join("")};`)
         this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `[Ix.SpectatorSpeedModifier, ["ShiftLeft", "ShiftRight"]]`, this.defaultBinds.join(""))
         this.registerFuncMixin("mI", MixinType.INSERT, "), Ix.ToggleFpsCounter)",this.keybindings.join(""))
     }
