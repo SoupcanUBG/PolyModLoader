@@ -479,7 +479,7 @@ export class PolyModLoader {
                 if(!curDependency) {
                     initCheck = false;
                     initList.splice(0, 1);
-                    alert(`Mod ${currentMod.name} is missing mod ${curDependency.id} ${curDependency.version} and will not be initialized.`);
+                    alert(`Mod ${currentMod.name} is missing mod ${dependency.id} ${dependency.version} and will not be initialized.`);
                     console.warn(`Mod ${currentMod.name} is missing mod ${curDependency.id} ${curDependency.version} and will not be initialized.`);
                     break;
                 }
