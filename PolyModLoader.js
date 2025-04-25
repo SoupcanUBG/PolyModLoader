@@ -7,53 +7,40 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
-    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-};
 var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
     if (kind === "m") throw new TypeError("Private method is not writable");
     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
 };
-var _PolyMod_modAuthor, _PolyMod_modID, _PolyMod_modName, _PolyMod_modVersion, _PolyMod_IconSrc, _PolyMod_loaded, _PolyMod_modBaseUrl, _PolyMod_touchingPhysics, _PolyMod_modDependencies, _PolyMod_modDescription, _PolyMod_latestSaved, _PolyMod_modInitialized, _PolyMod_polyVersion, _PolyMod_assetFolder, _PolyModLoader_instances, _PolyModLoader_polyVersion, _PolyModLoader_allMods, _PolyModLoader_physicsTouched, _PolyModLoader_simWorkerClassMixins, _PolyModLoader_simWorkerFuncMixins, _PolyModLoader_settings, _PolyModLoader_settingConstructor, _PolyModLoader_defaultSettings, _PolyModLoader_latestSetting, _PolyModLoader_keybindings, _PolyModLoader_defaultBinds, _PolyModLoader_bindConstructor, _PolyModLoader_latestBinding, _PolyModLoader_polyModUrls, _PolyModLoader_applySettings, _PolyModLoader_applyKeybinds;
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+};
+var _PolyModLoader_instances, _PolyModLoader_polyVersion, _PolyModLoader_allMods, _PolyModLoader_physicsTouched, _PolyModLoader_simWorkerClassMixins, _PolyModLoader_simWorkerFuncMixins, _PolyModLoader_settings, _PolyModLoader_settingConstructor, _PolyModLoader_defaultSettings, _PolyModLoader_latestSetting, _PolyModLoader_keybindings, _PolyModLoader_defaultBinds, _PolyModLoader_bindConstructor, _PolyModLoader_latestBinding, _PolyModLoader_polyModUrls, _PolyModLoader_applySettings, _PolyModLoader_applyKeybinds;
 /**
  * Base class for all polytrack mods. Mods should export an instance of their mod class named `polyMod` in their main file.
  */
 export class PolyMod {
     constructor() {
-        _PolyMod_modAuthor.set(this, void 0);
-        _PolyMod_modID.set(this, void 0);
-        _PolyMod_modName.set(this, void 0);
-        _PolyMod_modVersion.set(this, void 0);
-        _PolyMod_IconSrc.set(this, void 0);
-        _PolyMod_loaded.set(this, void 0);
-        _PolyMod_modBaseUrl.set(this, void 0);
-        _PolyMod_touchingPhysics.set(this, void 0);
-        _PolyMod_modDependencies.set(this, void 0);
-        _PolyMod_modDescription.set(this, void 0);
-        _PolyMod_latestSaved.set(this, void 0);
-        _PolyMod_modInitialized.set(this, void 0);
-        _PolyMod_polyVersion.set(this, void 0);
-        _PolyMod_assetFolder.set(this, void 0);
+        this.loaded = false;
         this.applyManifest = (manifest) => {
             const mod = manifest.polymod;
             /** @type {string} */
-            __classPrivateFieldSet(this, _PolyMod_modName, mod.name, "f");
+            this.modName = mod.name;
             /** @type {string} */
-            __classPrivateFieldSet(this, _PolyMod_modID, mod.id, "f");
+            this.modID = mod.id;
             /** @type {string} */
-            __classPrivateFieldSet(this, _PolyMod_modAuthor, mod.author, "f");
+            this.modAuthor = mod.author;
             /** @type {string} */
-            __classPrivateFieldSet(this, _PolyMod_modVersion, mod.version, "f");
+            this.modVersion = mod.version;
             /** @type {string} */
-            __classPrivateFieldSet(this, _PolyMod_polyVersion, mod.targets, "f");
-            __classPrivateFieldSet(this, _PolyMod_assetFolder, "assets", "f");
+            this.polyVersion = mod.targets;
+            this.assetFolder = "assets";
             // no idea how to type annotate this
             // /** @type {{string: string}[]} */
-            __classPrivateFieldSet(this, _PolyMod_modDependencies, manifest.dependencies, "f");
+            this.modDependencies = manifest.dependencies;
         };
         /**
          * Function to run during initialization of mods. Note that this is called *before* polytrack itself is loaded,
@@ -77,7 +64,7 @@ export class PolyMod {
      * @type {string}
      */
     get author() {
-        return __classPrivateFieldGet(this, _PolyMod_modAuthor, "f");
+        return this.modAuthor;
     }
     /**
      * The mod ID.
@@ -85,7 +72,7 @@ export class PolyMod {
      * @type {string}
      */
     get id() {
-        return __classPrivateFieldGet(this, _PolyMod_modID, "f");
+        return this.modID;
     }
     /**
      * The mod name.
@@ -93,7 +80,7 @@ export class PolyMod {
      * @type {string}
      */
     get name() {
-        return __classPrivateFieldGet(this, _PolyMod_modName, "f");
+        return this.modName;
     }
     /**
      * The mod version.
@@ -101,7 +88,7 @@ export class PolyMod {
      * @type {string}
      */
     get version() {
-        return __classPrivateFieldGet(this, _PolyMod_modVersion, "f");
+        return this.modVersion;
     }
     /**
      * The the mod's icon file URL.
@@ -109,10 +96,13 @@ export class PolyMod {
      * @type {string}
      */
     get iconSrc() {
-        return __classPrivateFieldGet(this, _PolyMod_IconSrc, "f");
+        return this.IconSrc;
     }
     set iconSrc(src) {
-        __classPrivateFieldSet(this, _PolyMod_IconSrc, src, "f");
+        this.IconSrc = src;
+    }
+    set setLoaded(status) {
+        this.loaded = status;
     }
     /**
      * The mod's loaded state.
@@ -120,10 +110,7 @@ export class PolyMod {
      * @type {boolean}
      */
     get isLoaded() {
-        return __classPrivateFieldGet(this, _PolyMod_loaded, "f");
-    }
-    set setLoaded(status) {
-        __classPrivateFieldSet(this, _PolyMod_loaded, status, "f");
+        return this.loaded;
     }
     /**
      * The mod's base URL.
@@ -131,10 +118,10 @@ export class PolyMod {
      * @type {string}
      */
     get baseUrl() {
-        return __classPrivateFieldGet(this, _PolyMod_modBaseUrl, "f");
+        return this.modBaseUrl;
     }
     set baseUrl(url) {
-        __classPrivateFieldSet(this, _PolyMod_modBaseUrl, url, "f");
+        this.modBaseUrl = url;
     }
     /**
      * Whether the mod has changed the game physics in some way.
@@ -142,16 +129,16 @@ export class PolyMod {
      * @type {boolean}
      */
     get touchesPhysics() {
-        return __classPrivateFieldGet(this, _PolyMod_touchingPhysics, "f");
+        return this.touchingPhysics;
     }
     /**
      * Other mods that this mod depends on.
      */
     get dependencies() {
-        return __classPrivateFieldGet(this, _PolyMod_modDependencies, "f");
+        return this.modDependencies;
     }
     get descriptionUrl() {
-        return __classPrivateFieldGet(this, _PolyMod_modDescription, "f");
+        return this.modDescription;
     }
     /**
      * Whether the mod is saved as to always fetch latest version (`true`)
@@ -160,19 +147,18 @@ export class PolyMod {
      * @type {boolean}
      */
     get savedLatest() {
-        return __classPrivateFieldGet(this, _PolyMod_latestSaved, "f");
+        return this.latestSaved;
     }
     set savedLatest(latest) {
-        __classPrivateFieldSet(this, _PolyMod_latestSaved, latest, "f");
+        this.latestSaved = latest;
     }
     get initialized() {
-        return __classPrivateFieldGet(this, _PolyMod_modInitialized, "f");
+        return this.modInitialized;
     }
     set initialized(initState) {
-        __classPrivateFieldSet(this, _PolyMod_modInitialized, initState, "f");
+        this.modInitialized = initState;
     }
 }
-_PolyMod_modAuthor = new WeakMap(), _PolyMod_modID = new WeakMap(), _PolyMod_modName = new WeakMap(), _PolyMod_modVersion = new WeakMap(), _PolyMod_IconSrc = new WeakMap(), _PolyMod_loaded = new WeakMap(), _PolyMod_modBaseUrl = new WeakMap(), _PolyMod_touchingPhysics = new WeakMap(), _PolyMod_modDependencies = new WeakMap(), _PolyMod_modDescription = new WeakMap(), _PolyMod_latestSaved = new WeakMap(), _PolyMod_modInitialized = new WeakMap(), _PolyMod_polyVersion = new WeakMap(), _PolyMod_assetFolder = new WeakMap();
 /**
  * This class is used in {@link PolyModLoader}'s register mixin functions to set where functions should be injected into the target function.
  */
@@ -369,12 +355,16 @@ export class PolyModLoader {
         return __classPrivateFieldGet(this, _PolyModLoader_polyModUrls, "f");
     }
     serializeMod(mod) {
-        return { "base": mod.baseUrl, "version": mod.savedLatest ? "latest" : mod.version, "loaded": mod.isLoaded };
+        return { "base": mod.baseUrl, "version": mod.savedLatest ? "latest" : mod.version, "loaded": mod.isLoaded || false };
     }
     saveModsToLocalStorage() {
         let savedMods = [];
-        for (let mod of __classPrivateFieldGet(this, _PolyModLoader_allMods, "f"))
-            savedMods.push(this.serializeMod(mod));
+        for (let mod of __classPrivateFieldGet(this, _PolyModLoader_allMods, "f")) {
+            const modSerialized = this.serializeMod(mod);
+            console.log(modSerialized);
+            console.log(mod);
+            savedMods.push(modSerialized);
+        }
         __classPrivateFieldSet(this, _PolyModLoader_polyModUrls, savedMods, "f");
         this.localStorage.setItem("polyMods", JSON.stringify(__classPrivateFieldGet(this, _PolyModLoader_polyModUrls, "f")));
     }

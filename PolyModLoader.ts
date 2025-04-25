@@ -52,6 +52,10 @@ export class PolyMod {
     set iconSrc(src) {
         this.IconSrc = src;
     }
+    loaded: boolean = false;
+    set setLoaded(status) {
+        this.loaded = status;
+    }
     /**
      * The mod's loaded state.
      * 
@@ -59,10 +63,6 @@ export class PolyMod {
      */
     get isLoaded() {
         return this.loaded;
-    }
-    loaded: boolean;
-    set setLoaded(status) {
-        this.loaded = status;
     }
     /**
      * The mod's base URL.
@@ -338,11 +338,16 @@ export class PolyModLoader {
         return this.#polyModUrls;
     }
     serializeMod(mod: PolyMod) {
-        return { "base": mod.baseUrl, "version": mod.savedLatest ? "latest" : mod.version, "loaded": mod.isLoaded };
+        return { "base": mod.baseUrl, "version": mod.savedLatest ? "latest" : mod.version, "loaded": mod.isLoaded  || false};
     }
     saveModsToLocalStorage() {
         let savedMods: Array<{ base: string, version: string, loaded: boolean }> = [];
-        for (let mod of this.#allMods) savedMods.push(this.serializeMod(mod));
+        for (let mod of this.#allMods) {
+            const modSerialized = this.serializeMod(mod);
+            console.log(modSerialized)
+            console.log(mod)
+            savedMods.push(modSerialized);
+        }
         this.#polyModUrls = savedMods;
         this.localStorage.setItem("polyMods", JSON.stringify(this.#polyModUrls));
     }
