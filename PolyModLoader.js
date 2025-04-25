@@ -1,199 +1,273 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+};
+var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
+    if (kind === "m") throw new TypeError("Private method is not writable");
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+    return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+};
+var _PolyMod_modAuthor, _PolyMod_modID, _PolyMod_modName, _PolyMod_modVersion, _PolyMod_IconSrc, _PolyMod_loaded, _PolyMod_modBaseUrl, _PolyMod_touchingPhysics, _PolyMod_modDependencies, _PolyMod_modDescription, _PolyMod_latestSaved, _PolyMod_modInitialized, _PolyMod_polyVersion, _PolyMod_assetFolder, _PolyModLoader_instances, _PolyModLoader_polyVersion, _PolyModLoader_allMods, _PolyModLoader_physicsTouched, _PolyModLoader_simWorkerClassMixins, _PolyModLoader_simWorkerFuncMixins, _PolyModLoader_settings, _PolyModLoader_settingConstructor, _PolyModLoader_defaultSettings, _PolyModLoader_latestSetting, _PolyModLoader_keybindings, _PolyModLoader_defaultBinds, _PolyModLoader_bindConstructor, _PolyModLoader_latestBinding, _PolyModLoader_polyModUrls, _PolyModLoader_applySettings, _PolyModLoader_applyKeybinds;
 /**
  * Base class for all polytrack mods. Mods should export an instance of their mod class named `polyMod` in their main file.
  */
 export class PolyMod {
+    constructor() {
+        _PolyMod_modAuthor.set(this, void 0);
+        _PolyMod_modID.set(this, void 0);
+        _PolyMod_modName.set(this, void 0);
+        _PolyMod_modVersion.set(this, void 0);
+        _PolyMod_IconSrc.set(this, void 0);
+        _PolyMod_loaded.set(this, void 0);
+        _PolyMod_modBaseUrl.set(this, void 0);
+        _PolyMod_touchingPhysics.set(this, void 0);
+        _PolyMod_modDependencies.set(this, void 0);
+        _PolyMod_modDescription.set(this, void 0);
+        _PolyMod_latestSaved.set(this, void 0);
+        _PolyMod_modInitialized.set(this, void 0);
+        _PolyMod_polyVersion.set(this, void 0);
+        _PolyMod_assetFolder.set(this, void 0);
+        this.applyManifest = (manifest) => {
+            const mod = manifest.polymod;
+            /** @type {string} */
+            __classPrivateFieldSet(this, _PolyMod_modName, mod.name, "f");
+            /** @type {string} */
+            __classPrivateFieldSet(this, _PolyMod_modID, mod.id, "f");
+            /** @type {string} */
+            __classPrivateFieldSet(this, _PolyMod_modAuthor, mod.author, "f");
+            /** @type {string} */
+            __classPrivateFieldSet(this, _PolyMod_modVersion, mod.version, "f");
+            /** @type {string} */
+            __classPrivateFieldSet(this, _PolyMod_polyVersion, mod.targets, "f");
+            __classPrivateFieldSet(this, _PolyMod_assetFolder, "assets", "f");
+            // no idea how to type annotate this
+            // /** @type {{string: string}[]} */
+            __classPrivateFieldSet(this, _PolyMod_modDependencies, manifest.dependencies, "f");
+        };
+        /**
+         * Function to run during initialization of mods. Note that this is called *before* polytrack itself is loaded,
+         * but *after* everything has been declared.
+         *
+         * @param {PolyModLoader} pmlInstance - The instance of {@link PolyModLoader}.
+         */
+        this.init = (pmlInstance) => { };
+        /**
+         * Function to run after all mods and polytrack have been initialized and loaded.
+         */
+        this.postInit = () => { };
+        /**
+         * Function to run before initialization of `simulation_worker.bundle.js`.
+         */
+        this.simInit = () => { };
+    }
     /**
      * The author of the mod.
-     * 
+     *
      * @type {string}
      */
     get author() {
-        return this.modAuthor;
+        return __classPrivateFieldGet(this, _PolyMod_modAuthor, "f");
     }
     /**
      * The mod ID.
-     * 
+     *
      * @type {string}
      */
     get id() {
-        return this.modID;
+        return __classPrivateFieldGet(this, _PolyMod_modID, "f");
     }
     /**
      * The mod name.
-     * 
+     *
      * @type {string}
      */
     get name() {
-        return this.modName;
+        return __classPrivateFieldGet(this, _PolyMod_modName, "f");
     }
     /**
      * The mod version.
-     * 
+     *
      * @type {string}
      */
     get version() {
-        return this.modVersion;
+        return __classPrivateFieldGet(this, _PolyMod_modVersion, "f");
     }
     /**
      * The the mod's icon file URL.
-     * 
+     *
      * @type {string}
      */
     get iconSrc() {
-        return this.IconSrc;
+        return __classPrivateFieldGet(this, _PolyMod_IconSrc, "f");
     }
     set iconSrc(src) {
-        this.IconSrc = src;
+        __classPrivateFieldSet(this, _PolyMod_IconSrc, src, "f");
     }
     /**
      * The mod's loaded state.
-     * 
+     *
      * @type {boolean}
      */
     get isLoaded() {
-        return this.loaded;
+        return __classPrivateFieldGet(this, _PolyMod_loaded, "f");
     }
     set setLoaded(status) {
-        this.loaded = status;
+        __classPrivateFieldSet(this, _PolyMod_loaded, status, "f");
     }
     /**
      * The mod's base URL.
-     * 
+     *
      * @type {string}
      */
     get baseUrl() {
-        return this.modBaseUrl;
+        return __classPrivateFieldGet(this, _PolyMod_modBaseUrl, "f");
     }
     set baseUrl(url) {
-        this.modBaseUrl = url;
+        __classPrivateFieldSet(this, _PolyMod_modBaseUrl, url, "f");
     }
     /**
      * Whether the mod has changed the game physics in some way.
-     *  
+     *
      * @type {boolean}
      */
     get touchesPhysics() {
-        return this.touchingPhysics;
+        return __classPrivateFieldGet(this, _PolyMod_touchingPhysics, "f");
     }
     /**
      * Other mods that this mod depends on.
      */
     get dependencies() {
-        return this.modDependencies;
+        return __classPrivateFieldGet(this, _PolyMod_modDependencies, "f");
     }
     get descriptionUrl() {
-        return this.modDescription;
+        return __classPrivateFieldGet(this, _PolyMod_modDescription, "f");
     }
     /**
      * Whether the mod is saved as to always fetch latest version (`true`)
      * or to fetch a specific version (`false`, with version defined by {@link PolyMod.version}).
-     * 
+     *
      * @type {boolean}
      */
     get savedLatest() {
-        return this.latestSaved;
+        return __classPrivateFieldGet(this, _PolyMod_latestSaved, "f");
     }
     set savedLatest(latest) {
-        this.latestSaved = latest;
+        __classPrivateFieldSet(this, _PolyMod_latestSaved, latest, "f");
     }
     get initialized() {
-        return this.modInitialized;
+        return __classPrivateFieldGet(this, _PolyMod_modInitialized, "f");
     }
     set initialized(initState) {
-        this.modInitialized = initState;
+        __classPrivateFieldSet(this, _PolyMod_modInitialized, initState, "f");
     }
-    applyManifest = (manifest) => {
-        const mod = manifest.polymod;
-        /** @type {string} */
-        this.modName = mod.name;
-        /** @type {string} */
-        this.modID = mod.id;
-        /** @type {string} */
-        this.modAuthor = mod.author;
-        /** @type {string} */
-        this.modVersion = mod.version;
-
-        /** @type {string} */
-        this.polyVersion = mod.targets;
-        this.assetFolder = "assets";
-        // no idea how to type annotate this
-        // /** @type {{string: string}[]} */
-        this.modDependencies = manifest.dependencies;
-    }
-    /**
-     * Function to run during initialization of mods. Note that this is called *before* polytrack itself is loaded, 
-     * but *after* everything has been declared.
-     * 
-     * @param {PolyModLoader} pmlInstance - The instance of {@link PolyModLoader}.
-     */
-    init = (pmlInstance) => { }
-    /**
-     * Function to run after all mods and polytrack have been initialized and loaded.
-     */
-    postInit = () => { }
-    /**
-     * Function to run before initialization of `simulation_worker.bundle.js`.
-     */
-    simInit = () => { }
 }
-
+_PolyMod_modAuthor = new WeakMap(), _PolyMod_modID = new WeakMap(), _PolyMod_modName = new WeakMap(), _PolyMod_modVersion = new WeakMap(), _PolyMod_IconSrc = new WeakMap(), _PolyMod_loaded = new WeakMap(), _PolyMod_modBaseUrl = new WeakMap(), _PolyMod_touchingPhysics = new WeakMap(), _PolyMod_modDependencies = new WeakMap(), _PolyMod_modDescription = new WeakMap(), _PolyMod_latestSaved = new WeakMap(), _PolyMod_modInitialized = new WeakMap(), _PolyMod_polyVersion = new WeakMap(), _PolyMod_assetFolder = new WeakMap();
 /**
  * This class is used in {@link PolyModLoader}'s register mixin functions to set where functions should be injected into the target function.
  */
-export const MixinType = Object.freeze({
+export var MixinType;
+(function (MixinType) {
     /**
      * Inject at the start of the target function.
      */
-    HEAD: 0,
+    MixinType[MixinType["HEAD"] = 0] = "HEAD";
     /**
      * Inject at the end of the target function.
      */
-    TAIL: 1,
+    MixinType[MixinType["TAIL"] = 1] = "TAIL";
     /**
      * Override the target function with the new function.
      */
-    OVERRIDE: 2,
+    MixinType[MixinType["OVERRIDE"] = 2] = "OVERRIDE";
     /**
      * Insert code after a given token.
      */
-    INSERT: 3,
+    MixinType[MixinType["INSERT"] = 3] = "INSERT";
     /**
      * Replace code between 2 given tokens. Inclusive.
      */
-    REPLACEBETWEEN: 5,
+    MixinType[MixinType["REPLACEBETWEEN"] = 5] = "REPLACEBETWEEN";
     /**
      * Remove code between 2 given tokens. Inclusive.
      */
-    REMOVEBETWEEN: 6,
+    MixinType[MixinType["REMOVEBETWEEN"] = 6] = "REMOVEBETWEEN";
     /**
      * Inserts code after a given token, but class wide.
      */
-    CLASSINSERT: 8,
+    MixinType[MixinType["CLASSINSERT"] = 8] = "CLASSINSERT";
     /**
      * Replace code between 2 given tokens, but class wide. Inclusive.
      */
-    CLASSREMOVE: 4,
+    MixinType[MixinType["CLASSREMOVE"] = 4] = "CLASSREMOVE";
     /**
      * Remove code between 2 given tokens, but class wide. Inclusive.
      */
-    CLASSREPLACE: 7
-})
-
-export const SettingType = Object.freeze({
-    BOOL: "boolean",
-    SLIDER: "slider",
-    CUSTOM: "custom"
-})
-
+    MixinType[MixinType["CLASSREPLACE"] = 7] = "CLASSREPLACE";
+})(MixinType || (MixinType = {}));
+export var SettingType;
+(function (SettingType) {
+    SettingType["BOOL"] = "boolean";
+    SettingType["SLIDER"] = "slider";
+    SettingType["CUSTOM"] = "custom";
+})(SettingType || (SettingType = {}));
 export class PolyModLoader {
     constructor(polyVersion) {
+        _PolyModLoader_instances.add(this);
+        _PolyModLoader_polyVersion.set(this, void 0);
+        _PolyModLoader_allMods.set(this, void 0);
+        _PolyModLoader_physicsTouched.set(this, void 0);
+        _PolyModLoader_simWorkerClassMixins.set(this, void 0);
+        _PolyModLoader_simWorkerFuncMixins.set(this, void 0);
+        _PolyModLoader_settings.set(this, void 0);
+        _PolyModLoader_settingConstructor.set(this, void 0);
+        _PolyModLoader_defaultSettings.set(this, void 0);
+        _PolyModLoader_latestSetting.set(this, void 0);
+        _PolyModLoader_keybindings.set(this, void 0);
+        _PolyModLoader_defaultBinds.set(this, void 0);
+        _PolyModLoader_bindConstructor.set(this, void 0);
+        _PolyModLoader_latestBinding.set(this, void 0);
+        _PolyModLoader_polyModUrls.set(this, void 0);
+        this.getFromPolyTrack = (path) => { };
+        /**
+         * Inject mixin under scope {@link scope} with target function name defined by {@link path}.
+         * This only injects functions in `main.bundle.js`.
+         *
+         * @param {string} scope        - The scope under which mixin is injected.
+         * @param {string} path         - The path under the {@link scope} which the mixin targets.
+         * @param {MixinType} mixinType - The type of injection.
+         * @param {string[]} accessors  - A list of strings to evaluate to access private variables.
+         * @param {function} func       - The new function to be injected.
+         */
+        this.registerClassMixin = (scope, path, mixinType, accessors, func, extraOptinonal) => { };
+        /**
+         * Inject mixin with target function name defined by {@link path}.
+         * This only injects functions in `main.bundle.js`.
+         *
+         * @param {string} path         - The path of the function which the mixin targets.
+         * @param {MixinType} mixinType - The type of injection.
+         * @param {string[]} accessors  - A list of strings to evaluate to access private variables.
+         * @param {function} func       - The new function to be injected.
+         */
+        this.registerFuncMixin = (path, mixinType, accessors, func, extraOptinonal) => { };
+        this.registerClassWideMixin = (path, mixinType, firstToken, funcOrSecondToken, funcOptional) => { };
         /** @type {string} */
-        this.polyVersion = polyVersion;
+        __classPrivateFieldSet(this, _PolyModLoader_polyVersion, polyVersion, "f");
         /** @type {PolyMod[]} */
-        this.allMods = [];
+        __classPrivateFieldSet(this, _PolyModLoader_allMods, [], "f");
         /** @type {boolean} */
-        this.physicsTouched = false;
-        /** 
+        __classPrivateFieldSet(this, _PolyModLoader_physicsTouched, false, "f");
+        /**
          * @type {{
          *      scope: string,
          *      path: string,
@@ -202,8 +276,8 @@ export class PolyModLoader {
          *      funcString: string,
          *  }}
          */
-        this.simWorkerClassMixins = [];
-        /** 
+        __classPrivateFieldSet(this, _PolyModLoader_simWorkerClassMixins, [], "f");
+        /**
          * @type {{
         *      path: string,
         *      mixinType: MixinType,
@@ -211,183 +285,194 @@ export class PolyModLoader {
         *      funcString: string,
         *  }}
         */
-        this.simWorkerFuncMixins = [];
-
-        this.settings = [];
-        this.settingConstructor = [];
-        this.defaultSettings = [];
-        this.latestSetting = 18;
-
-        this.keybindings = []
-        this.defaultBinds = []
-        this.bindConstructor = []
-        this.latestBinding = 31
+        __classPrivateFieldSet(this, _PolyModLoader_simWorkerFuncMixins, [], "f");
+        __classPrivateFieldSet(this, _PolyModLoader_settings, [], "f");
+        __classPrivateFieldSet(this, _PolyModLoader_settingConstructor, [], "f");
+        __classPrivateFieldSet(this, _PolyModLoader_defaultSettings, [], "f");
+        __classPrivateFieldSet(this, _PolyModLoader_latestSetting, 18, "f");
+        __classPrivateFieldSet(this, _PolyModLoader_keybindings, [], "f");
+        __classPrivateFieldSet(this, _PolyModLoader_defaultBinds, [], "f");
+        __classPrivateFieldSet(this, _PolyModLoader_bindConstructor, [], "f");
+        __classPrivateFieldSet(this, _PolyModLoader_latestBinding, 31, "f");
     }
-    initStorage = (localStorage) => {
-        /** @type {WindowLocalStorage} */
+    initStorage(localStorage) {
+        /** @type {Storage} */
         this.localStorage = localStorage;
-        /** @type {{base: string, version: string, loaded: bool}[]} */
-        this.polyModUrls = this.getPolyModsStorage();
+        __classPrivateFieldSet(this, _PolyModLoader_polyModUrls, this.getPolyModsStorage(), "f");
     }
-    importMods = async () => {
-        for (let polyModObject of this.polyModUrls) {
-            let latest = false;
-            if (polyModObject.version === "latest") {
-                try {
-                    const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json());
-                    polyModObject.version = latestFile[this.polyVersion];
-                    latest = true;
-                } catch (err) {
-                    alert(`Couldn't find latest version for ${polyModObject.base}`);
-                    console.error("Error in fetching latest version json:", err);
-                }
-            }
-            const polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
-            try {
-                const manifestFile = await fetch(`${polyModUrl}/manifest.json`).then(r => r.json());
-                let mod = manifestFile.polymod;
-                try {
-                    const modImport = await import(`${polyModUrl}/${mod.main}`);
-
-                    let newMod = modImport.polyMod;
-                    mod.version = polyModObject.version;
-                    if (this.getMod(mod.id)) alert(`Duplicate mod detected: ${mod.name}`);
-                    newMod.applyManifest(manifestFile);
-                    newMod.baseUrl = polyModObject.base;
-                    newMod.applyManifest = (nothing) => { console.warn("Can't apply manifest after initialization!") }
-                    newMod.savedLatest = latest;
-                    newMod.iconSrc = `${polyModUrl}/icon.png`;
-                    if (polyModObject.loaded) {
-                        newMod.setLoaded = true;
-                        if (newMod.touchesPhysics) {
-                            this.physicsTouched = true;
-                            this.registerClassMixin("HB.prototype","submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => {})
-                        }
+    importMods() {
+        return __awaiter(this, void 0, void 0, function* () {
+            for (let polyModObject of __classPrivateFieldGet(this, _PolyModLoader_polyModUrls, "f")) {
+                let latest = false;
+                if (polyModObject.version === "latest") {
+                    try {
+                        const latestFile = yield fetch(`${polyModObject.base}/latest.json`).then(r => r.json());
+                        polyModObject.version = latestFile[__classPrivateFieldGet(this, _PolyModLoader_polyVersion, "f")];
+                        latest = true;
                     }
-                    this.allMods.push(newMod);
-                } catch (err) {
-                    alert(`Mod ${mod.name} failed to load.`);
-                    console.error("Error in loading mod:", err);
+                    catch (err) {
+                        alert(`Couldn't find latest version for ${polyModObject.base}`);
+                        console.error("Error in fetching latest version json:", err);
+                    }
                 }
-            } catch (err) {
-                alert(`Couldn't load mod with URL ${polyModUrl}.`);
-                console.error("Error in loading mod URL:", err);
+                const polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
+                try {
+                    const manifestFile = yield fetch(`${polyModUrl}/manifest.json`).then(r => r.json());
+                    let mod = manifestFile.polymod;
+                    try {
+                        const modImport = yield import(`${polyModUrl}/${mod.main}`);
+                        let newMod = modImport.polyMod;
+                        mod.version = polyModObject.version;
+                        if (this.getMod(mod.id))
+                            alert(`Duplicate mod detected: ${mod.name}`);
+                        newMod.applyManifest(manifestFile);
+                        newMod.baseUrl = polyModObject.base;
+                        newMod.applyManifest = (nothing) => { console.warn("Can't apply manifest after initialization!"); };
+                        newMod.savedLatest = latest;
+                        newMod.iconSrc = `${polyModUrl}/icon.png`;
+                        if (polyModObject.loaded) {
+                            newMod.setLoaded = true;
+                            if (newMod.touchesPhysics) {
+                                __classPrivateFieldSet(this, _PolyModLoader_physicsTouched, true, "f");
+                                this.registerClassMixin("HB.prototype", "submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => { });
+                            }
+                        }
+                        __classPrivateFieldGet(this, _PolyModLoader_allMods, "f").push(newMod);
+                    }
+                    catch (err) {
+                        alert(`Mod ${mod.name} failed to load.`);
+                        console.error("Error in loading mod:", err);
+                    }
+                }
+                catch (err) {
+                    alert(`Couldn't load mod with URL ${polyModUrl}.`);
+                    console.error("Error in loading mod URL:", err);
+                }
             }
-        }
+        });
     }
-    getPolyModsStorage = () => {
-        if (this.localStorage.getItem("polyMods")) {
-            this.polyModUrls = JSON.parse(this.localStorage.getItem("polyMods"));
-        } else {
-            this.polyModUrls = [
+    getPolyModsStorage() {
+        const polyModsStorage = this.localStorage.getItem("polyMods");
+        if (polyModsStorage) {
+            __classPrivateFieldSet(this, _PolyModLoader_polyModUrls, JSON.parse(polyModsStorage), "f");
+        }
+        else {
+            __classPrivateFieldSet(this, _PolyModLoader_polyModUrls, [
                 {
                     "base": "https://pml.orangy.cfd/PolyTrackMods/PolyModLoader/0.5.0/pmlcore",
                     "version": "latest",
                     "loaded": true
                 }
-            ];
-            this.localStorage.setItem("polyMods", JSON.stringify(this.polyModUrls));
+            ], "f");
+            this.localStorage.setItem("polyMods", JSON.stringify(__classPrivateFieldGet(this, _PolyModLoader_polyModUrls, "f")));
         }
-        return this.polyModUrls;
+        return __classPrivateFieldGet(this, _PolyModLoader_polyModUrls, "f");
     }
-    serializeMod = (mod) => {
+    serializeMod(mod) {
         return { "base": mod.baseUrl, "version": mod.savedLatest ? "latest" : mod.version, "loaded": mod.isLoaded };
     }
-    saveModsToLocalStorage = () => {
+    saveModsToLocalStorage() {
         let savedMods = [];
-        for (let mod of this.allMods) savedMods.push(this.serializeMod(mod));
-        this.polyModUrls = savedMods;
-        this.localStorage.setItem("polyMods", JSON.stringify(this.polyModUrls));
+        for (let mod of __classPrivateFieldGet(this, _PolyModLoader_allMods, "f"))
+            savedMods.push(this.serializeMod(mod));
+        __classPrivateFieldSet(this, _PolyModLoader_polyModUrls, savedMods, "f");
+        this.localStorage.setItem("polyMods", JSON.stringify(__classPrivateFieldGet(this, _PolyModLoader_polyModUrls, "f")));
     }
     /**
      * Reorder a mod in the internal list to change its priority in mod loading.
-     * 
+     *
      * @param {PolyMod} mod  - The mod to reorder.
      * @param {number} delta - The amount to reorder it by. Positive numbers decrease priority, negative numbers increase priority.
      */
-    reorderMod = (mod, delta) => {
-        if (!mod) return;
-        if(mod.id === "pmlcore") {
+    reorderMod(mod, delta) {
+        if (!mod)
+            return;
+        if (mod.id === "pmlcore") {
             return;
         }
-        const currentIndex = this.allMods.indexOf(mod);
-        if ((currentIndex === 1) || delta > 0) return;
+        const currentIndex = __classPrivateFieldGet(this, _PolyModLoader_allMods, "f").indexOf(mod);
+        if ((currentIndex === 1) || delta > 0)
+            return;
         if (currentIndex === null || currentIndex === undefined) {
             alert("This mod isn't loaded");
             return;
         }
-        const temp = this.allMods[currentIndex + delta];
-        this.allMods[currentIndex + delta] = this.allMods[currentIndex];
-        this.allMods[currentIndex] = temp;
+        const temp = __classPrivateFieldGet(this, _PolyModLoader_allMods, "f")[currentIndex + delta];
+        __classPrivateFieldGet(this, _PolyModLoader_allMods, "f")[currentIndex + delta] = __classPrivateFieldGet(this, _PolyModLoader_allMods, "f")[currentIndex];
+        __classPrivateFieldGet(this, _PolyModLoader_allMods, "f")[currentIndex] = temp;
         this.saveModsToLocalStorage();
     }
     /**
      * Add a mod to the internal mod list. Added mod is given least priority.
-     * 
+     *
      * @param {{base: string, version: string, loaded: bool}} polyModObject - The mod's JSON representation to add.
      */
-    addMod = async (polyModObject, autoUpdate) => {
-        let latest = false;
-        if (polyModObject.version === "latest") {
-            try {
-                const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json());
-                polyModObject.version = latestFile[this.polyVersion];
-                if(autoUpdate){
-                    latest = true;
+    addMod(polyModObject, autoUpdate) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let latest = false;
+            if (polyModObject.version === "latest") {
+                try {
+                    const latestFile = yield fetch(`${polyModObject.base}/latest.json`).then(r => r.json());
+                    polyModObject.version = latestFile[__classPrivateFieldGet(this, _PolyModLoader_polyVersion, "f")];
+                    if (autoUpdate) {
+                        latest = true;
+                    }
                 }
-            } catch {
-                alert(`Couldn't find latest version for ${polyModObject.base}`);
+                catch (_a) {
+                    alert(`Couldn't find latest version for ${polyModObject.base}`);
+                }
             }
-        }
-        const polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
-        try {
-            const manifestFile = await fetch(`${polyModUrl}/manifest.json`).then(r => r.json());
-            const mod = manifestFile.polymod;
-            if (this.getMod(mod.id)) {
-                alert("This mod is already present!");
-                return;
-            }
-            if (mod.targets.indexOf(this.polyVersion) === -1) {
-                alert(
-                    `Mod target version does not match polytrack version!
-                    Note: ${mod.name} version ${PolyModObject.version} targets polytrack versions ${mod.targets.join(', ')}, but current polytrack version is ${this.polyVersion}.`
-                );
-                return;
-            }
+            const polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
             try {
-                const modImport = await import(`${polyModUrl}/${mod.main}`);
-                let newMod = modImport.polyMod;
-                newMod.iconSrc = `${polyModUrl}/icon.png`;
-                mod.version = polyModObject.version;
-                newMod.applyManifest(manifestFile);
-                newMod.baseUrl = polyModObject.base;
-                newMod.applyManifest = (nothing) => { console.warn("Can't apply manifest after initialization!") }
-                newMod.savedLatest = latest;
-                polyModObject.loaded = false;
-                this.allMods.push(newMod);
-                this.saveModsToLocalStorage();
-            } catch (err) {
-                alert("Something went wrong importing this mod!");
-                console.error("Error in importing mod:", err);
-                return;
+                const manifestFile = yield fetch(`${polyModUrl}/manifest.json`).then(r => r.json());
+                const mod = manifestFile.polymod;
+                if (this.getMod(mod.id)) {
+                    alert("This mod is already present!");
+                    return;
+                }
+                if (mod.targets.indexOf(__classPrivateFieldGet(this, _PolyModLoader_polyVersion, "f")) === -1) {
+                    alert(`Mod target version does not match polytrack version!
+                    Note: ${mod.name} version ${polyModObject.version} targets polytrack versions ${mod.targets.join(', ')}, but current polytrack version is ${__classPrivateFieldGet(this, _PolyModLoader_polyVersion, "f")}.`);
+                    return;
+                }
+                try {
+                    const modImport = yield import(`${polyModUrl}/${mod.main}`);
+                    let newMod = modImport.polyMod;
+                    newMod.iconSrc = `${polyModUrl}/icon.png`;
+                    mod.version = polyModObject.version;
+                    newMod.applyManifest(manifestFile);
+                    newMod.baseUrl = polyModObject.base;
+                    newMod.applyManifest = (nothing) => { console.warn("Can't apply manifest after initialization!"); };
+                    newMod.savedLatest = latest;
+                    polyModObject.loaded = false;
+                    __classPrivateFieldGet(this, _PolyModLoader_allMods, "f").push(newMod);
+                    this.saveModsToLocalStorage();
+                }
+                catch (err) {
+                    alert("Something went wrong importing this mod!");
+                    console.error("Error in importing mod:", err);
+                    return;
+                }
             }
-        } catch (err) {
-            alert(`Couldn't find mod manifest for "${polyModObject.base}".`);
-            console.error("Error in getting mod manifest:", err);
-        }
+            catch (err) {
+                alert(`Couldn't find mod manifest for "${polyModObject.base}".`);
+                console.error("Error in getting mod manifest:", err);
+            }
+        });
     }
-    registerSettingCategory = (name) => {
-        this.settings.push(`xI(this, eI, "m", gI).call(this, xI(this, nI, "f").get("${name}")),`);
+    registerSettingCategory(name) {
+        __classPrivateFieldGet(this, _PolyModLoader_settings, "f").push(`xI(this, eI, "m", gI).call(this, xI(this, nI, "f").get("${name}")),`);
     }
-    registerBindCategory = (name) => {
-        this.keybindings.push(`,xI(this, eI, "m", vI).call(this, xI(this, nI, "f").get("${name}"))`);
+    registerBindCategory(name) {
+        __classPrivateFieldGet(this, _PolyModLoader_keybindings, "f").push(`,xI(this, eI, "m", vI).call(this, xI(this, nI, "f").get("${name}"))`);
     }
-    registerSetting = (name, id, type, defaultOption, optionsOptional) => {
-        this.latestSetting++
-        this.settingConstructor.push(`$o[$o.${id} = ${this.latestSetting}] = "${id}";`);
-        if(type === "boolean") {
-            this.defaultSettings.push(`, [$o.${id}, "${defaultOption ? "true" : "false"}"]`)
-            this.settings.push(`
+    registerSetting(name, id, type, defaultOption, optionsOptional) {
+        var _a;
+        __classPrivateFieldSet(this, _PolyModLoader_latestSetting, (_a = __classPrivateFieldGet(this, _PolyModLoader_latestSetting, "f"), _a++, _a), "f");
+        __classPrivateFieldGet(this, _PolyModLoader_settingConstructor, "f").push(`$o[$o.${id} = ${__classPrivateFieldGet(this, _PolyModLoader_latestSetting, "f")}] = "${id}";`);
+        if (type === "boolean") {
+            __classPrivateFieldGet(this, _PolyModLoader_defaultSettings, "f").push(`, [$o.${id}, "${defaultOption ? "true" : "false"}"]`);
+            __classPrivateFieldGet(this, _PolyModLoader_settings, "f").push(`
                 xI(this, eI, "m", wI).call(this, xI(this, nI, "f").get("${name}"), [{
                     title: xI(this, nI, "f").get("Off"),
                     value: "false"
@@ -395,219 +480,203 @@ export class PolyModLoader {
                     title: xI(this, nI, "f").get("On"),
                     value: "true"
                 }], $o.${id}),
-                `)
-        } else if(type === "slider") {
-            this.defaultSettings.push(`, [$o.${id}, "${defaultOption}"]`)
-            this.settings.push(`
-                 xI(this, eI, "m", yI).call(this, xI(this, nI, "f").get("${name}"), $o.${id}),`)
-        } else if(type === "custom") {
-            this.defaultSettings.push(`, [$o.${id}, "${defaultOption}"]`)
-            this.settings.push(`
+                `);
+        }
+        else if (type === "slider") {
+            __classPrivateFieldGet(this, _PolyModLoader_defaultSettings, "f").push(`, [$o.${id}, "${defaultOption}"]`);
+            __classPrivateFieldGet(this, _PolyModLoader_settings, "f").push(`
+                 xI(this, eI, "m", yI).call(this, xI(this, nI, "f").get("${name}"), $o.${id}),`);
+        }
+        else if (type === "custom") {
+            __classPrivateFieldGet(this, _PolyModLoader_defaultSettings, "f").push(`, [$o.${id}, "${defaultOption}"]`);
+            __classPrivateFieldGet(this, _PolyModLoader_settings, "f").push(`
                 xI(this, eI, "m", wI).call(this, xI(this, nI, "f").get("${name}"), ${JSON.stringify(optionsOptional)}, $o.${id}),
-                `)
+                `);
         }
     }
-    registerKeybind = (name, id, event, defaultBind, secondBindOptional, callback) => {
-        this.keybindings.push(`,xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("${name}"), Ix.${id})`);
-        this.bindConstructor.push(`Ix[Ix.${id} = ${this.latestBinding}] = "${id}"`)
-        this.defaultBinds.push(`, [Ix.${id}, ["${defaultBind}", ${secondBindOptional ? `"${secondBindOptional}"` : "null"}]]`);
-        this.latestBinding++;
+    registerKeybind(name, id, event, defaultBind, secondBindOptional, callback) {
+        var _a;
+        __classPrivateFieldGet(this, _PolyModLoader_keybindings, "f").push(`,xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("${name}"), Ix.${id})`);
+        __classPrivateFieldGet(this, _PolyModLoader_bindConstructor, "f").push(`Ix[Ix.${id} = ${__classPrivateFieldGet(this, _PolyModLoader_latestBinding, "f")}] = "${id}"`);
+        __classPrivateFieldGet(this, _PolyModLoader_defaultBinds, "f").push(`, [Ix.${id}, ["${defaultBind}", ${secondBindOptional ? `"${secondBindOptional}"` : "null"}]]`);
+        __classPrivateFieldSet(this, _PolyModLoader_latestBinding, (_a = __classPrivateFieldGet(this, _PolyModLoader_latestBinding, "f"), _a++, _a), "f");
         window.addEventListener(event, (e) => {
-            if(this.settingClass.checkKeyBinding(e, this.getFromPolyTrack(`Ix.${id}`))) {
-                callback(e)
+            if (this.settingClass.checkKeyBinding(e, this.getFromPolyTrack(`Ix.${id}`))) {
+                callback(e);
             }
         });
     }
-    applySettings = () => {
-        this.registerClassMixin("ZB.prototype", "defaultSettings", MixinType.INSERT, `defaultSettings() {`, `ActivePolyModLoader.settingClass = this;${this.settingConstructor.join("")}`)
-        this.registerClassMixin("ZB.prototype", "defaultSettings", MixinType.INSERT, `[$o.CheckpointVolume, "1"]`, this.defaultSettings.join(""))
-        this.registerFuncMixin("mI", MixinType.INSERT, "), $o.CheckpointVolume),",this.settings.join(""))
-    }
-
-    applyKeybinds = () => {
-        this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `defaultKeyBindings() {`, `${this.bindConstructor.join("")};`)
-        this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `[Ix.SpectatorSpeedModifier, ["ShiftLeft", "ShiftRight"]]`, this.defaultBinds.join(""))
-        this.registerFuncMixin("mI", MixinType.INSERT, "), Ix.ToggleSpectatorCamera)",this.keybindings.join(""))
-    }
-    getSetting = (id) => {
+    getSetting(id) {
         return this.getFromPolyTrack(`ActivePolyModLoader.settingClass.getSetting($o.${id})`);
     }
     /**
      * Remove a mod from the internal list.
-     * 
+     *
      * @param {PolyMod} mod - The mod to remove.
      */
-    removeMod = (mod) => {
-        if (!mod) return;
-        if(mod.id === "pmlcore") {
+    removeMod(mod) {
+        if (!mod)
+            return;
+        if (mod.id === "pmlcore") {
             return;
         }
-        const index = this.allMods.indexOf(mod);
+        const index = __classPrivateFieldGet(this, _PolyModLoader_allMods, "f").indexOf(mod);
         if (index > -1) {
-            this.allMods.splice(index, 1);
+            __classPrivateFieldGet(this, _PolyModLoader_allMods, "f").splice(index, 1);
         }
         this.saveModsToLocalStorage();
     }
     /**
      * Set the loaded state of a mod.
-     * 
+     *
      * @param {PolyMod} mod   - The mod to set the state of.
      * @param {boolean} state - The state to set. `true` is loaded, `false` is unloaded.
      */
-    setModLoaded = (mod, state) => {
-        if (!mod) return;
-        if(mod.id === "pmlcore") {
+    setModLoaded(mod, state) {
+        if (!mod)
+            return;
+        if (mod.id === "pmlcore") {
             return;
         }
         mod.loaded = state;
         this.saveModsToLocalStorage();
     }
-    initMods = () => {
-        let initList = []
-        for (let polyMod of this.allMods) {
-            if(polyMod.loaded)
+    initMods() {
+        let initList = [];
+        for (let polyMod of __classPrivateFieldGet(this, _PolyModLoader_allMods, "f")) {
+            if (polyMod.isLoaded)
                 initList.push(polyMod.id);
         }
-        if(initList.length === 0) return; // no mods to initialize lol
+        if (initList.length === 0)
+            return; // no mods to initialize lol
         let allModsInit = false;
-        while(!allModsInit) {
+        while (!allModsInit) {
             let currentMod = this.getMod(initList[0]);
+            if (!currentMod)
+                continue;
             console.log(initList[0]);
             let initCheck = true;
-            for(let dependency of currentMod.dependencies) {
-                let curDependency = this.getMod(dependency.id)
-                if(!curDependency) {
+            for (let dependency of currentMod.dependencies) {
+                let curDependency = this.getMod(dependency.id);
+                if (!curDependency) {
                     initCheck = false;
                     initList.splice(0, 1);
                     alert(`Mod ${currentMod.name} is missing mod ${dependency.id} ${dependency.version} and will not be initialized.`);
-                    console.warn(`Mod ${currentMod.name} is missing mod ${curDependency.id} ${curDependency.version} and will not be initialized.`);
+                    console.warn(`Mod ${currentMod.name} is missing mod ${dependency.id} ${dependency.version} and will not be initialized.`);
                     break;
                 }
-                if(curDependency.version !== dependency.version) {
+                if (curDependency.version !== dependency.version) {
                     initCheck = false;
                     initList.splice(0, 1);
                     alert(`Mod ${currentMod.name} needs version ${dependency.version} of ${curDependency.name} but ${curDependency.version} is present.`);
                     console.warn(`Mod ${currentMod.name} needs version ${dependency.version} of ${curDependency.name} but ${curDependency.version} is present.`);
                     break;
                 }
-                if(!curDependency.initialized) {
+                if (!curDependency.initialized) {
                     initCheck = false;
                     initList.splice(0, 1);
                     initList.push(currentMod.id);
                     break;
                 }
             }
-            if(initCheck) {
+            if (initCheck) {
                 currentMod.init(this);
                 currentMod.initialized = true;
                 initList.splice(0, 1);
             }
-            if(initList.length === 0)
+            if (initList.length === 0)
                 allModsInit = true;
         }
-        this.applySettings();
-        this.applyKeybinds();
+        __classPrivateFieldGet(this, _PolyModLoader_instances, "m", _PolyModLoader_applySettings).call(this);
+        __classPrivateFieldGet(this, _PolyModLoader_instances, "m", _PolyModLoader_applyKeybinds).call(this);
     }
-    postInitMods = () => {
-        for (let polyMod of this.allMods) {
-            if (polyMod.isLoaded) polyMod.postInit();
+    postInitMods() {
+        for (let polyMod of __classPrivateFieldGet(this, _PolyModLoader_allMods, "f")) {
+            if (polyMod.isLoaded)
+                polyMod.postInit();
         }
     }
-    simInitMods = () => {
-        for (let polyMod of this.allMods) {
-            if (polyMod.isLoaded) polyMod.simInit();
+    simInitMods() {
+        for (let polyMod of __classPrivateFieldGet(this, _PolyModLoader_allMods, "f")) {
+            if (polyMod.isLoaded)
+                polyMod.simInit();
         }
     }
     /**
      * Access a mod by its mod ID.
-     * 
+     *
      * @param   {string} id - The ID of the mod to get
      * @returns {PolyMod}   - The requested mod's object.
      */
     getMod(id) {
-        for (let polyMod of this.allMods) {
-            if (polyMod.id == id) return polyMod;
+        for (let polyMod of __classPrivateFieldGet(this, _PolyModLoader_allMods, "f")) {
+            if (polyMod.id == id)
+                return polyMod;
         }
     }
     /**
      * Get the list of all mods.
-     * 
+     *
      * @type {PolyMod[]}
      */
-    getAllMods = function() {
-        return this.allMods;
+    getAllMods() {
+        return __classPrivateFieldGet(this, _PolyModLoader_allMods, "f");
     }
     /**
      * Whether uploading runs to leaderboard is invalid or not.
      */
     get lbInvalid() {
-        return this.physicsTouched;
+        return __classPrivateFieldGet(this, _PolyModLoader_physicsTouched, "f");
     }
-    getFromPolyTrack = (path) => { }
-    /**
-     * Inject mixin under scope {@link scope} with target function name defined by {@link path}.
-     * This only injects functions in `main.bundle.js`.
-     * 
-     * @param {string} scope        - The scope under which mixin is injected.
-     * @param {string} path         - The path under the {@link scope} which the mixin targets.
-     * @param {MixinType} mixinType - The type of injection.
-     * @param {string[]} accessors  - A list of strings to evaluate to access private variables.
-     * @param {function} func       - The new function to be injected.
-     */
-    registerClassMixin = (scope, path, mixinType, accessors, func, extraOptinonal) => { }
-    /**
-     * Inject mixin with target function name defined by {@link path}.
-     * This only injects functions in `main.bundle.js`.
-     * 
-     * @param {string} path         - The path of the function which the mixin targets.
-     * @param {MixinType} mixinType - The type of injection.
-     * @param {string[]} accessors  - A list of strings to evaluate to access private variables.
-     * @param {function} func       - The new function to be injected.
-     */
-    registerFuncMixin = (path, mixinType, accessors, func, extraOptinonal) => { }
-    registerClassWideMixin = (path, mixinType, firstToken, funcOrSecondToken, funcOptional) => {}
     /**
      * Inject mixin under scope {@link scope} with target function name defined by {@link path}.
      * This only injects functions in `simulation_worker.bundle.js`.
-     * 
+     *
      * @param {string} scope        - The scope under which mixin is injected.
      * @param {string} path         - The path under the {@link scope} which the mixin targets.
      * @param {MixinType} mixinType - The type of injection.
      * @param {string[]} accessors  - A list of strings to evaluate to access private variables.
      * @param {function} func       - The new function to be injected.
      */
-    registerSimWorkerClassMixin = (scope, path, mixinType, accessors, func, extraOptinonal) => {
-        this.registerClassMixin("HB.prototype","submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => {})
-        this.simWorkerClassMixins.push({
+    registerSimWorkerClassMixin(scope, path, mixinType, accessors, func, extraOptinonal) {
+        this.registerClassMixin("HB.prototype", "submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => { });
+        __classPrivateFieldGet(this, _PolyModLoader_simWorkerClassMixins, "f").push({
             scope: scope,
             path: path,
             mixinType: mixinType,
             accessors: accessors,
             funcString: typeof func === "function" ? func.toString() : func,
             func2Sstring: extraOptinonal ? extraOptinonal.toString() : null
-        })
+        });
     }
     /**
      * Inject mixin with target function name defined by {@link path}.
      * This only injects functions in `simulation_worker.bundle.js`.
-     * 
+     *
      * @param {string} path         - The path of the function which the mixin targets.
      * @param {MixinType} mixinType - The type of injection.
      * @param {string[]} accessors  - A list of strings to evaluate to access private variables.
      * @param {function} func       - The new function to be injected.
      */
-    registerSimWorkerFuncMixin = (path, mixinType, accessors, func, extraOptinonal) => {
-        this.registerClassMixin("HB.prototype","submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => {})
-        this.simWorkerFuncMixins.push({
+    registerSimWorkerFuncMixin(path, mixinType, accessors, func, extraOptinonal) {
+        this.registerClassMixin("HB.prototype", "submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => { });
+        __classPrivateFieldGet(this, _PolyModLoader_simWorkerFuncMixins, "f").push({
             path: path,
             mixinType: mixinType,
             accessors: accessors,
             funcString: typeof func === "function" ? func.toString() : func,
             func2Sstring: extraOptinonal ? extraOptinonal.toString() : null
-        })
+        });
     }
 }
-
+_PolyModLoader_polyVersion = new WeakMap(), _PolyModLoader_allMods = new WeakMap(), _PolyModLoader_physicsTouched = new WeakMap(), _PolyModLoader_simWorkerClassMixins = new WeakMap(), _PolyModLoader_simWorkerFuncMixins = new WeakMap(), _PolyModLoader_settings = new WeakMap(), _PolyModLoader_settingConstructor = new WeakMap(), _PolyModLoader_defaultSettings = new WeakMap(), _PolyModLoader_latestSetting = new WeakMap(), _PolyModLoader_keybindings = new WeakMap(), _PolyModLoader_defaultBinds = new WeakMap(), _PolyModLoader_bindConstructor = new WeakMap(), _PolyModLoader_latestBinding = new WeakMap(), _PolyModLoader_polyModUrls = new WeakMap(), _PolyModLoader_instances = new WeakSet(), _PolyModLoader_applySettings = function _PolyModLoader_applySettings() {
+    this.registerClassMixin("ZB.prototype", "defaultSettings", MixinType.INSERT, `defaultSettings() {`, `ActivePolyModLoader.settingClass = this;${__classPrivateFieldGet(this, _PolyModLoader_settingConstructor, "f").join("")}`);
+    this.registerClassMixin("ZB.prototype", "defaultSettings", MixinType.INSERT, `[$o.CheckpointVolume, "1"]`, __classPrivateFieldGet(this, _PolyModLoader_defaultSettings, "f").join(""));
+    this.registerFuncMixin("mI", MixinType.INSERT, "), $o.CheckpointVolume),", __classPrivateFieldGet(this, _PolyModLoader_settings, "f").join(""));
+}, _PolyModLoader_applyKeybinds = function _PolyModLoader_applyKeybinds() {
+    this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `defaultKeyBindings() {`, `${__classPrivateFieldGet(this, _PolyModLoader_bindConstructor, "f").join("")};`);
+    this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `[Ix.SpectatorSpeedModifier, ["ShiftLeft", "ShiftRight"]]`, __classPrivateFieldGet(this, _PolyModLoader_defaultBinds, "f").join(""));
+    this.registerFuncMixin("mI", MixinType.INSERT, "), Ix.ToggleSpectatorCamera)", __classPrivateFieldGet(this, _PolyModLoader_keybindings, "f").join(""));
+};
 let ActivePolyModLoader = new PolyModLoader("0.5.0");
-
-export { ActivePolyModLoader }
+export { ActivePolyModLoader };

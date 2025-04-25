@@ -43548,8 +43548,8 @@ ActivePolyModLoader.importMods().then(() => {
               ActivePolyModLoader.simInitMods();
               lU(this, nU, "f").postMessage({
                 messageType: 69,
-                classMixins: ActivePolyModLoader.simWorkerClassMixins,
-                funcMixins: ActivePolyModLoader.simWorkerFuncMixins
+                classMixins: ActivePolyModLoader.simWorkerClassMixins || [],
+                funcMixins: ActivePolyModLoader.simWorkerFuncMixins || []
               });
           }
           dispose() {
