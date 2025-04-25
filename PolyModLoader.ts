@@ -344,8 +344,6 @@ export class PolyModLoader {
         let savedMods: Array<{ base: string, version: string, loaded: boolean }> = [];
         for (let mod of this.#allMods) {
             const modSerialized = this.serializeMod(mod);
-            console.log(modSerialized)
-            console.log(mod)
             savedMods.push(modSerialized);
         }
         this.#polyModUrls = savedMods;

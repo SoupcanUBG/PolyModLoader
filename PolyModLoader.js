@@ -361,8 +361,6 @@ export class PolyModLoader {
         let savedMods = [];
         for (let mod of __classPrivateFieldGet(this, _PolyModLoader_allMods, "f")) {
             const modSerialized = this.serializeMod(mod);
-            console.log(modSerialized);
-            console.log(mod);
             savedMods.push(modSerialized);
         }
         __classPrivateFieldSet(this, _PolyModLoader_polyModUrls, savedMods, "f");
