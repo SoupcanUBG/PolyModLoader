@@ -1,5 +1,3 @@
-import { polyMod } from "./wipmod/0.1.0/main.mod";
-
 /**
  * Base class for all polytrack mods. Mods should export an instance of their mod class named `polyMod` in their main file.
  */
@@ -118,7 +116,7 @@ export class PolyMod {
     }
     polyVersion: Array<string>;
     assetFolder: string;
-    applyManifest = (manifest: { polymod: { name: string, author: string, version: string, id: string, targets: Array<string> }, dependencies: Array<{ id: string, version: string}>}) => {
+    applyManifest = (manifest: { polymod: { name: string, author: string, version: string, id: string, targets: Array<string> }, dependencies: Array<{ id: string, version: string }> }) => {
         const mod = manifest.polymod;
         /** @type {string} */
         this.modName = mod.name;
@@ -195,7 +193,7 @@ export enum MixinType {
     CLASSREPLACE = 7
 }
 
-export enum  SettingType {
+export enum SettingType {
     BOOL = "boolean",
     SLIDER = "slider",
     CUSTOM = "custom"
@@ -269,7 +267,7 @@ export class PolyModLoader {
         this.#latestBinding = 31
     }
     localStorage: Storage
-    #polyModUrls: Array<{ base: string, version: string, loaded: boolean}>
+    #polyModUrls: Array<{ base: string, version: string, loaded: boolean }>
     initStorage(localStorage: Storage) {
         /** @type {Storage} */
         this.localStorage = localStorage;
@@ -307,7 +305,7 @@ export class PolyModLoader {
                         newMod.setLoaded = true;
                         if (newMod.touchesPhysics) {
                             this.#physicsTouched = true;
-                            this.registerClassMixin("HB.prototype","submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => {})
+                            this.registerClassMixin("HB.prototype", "submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => { })
                         }
                     }
                     this.#allMods.push(newMod);
@@ -338,7 +336,7 @@ export class PolyModLoader {
         return this.#polyModUrls;
     }
     serializeMod(mod: PolyMod) {
-        return { "base": mod.baseUrl, "version": mod.savedLatest ? "latest" : mod.version, "loaded": mod.isLoaded  || false};
+        return { "base": mod.baseUrl, "version": mod.savedLatest ? "latest" : mod.version, "loaded": mod.isLoaded || false };
     }
     saveModsToLocalStorage() {
         let savedMods: Array<{ base: string, version: string, loaded: boolean }> = [];
@@ -357,7 +355,7 @@ export class PolyModLoader {
      */
     reorderMod(mod: PolyMod, delta: number) {
         if (!mod) return;
-        if(mod.id === "pmlcore") {
+        if (mod.id === "pmlcore") {
             return;
         }
         const currentIndex = this.#allMods.indexOf(mod);
@@ -376,13 +374,13 @@ export class PolyModLoader {
      * 
      * @param {{base: string, version: string, loaded: bool}} polyModObject - The mod's JSON representation to add.
      */
-    async addMod(polyModObject: { base: string, version: string, loaded: boolean}, autoUpdate: boolean ) {
+    async addMod(polyModObject: { base: string, version: string, loaded: boolean }, autoUpdate: boolean) {
         let latest = false;
         if (polyModObject.version === "latest") {
             try {
                 const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json());
                 polyModObject.version = latestFile[this.#polyVersion];
-                if(autoUpdate){
+                if (autoUpdate) {
                     latest = true;
                 }
             } catch {
@@ -435,7 +433,7 @@ export class PolyModLoader {
     registerSetting(name: string, id: string, type: SettingType, defaultOption: any, optionsOptional: any) {
         this.#latestSetting++
         this.#settingConstructor.push(`$o[$o.${id} = ${this.#latestSetting}] = "${id}";`);
-        if(type === "boolean") {
+        if (type === "boolean") {
             this.#defaultSettings.push(`, [$o.${id}, "${defaultOption ? "true" : "false"}"]`)
             this.#settings.push(`
                 xI(this, eI, "m", wI).call(this, xI(this, nI, "f").get("${name}"), [{
@@ -446,11 +444,11 @@ export class PolyModLoader {
                     value: "true"
                 }], $o.${id}),
                 `)
-        } else if(type === "slider") {
+        } else if (type === "slider") {
             this.#defaultSettings.push(`, [$o.${id}, "${defaultOption}"]`)
             this.#settings.push(`
                  xI(this, eI, "m", yI).call(this, xI(this, nI, "f").get("${name}"), $o.${id}),`)
-        } else if(type === "custom") {
+        } else if (type === "custom") {
             this.#defaultSettings.push(`, [$o.${id}, "${defaultOption}"]`)
             this.#settings.push(`
                 xI(this, eI, "m", wI).call(this, xI(this, nI, "f").get("${name}"), ${JSON.stringify(optionsOptional)}, $o.${id}),
@@ -460,11 +458,11 @@ export class PolyModLoader {
     settingClass: any
     registerKeybind(name: string, id: string, event: string, defaultBind: string, secondBindOptional: string | null, callback: Function) {
         this.#keybindings.push(`,xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("${name}"), Ix.${id})`);
-        this.#bindConstructor.push(`Ix[Ix.${id} = ${this.#latestBinding}] = "${id}"`)
+        this.#bindConstructor.push(`Ix[Ix.${id} = ${this.#latestBinding}] = "${id}";`);
         this.#defaultBinds.push(`, [Ix.${id}, ["${defaultBind}", ${secondBindOptional ? `"${secondBindOptional}"` : "null"}]]`);
         this.#latestBinding++;
         window.addEventListener(event, (e) => {
-            if(this.settingClass.checkKeyBinding(e, this.getFromPolyTrack(`Ix.${id}`))) {
+            if (this.settingClass.checkKeyBinding(e, this.getFromPolyTrack(`Ix.${id}`))) {
                 callback(e)
             }
         });
@@ -472,20 +470,20 @@ export class PolyModLoader {
     #applySettings() {
         this.registerClassMixin("ZB.prototype", "defaultSettings", MixinType.INSERT, `defaultSettings() {`, `ActivePolyModLoader.settingClass = this;${this.#settingConstructor.join("")}`)
         this.registerClassMixin("ZB.prototype", "defaultSettings", MixinType.INSERT, `[$o.CheckpointVolume, "1"]`, this.#defaultSettings.join(""))
-        this.registerFuncMixin("mI", MixinType.INSERT, "), $o.CheckpointVolume),",this.#settings.join(""))
+        this.registerFuncMixin("mI", MixinType.INSERT, "), $o.CheckpointVolume),", this.#settings.join(""))
     }
 
     #applyKeybinds() {
         this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `defaultKeyBindings() {`, `${this.#bindConstructor.join("")};`)
         this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `[Ix.SpectatorSpeedModifier, ["ShiftLeft", "ShiftRight"]]`, this.#defaultBinds.join(""))
-        this.registerFuncMixin("mI", MixinType.INSERT, "), Ix.ToggleSpectatorCamera)",this.#keybindings.join(""))
+        this.registerFuncMixin("mI", MixinType.INSERT, "), Ix.ToggleSpectatorCamera)", this.#keybindings.join(""))
     }
     getSetting(id: string) {
         return this.getFromPolyTrack(`ActivePolyModLoader.settingClass.getSetting($o.${id})`);
     }
     registerSoundOverride(id: string, url: string) {
         console.log("hello");
-        this.registerClassMixin("ul.prototype", "load", MixinType.INSERT, `dl(this, tl, "f").addResource(),`,`
+        this.registerClassMixin("ul.prototype", "load", MixinType.INSERT, `dl(this, tl, "f").addResource(),`, `
             console.log(e);
             console.log("${id}")
             if(e === "${id}") {
@@ -502,7 +500,7 @@ export class PolyModLoader {
      */
     removeMod(mod) {
         if (!mod) return;
-        if(mod.id === "pmlcore") {
+        if (mod.id === "pmlcore") {
             return;
         }
         const index = this.#allMods.indexOf(mod);
@@ -519,7 +517,7 @@ export class PolyModLoader {
      */
     setModLoaded(mod, state) {
         if (!mod) return;
-        if(mod.id === "pmlcore") {
+        if (mod.id === "pmlcore") {
             return;
         }
         mod.loaded = state;
@@ -528,46 +526,46 @@ export class PolyModLoader {
     initMods() {
         let initList: Array<string> = []
         for (let polyMod of this.#allMods) {
-            if(polyMod.isLoaded)
+            if (polyMod.isLoaded)
                 initList.push(polyMod.id);
         }
-        if(initList.length === 0) return; // no mods to initialize lol
+        if (initList.length === 0) return; // no mods to initialize lol
         let allModsInit = false;
-        while(!allModsInit) {
+        while (!allModsInit) {
             let currentMod: PolyMod | undefined = this.getMod(initList[0]);
-            if(!currentMod)
+            if (!currentMod)
                 continue;
             console.log(initList[0]);
             let initCheck = true;
-            for(let dependency of currentMod.dependencies) {
+            for (let dependency of currentMod.dependencies) {
                 let curDependency = this.getMod(dependency.id)
-                if(!curDependency) {
+                if (!curDependency) {
                     initCheck = false;
                     initList.splice(0, 1);
                     alert(`Mod ${currentMod.name} is missing mod ${dependency.id} ${dependency.version} and will not be initialized.`);
                     console.warn(`Mod ${currentMod.name} is missing mod ${dependency.id} ${dependency.version} and will not be initialized.`);
                     break;
                 }
-                if(curDependency.version !== dependency.version) {
+                if (curDependency.version !== dependency.version) {
                     initCheck = false;
                     initList.splice(0, 1);
                     alert(`Mod ${currentMod.name} needs version ${dependency.version} of ${curDependency.name} but ${curDependency.version} is present.`);
                     console.warn(`Mod ${currentMod.name} needs version ${dependency.version} of ${curDependency.name} but ${curDependency.version} is present.`);
                     break;
                 }
-                if(!curDependency.initialized) {
+                if (!curDependency.initialized) {
                     initCheck = false;
                     initList.splice(0, 1);
                     initList.push(currentMod.id);
                     break;
                 }
             }
-            if(initCheck) {
+            if (initCheck) {
                 currentMod.init(this);
                 currentMod.initialized = true;
                 initList.splice(0, 1);
             }
-            if(initList.length === 0)
+            if (initList.length === 0)
                 allModsInit = true;
         }
         this.#applySettings();
@@ -630,7 +628,7 @@ export class PolyModLoader {
      * @param {function} func       - The new function to be injected.
      */
     registerFuncMixin = (path: string, mixinType: MixinType, accessors: string | Array<string>, func: Function | string, extraOptinonal?: Function | string) => { }
-    registerClassWideMixin = (path: string, mixinType: MixinType, firstToken: string, funcOrSecondToken: string | Function, funcOptional?: Function | string) => {}
+    registerClassWideMixin = (path: string, mixinType: MixinType, firstToken: string, funcOrSecondToken: string | Function, funcOptional?: Function | string) => { }
     /**
      * Inject mixin under scope {@link scope} with target function name defined by {@link path}.
      * This only injects functions in `simulation_worker.bundle.js`.
@@ -642,7 +640,7 @@ export class PolyModLoader {
      * @param {function} func       - The new function to be injected.
      */
     registerSimWorkerClassMixin(scope: string, path: string, mixinType: MixinType, accessors: string | Array<string>, func: Function | string, extraOptinonal?: Function | string) {
-        this.registerClassMixin("HB.prototype","submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => {})
+        this.registerClassMixin("HB.prototype", "submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => { })
         this.#simWorkerClassMixins.push({
             scope: scope,
             path: path,
@@ -662,7 +660,7 @@ export class PolyModLoader {
      * @param {function} func       - The new function to be injected.
      */
     registerSimWorkerFuncMixin(path: string, mixinType: MixinType, accessors: string | Array<string>, func: Function | string, extraOptinonal?: Function | string) {
-        this.registerClassMixin("HB.prototype","submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => {})
+        this.registerClassMixin("HB.prototype", "submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => { })
         this.#simWorkerFuncMixins.push({
             path: path,
             mixinType: mixinType,
