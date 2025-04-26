@@ -497,6 +497,18 @@ export class PolyModLoader {
     getSetting(id) {
         return this.getFromPolyTrack(`ActivePolyModLoader.settingClass.getSetting($o.${id})`);
     }
+    registerSoundOverride(id, url) {
+        console.log("hello");
+        this.registerClassMixin("ul.prototype", "load", MixinType.INSERT, `dl(this, tl, "f").addResource(),`, `
+            console.log(e);
+            console.log("${id}")
+            if(e === "${id}") {
+                console.log(t);
+                t = ["${url}"];
+                console.log(t);
+            }
+            `);
+    }
     /**
      * Remove a mod from the internal list.
      *
