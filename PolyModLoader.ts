@@ -561,9 +561,16 @@ export class PolyModLoader {
                 }
             }
             if (initCheck) {
-                currentMod.init(this);
-                currentMod.initialized = true;
-                initList.splice(0, 1);
+                try {
+                    currentMod.init(this);
+                    currentMod.initialized = true;
+                    initList.splice(0, 1);
+                } catch(err) {
+                    alert(`Mod ${currentMod.name} failed to initialize and will be unloaded.`);
+                    console.error("Error in initializing mod:", err);
+                    this.setModLoaded(currentMod, false);
+                    initList.splice(0, 1);
+                }
             }
             if (initList.length === 0)
                 allModsInit = true;
@@ -573,7 +580,15 @@ export class PolyModLoader {
     }
     postInitMods() {
         for (let polyMod of this.#allMods) {
-            if (polyMod.isLoaded) polyMod.postInit();
+            if (polyMod.isLoaded) {
+                try {
+                    polyMod.postInit();
+                } catch(err) {
+                    alert(`Mod ${polyMod.name} failed to post initialize and will be unloaded.`);
+                    console.error("Error in post initializing mod:", err);
+                    this.setModLoaded(polyMod, false);
+                }
+            }
         }
     }
     simInitMods() {

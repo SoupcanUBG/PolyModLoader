@@ -485,7 +485,7 @@ export class PolyModLoader {
     registerKeybind(name, id, event, defaultBind, secondBindOptional, callback) {
         var _a;
         __classPrivateFieldGet(this, _PolyModLoader_keybindings, "f").push(`,xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("${name}"), Ix.${id})`);
-        __classPrivateFieldGet(this, _PolyModLoader_bindConstructor, "f").push(`Ix[Ix.${id} = ${__classPrivateFieldGet(this, _PolyModLoader_latestBinding, "f")}] = "${id}"`);
+        __classPrivateFieldGet(this, _PolyModLoader_bindConstructor, "f").push(`Ix[Ix.${id} = ${__classPrivateFieldGet(this, _PolyModLoader_latestBinding, "f")}] = "${id}";`);
         __classPrivateFieldGet(this, _PolyModLoader_defaultBinds, "f").push(`, [Ix.${id}, ["${defaultBind}", ${secondBindOptional ? `"${secondBindOptional}"` : "null"}]]`);
         __classPrivateFieldSet(this, _PolyModLoader_latestBinding, (_a = __classPrivateFieldGet(this, _PolyModLoader_latestBinding, "f"), _a++, _a), "f");
         window.addEventListener(event, (e) => {
@@ -580,9 +580,17 @@ export class PolyModLoader {
                 }
             }
             if (initCheck) {
-                currentMod.init(this);
-                currentMod.initialized = true;
-                initList.splice(0, 1);
+                try {
+                    currentMod.init(this);
+                    currentMod.initialized = true;
+                    initList.splice(0, 1);
+                }
+                catch (err) {
+                    alert(`Mod ${currentMod.name} failed to initialize and will be unloaded.`);
+                    console.error("Error in initializing mod:", err);
+                    this.setModLoaded(currentMod, false);
+                    initList.splice(0, 1);
+                }
             }
             if (initList.length === 0)
                 allModsInit = true;
@@ -592,8 +600,16 @@ export class PolyModLoader {
     }
     postInitMods() {
         for (let polyMod of __classPrivateFieldGet(this, _PolyModLoader_allMods, "f")) {
-            if (polyMod.isLoaded)
-                polyMod.postInit();
+            if (polyMod.isLoaded) {
+                try {
+                    polyMod.postInit();
+                }
+                catch (err) {
+                    alert(`Mod ${polyMod.name} failed to post initialize and will be unloaded.`);
+                    console.error("Error in post initializing mod:", err);
+                    this.setModLoaded(polyMod, false);
+                }
+            }
         }
     }
     simInitMods() {
