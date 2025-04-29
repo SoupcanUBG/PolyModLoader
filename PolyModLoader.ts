@@ -455,7 +455,8 @@ export class PolyModLoader {
                 `)
         }
     }
-    settingClass: any
+    settingClass: any;
+    soundClass: any;
     registerKeybind(name: string, id: string, event: string, defaultBind: string, secondBindOptional: string | null, callback: Function) {
         this.#keybindings.push(`,xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("${name}"), Ix.${id})`);
         this.#bindConstructor.push(`Ix[Ix.${id} = ${this.#latestBinding}] = "${id}";`);
@@ -468,6 +469,7 @@ export class PolyModLoader {
         });
     }
     #applySettings() {
+        this.registerClassMixin("ul.prototype", "load", MixinType.INSERT, `load(e, t) {`, `ActivePolyModLoader.soundClass = this;`)
         this.registerClassMixin("ZB.prototype", "defaultSettings", MixinType.INSERT, `defaultSettings() {`, `ActivePolyModLoader.settingClass = this;${this.#settingConstructor.join("")}`)
         this.registerClassMixin("ZB.prototype", "defaultSettings", MixinType.INSERT, `[$o.CheckpointVolume, "1"]`, this.#defaultSettings.join(""))
         this.registerFuncMixin("mI", MixinType.INSERT, "), $o.CheckpointVolume),", this.#settings.join(""))
@@ -482,7 +484,6 @@ export class PolyModLoader {
         return this.getFromPolyTrack(`ActivePolyModLoader.settingClass.getSetting($o.${id})`);
     }
     registerSoundOverride(id: string, url: string) {
-        console.log("hello");
         this.registerClassMixin("ul.prototype", "load", MixinType.INSERT, `dl(this, tl, "f").addResource(),`, `
             console.log(e);
             console.log("${id}")
@@ -490,8 +491,22 @@ export class PolyModLoader {
                 console.log(t);
                 t = ["${url}"];
                 console.log(t);
-            }
-            `)
+            }`)
+    }
+    registerSound(id: string, url: string) {
+        this.soundClass.load(id, url);
+    }
+    playSound(id: string, gain: number) {
+        const e = this.soundClass.getBuffer(id);
+        if (null != e && null != this.soundClass.context && null != this.soundClass.destinationSfx) {
+            const t = this.soundClass.context.createBufferSource();
+            t.buffer = e;
+            const n = this.soundClass.context.createGain();
+            n.gain.value = gain,
+            t.connect(n),
+            n.connect(this.soundClass.destinationSfx),
+            t.start(0)
+        }
     }
     /**
      * Remove a mod from the internal list.

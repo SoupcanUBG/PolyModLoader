@@ -498,7 +498,6 @@ export class PolyModLoader {
         return this.getFromPolyTrack(`ActivePolyModLoader.settingClass.getSetting($o.${id})`);
     }
     registerSoundOverride(id, url) {
-        console.log("hello");
         this.registerClassMixin("ul.prototype", "load", MixinType.INSERT, `dl(this, tl, "f").addResource(),`, `
             console.log(e);
             console.log("${id}")
@@ -506,8 +505,22 @@ export class PolyModLoader {
                 console.log(t);
                 t = ["${url}"];
                 console.log(t);
-            }
-            `);
+            }`);
+    }
+    registerSound(id, url) {
+        this.soundClass.load(id, url);
+    }
+    playSound(id, gain) {
+        const e = this.soundClass.getBuffer(id);
+        if (null != e && null != this.soundClass.context && null != this.soundClass.destinationSfx) {
+            const t = this.soundClass.context.createBufferSource();
+            t.buffer = e;
+            const n = this.soundClass.context.createGain();
+            n.gain.value = gain,
+                t.connect(n),
+                n.connect(this.soundClass.destinationSfx),
+                t.start(0);
+        }
     }
     /**
      * Remove a mod from the internal list.
@@ -686,6 +699,7 @@ export class PolyModLoader {
     }
 }
 _PolyModLoader_polyVersion = new WeakMap(), _PolyModLoader_allMods = new WeakMap(), _PolyModLoader_physicsTouched = new WeakMap(), _PolyModLoader_simWorkerClassMixins = new WeakMap(), _PolyModLoader_simWorkerFuncMixins = new WeakMap(), _PolyModLoader_settings = new WeakMap(), _PolyModLoader_settingConstructor = new WeakMap(), _PolyModLoader_defaultSettings = new WeakMap(), _PolyModLoader_latestSetting = new WeakMap(), _PolyModLoader_keybindings = new WeakMap(), _PolyModLoader_defaultBinds = new WeakMap(), _PolyModLoader_bindConstructor = new WeakMap(), _PolyModLoader_latestBinding = new WeakMap(), _PolyModLoader_polyModUrls = new WeakMap(), _PolyModLoader_instances = new WeakSet(), _PolyModLoader_applySettings = function _PolyModLoader_applySettings() {
+    this.registerClassMixin("ul.prototype", "load", MixinType.INSERT, `load(e, t) {`, `ActivePolyModLoader.soundClass = this;`);
     this.registerClassMixin("ZB.prototype", "defaultSettings", MixinType.INSERT, `defaultSettings() {`, `ActivePolyModLoader.settingClass = this;${__classPrivateFieldGet(this, _PolyModLoader_settingConstructor, "f").join("")}`);
     this.registerClassMixin("ZB.prototype", "defaultSettings", MixinType.INSERT, `[$o.CheckpointVolume, "1"]`, __classPrivateFieldGet(this, _PolyModLoader_defaultSettings, "f").join(""));
     this.registerFuncMixin("mI", MixinType.INSERT, "), $o.CheckpointVolume),", __classPrivateFieldGet(this, _PolyModLoader_settings, "f").join(""));
