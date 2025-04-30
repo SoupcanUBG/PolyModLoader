@@ -1,4 +1,4 @@
-import { ActivePolyModLoader, MixinType } from "./PolyModLoader.js"
+import { ActivePolyModLoader, MixinType, SoundManager } from "./PolyModLoader.js"
 ActivePolyModLoader.initStorage(localStorage);
 window.polyModLoader = ActivePolyModLoader;
 ActivePolyModLoader.importMods().then(() => {

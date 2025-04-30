@@ -1,4 +1,4 @@
-import { ActivePolyModLoader, MixinType } from "https://pml.orangy.cfd/0rangy/PolyModLoader/0.5.0/PolyModLoader.js"
+import { ActivePolyModLoader, MixinType, SoundManager } from "https://pml.orangy.cfd/0rangy/PolyModLoader/0.5.0/PolyModLoader.js"
 ActivePolyModLoader.initStorage(localStorage);
 window.polyModLoader = ActivePolyModLoader;
 async function createWorkerFromURL(url) {
