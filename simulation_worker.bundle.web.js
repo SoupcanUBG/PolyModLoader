@@ -28752,9 +28752,8 @@
         const Dv = [];
         onmessage = e => {
             Dv.push(e)
-        }
-        ,
-        Ammo().then((function(e) {
+        };
+        var ammoFunc = (function(e) {
             let t = new p_([]);
             const n = [];
             function i(e) {
@@ -29131,7 +29130,8 @@
                 })
             }
         }
-        ))
+        );
+        Ammo().then(ammoFunc);
     }
     );
 }
