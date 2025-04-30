@@ -469,6 +469,7 @@ export class PolyModLoader {
                     polyModObject.loaded = false;
                     __classPrivateFieldGet(this, _PolyModLoader_allMods, "f").push(newMod);
                     this.saveModsToLocalStorage();
+                    return this.getMod(newMod.id);
                 }
                 catch (err) {
                     alert("Something went wrong importing this mod!");
@@ -533,12 +534,9 @@ export class PolyModLoader {
     }
     registerSoundOverride(id, url) {
         this.registerClassMixin("ul.prototype", "load", MixinType.INSERT, `dl(this, tl, "f").addResource(),`, `
-            console.log(e);
-            console.log("${id}")
+            null;
             if(e === "${id}") {
-                console.log(t);
                 t = ["${url}"];
-                console.log(t);
             }`);
     }
     /**
