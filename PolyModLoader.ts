@@ -199,6 +199,40 @@ export enum SettingType {
     CUSTOM = "custom"
 }
 
+export class SoundManager {
+    #soundClass: any;
+    constructor(soundClass: any) {
+        this.#soundClass = soundClass;
+    }
+    registerSound(id: string, url: string) {
+        this.#soundClass.load(id, url);
+    }
+    playSound(id: string, gain: number) {
+        const e = this.#soundClass.getBuffer(id);
+        if (null != e && null != this.#soundClass.context && null != this.#soundClass.destinationSfx) {
+            const t = this.#soundClass.context.createBufferSource();
+            t.buffer = e;
+            const n = this.#soundClass.context.createGain();
+            n.gain.value = gain,
+            t.connect(n),
+            n.connect(this.#soundClass.destinationSfx),
+            t.start(0)
+        }
+    }
+    playUIClick() {
+        const e = this.#soundClass.getBuffer("click");
+        if (null != e && null != this.#soundClass.context && null != this.#soundClass.destinationSfx) {
+            const t = this.#soundClass.context.createBufferSource();
+            t.buffer = e;
+            const n = this.#soundClass.context.createGain();
+            n.gain.value = .0075,
+            t.connect(n),
+            n.connect(this.#soundClass.destinationSfx),
+            t.start(0)
+        }
+    }
+}
+
 export class PolyModLoader {
     #polyVersion: string;
     #allMods: Array<PolyMod>;
@@ -456,7 +490,7 @@ export class PolyModLoader {
         }
     }
     settingClass: any;
-    soundClass: any;
+    soundManager: SoundManager;
     registerKeybind(name: string, id: string, event: string, defaultBind: string, secondBindOptional: string | null, callback: Function) {
         this.#keybindings.push(`,xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("${name}"), Ix.${id})`);
         this.#bindConstructor.push(`Ix[Ix.${id} = ${this.#latestBinding}] = "${id}";`);
@@ -469,7 +503,7 @@ export class PolyModLoader {
         });
     }
     #applySettings() {
-        this.registerClassMixin("ul.prototype", "load", MixinType.INSERT, `load(e, t) {`, `ActivePolyModLoader.soundClass = this;`)
+        this.registerClassMixin("ul.prototype", "load", MixinType.INSERT, `load(e, t) {`, `ActivePolyModLoader.soundManager = new SoundManager(this);`)
         this.registerClassMixin("ZB.prototype", "defaultSettings", MixinType.INSERT, `defaultSettings() {`, `ActivePolyModLoader.settingClass = this;${this.#settingConstructor.join("")}`)
         this.registerClassMixin("ZB.prototype", "defaultSettings", MixinType.INSERT, `[$o.CheckpointVolume, "1"]`, this.#defaultSettings.join(""))
         this.registerFuncMixin("mI", MixinType.INSERT, "), $o.CheckpointVolume),", this.#settings.join(""))
@@ -492,21 +526,6 @@ export class PolyModLoader {
                 t = ["${url}"];
                 console.log(t);
             }`)
-    }
-    registerSound(id: string, url: string) {
-        this.soundClass.load(id, url);
-    }
-    playSound(id: string, gain: number) {
-        const e = this.soundClass.getBuffer(id);
-        if (null != e && null != this.soundClass.context && null != this.soundClass.destinationSfx) {
-            const t = this.soundClass.context.createBufferSource();
-            t.buffer = e;
-            const n = this.soundClass.context.createGain();
-            n.gain.value = gain,
-            t.connect(n),
-            n.connect(this.soundClass.destinationSfx),
-            t.start(0)
-        }
     }
     /**
      * Remove a mod from the internal list.
@@ -701,6 +720,6 @@ export class PolyModLoader {
     }
 }
 
-let ActivePolyModLoader = new PolyModLoader("0.5.0");
+const ActivePolyModLoader = new PolyModLoader("0.5.0");
 
 export { ActivePolyModLoader }
