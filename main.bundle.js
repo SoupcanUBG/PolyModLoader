@@ -31573,7 +31573,7 @@ ActivePolyModLoader.importMods().then(() => {
               }
               return null
           }
-          toSaveString() {
+          toSaveString() { 
               const e = Eb(this, wb, "m", xb).call(this)
                 , t = new Yg.Deflate({
                   level: 9,
