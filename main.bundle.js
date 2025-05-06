@@ -48525,8 +48525,8 @@ ActivePolyModLoader.importMods().then(() => {
 * @license
 * Copyright 2025 Kodub.com
 */
-      nn.enabled = !1,
-        polyInitFunction = function() {
+      nn.enabled = !1;
+        let polyInitFunction = function() {
           const e = new oN;
           e.addResource(),
           K_().then(( () => {

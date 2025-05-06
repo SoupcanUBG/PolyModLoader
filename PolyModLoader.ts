@@ -555,7 +555,13 @@ export class PolyModLoader {
         mod.loaded = state;
         this.saveModsToLocalStorage();
     }
+    popUpClass: any;
+    #preInitPML() {
+        this.registerFuncMixin("polyInitFunction", MixinType.INSERT, `let L = new BD(h,x,b,A,k,f,S,m,v,y,a,c,p,g,e,!1,_,C,P,I,R)
+            , D = 0;`, `ActivePolyModLoader.popUpClass = S;`)
+    }
     initMods() {
+        this.#preInitPML();
         let initList: Array<string> = []
         for (let polyMod of this.#allMods) {
             if (polyMod.isLoaded)

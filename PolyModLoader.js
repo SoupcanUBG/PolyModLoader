@@ -18,7 +18,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _SoundManager_soundClass, _PolyModLoader_instances, _PolyModLoader_polyVersion, _PolyModLoader_allMods, _PolyModLoader_physicsTouched, _PolyModLoader_simWorkerClassMixins, _PolyModLoader_simWorkerFuncMixins, _PolyModLoader_settings, _PolyModLoader_settingConstructor, _PolyModLoader_defaultSettings, _PolyModLoader_latestSetting, _PolyModLoader_keybindings, _PolyModLoader_defaultBinds, _PolyModLoader_bindConstructor, _PolyModLoader_latestBinding, _PolyModLoader_polyModUrls, _PolyModLoader_applySettings, _PolyModLoader_applyKeybinds;
+var _SoundManager_soundClass, _PolyModLoader_instances, _PolyModLoader_polyVersion, _PolyModLoader_allMods, _PolyModLoader_physicsTouched, _PolyModLoader_simWorkerClassMixins, _PolyModLoader_simWorkerFuncMixins, _PolyModLoader_settings, _PolyModLoader_settingConstructor, _PolyModLoader_defaultSettings, _PolyModLoader_latestSetting, _PolyModLoader_keybindings, _PolyModLoader_defaultBinds, _PolyModLoader_bindConstructor, _PolyModLoader_latestBinding, _PolyModLoader_polyModUrls, _PolyModLoader_applySettings, _PolyModLoader_applyKeybinds, _PolyModLoader_preInitPML;
 /**
  * Base class for all polytrack mods. Mods should export an instance of their mod class named `polyMod` in their main file.
  */
@@ -572,6 +572,7 @@ export class PolyModLoader {
         this.saveModsToLocalStorage();
     }
     initMods() {
+        __classPrivateFieldGet(this, _PolyModLoader_instances, "m", _PolyModLoader_preInitPML).call(this);
         let initList = [];
         for (let polyMod of __classPrivateFieldGet(this, _PolyModLoader_allMods, "f")) {
             if (polyMod.isLoaded)
@@ -724,6 +725,9 @@ _PolyModLoader_polyVersion = new WeakMap(), _PolyModLoader_allMods = new WeakMap
     this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `defaultKeyBindings() {`, `${__classPrivateFieldGet(this, _PolyModLoader_bindConstructor, "f").join("")};`);
     this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `[Ix.SpectatorSpeedModifier, ["ShiftLeft", "ShiftRight"]]`, __classPrivateFieldGet(this, _PolyModLoader_defaultBinds, "f").join(""));
     this.registerFuncMixin("mI", MixinType.INSERT, "), Ix.ToggleSpectatorCamera)", __classPrivateFieldGet(this, _PolyModLoader_keybindings, "f").join(""));
+}, _PolyModLoader_preInitPML = function _PolyModLoader_preInitPML() {
+    this.registerFuncMixin("polyInitFunction", MixinType.INSERT, `let L = new BD(h,x,b,A,k,f,S,m,v,y,a,c,p,g,e,!1,_,C,P,I,R)
+            , D = 0;`, `ActivePolyModLoader.popUpClass = S;`);
 };
 const ActivePolyModLoader = new PolyModLoader("0.5.0");
 export { ActivePolyModLoader };
