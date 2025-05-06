@@ -48525,9 +48525,8 @@ ActivePolyModLoader.importMods().then(() => {
 * @license
 * Copyright 2025 Kodub.com
 */
-      ActivePolyModLoader.initMods();
       nn.enabled = !1,
-      function() {
+        polyInitFunction = function() {
           const e = new oN;
           e.addResource(),
           K_().then(( () => {
@@ -48732,7 +48731,9 @@ ActivePolyModLoader.importMods().then(() => {
               p.checkKeyBinding(e, Ix.ToggleFpsCounter) && E.toggle()
           }
           ))
-      }()
+      }
+      ActivePolyModLoader.initMods();
+      polyInitFunction();
   }
   )()
 }
