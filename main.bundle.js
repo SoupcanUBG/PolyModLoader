@@ -35587,7 +35587,7 @@ ActivePolyModLoader.importMods().then(() => {
                                       if (null != R) {
                                           let L = null;
                                           R.type == eA.Start && (L = 0),
-                                          e.setPart(1 * R.x, R.y, 1 * R.z, R.type, R.direction, nA.YPositive, Jy.Default, null, L)
+                                          e.setPart(4 * R.x, R.y, 4 * R.z, R.type, R.direction, nA.YPositive, Jy.Default, null, L)
                                       }
                           } while (t)
                       }(CM(this, VE, "f")),
