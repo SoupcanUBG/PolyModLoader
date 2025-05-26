@@ -1,4 +1,4 @@
-pipeline:
+steps:
   compile-asar:
     image: node:20
     commands:
