@@ -1,3 +1,6 @@
+clone:
+  depth: 1
+
 steps:
   compile-asar:
     image: node:20
@@ -7,15 +10,12 @@ steps:
         echo "Latest commit message: $COMMIT_MSG"
         if ! echo "$COMMIT_MSG" | grep -qE '^\[v'; then
           echo "Commit message does not start with [v — skipping build."
-          exit 78
+          exit 78 
         fi
-
       - npm install -g asar
       - asar p . app.asar
-
     artifacts:
       - app.asar
-
     when:
       event:
         - push
