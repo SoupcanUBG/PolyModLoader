@@ -465,7 +465,7 @@ export class PolyModLoader {
     registerBindCategory(name: string) {
         this.#keybindings.push(`,xI(this, eI, "m", vI).call(this, xI(this, nI, "f").get("${name}"))`);
     }
-    registerSetting(name: string, id: string, type: SettingType, defaultOption: any, optionsOptional: any) {
+    registerSetting(name: string, id: string, type: SettingType, defaultOption: any, optionsOptional?: Array<{ title: string, value: string }>) {
         this.#latestSetting++
         this.#settingConstructor.push(`$o[$o.${id} = ${this.#latestSetting}] = "${id}";`);
         if (type === "boolean") {
