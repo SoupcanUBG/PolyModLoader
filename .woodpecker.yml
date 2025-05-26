@@ -1,6 +1,3 @@
-clone:
-  depth: 1
-
 steps:
   compile-asar:
     image: node:20
