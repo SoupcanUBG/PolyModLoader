@@ -19,9 +19,12 @@ steps:
   - name: switch to app branch
     image: node:20
     commands:
+      - cd ../
+      - rm -rf PolyModLoader
       - git config user.name "Woodpecker CI"
       - git config user.email woodpecker@noreply.codeberg.org
-      - git remote set-url origin ssh://git@codeberg.org/CRJakob/PolyModLoader.git
+      - git clone ssh://git@codeberg.org/CRJakob/PolyModLoader.git
+      - cd PolyModLoader
       - git switch app
 
   - name: copy asar to app branch
