@@ -21,8 +21,6 @@ steps:
     commands:
       - cd ../
       - rm -rf PolyModLoader
-      - git config user.name "Woodpecker CI"
-      - git config user.email woodpecker@noreply.codeberg.org
       - git clone ssh://git@codeberg.org/CRJakob/PolyModLoader.git
       - cd PolyModLoader
       - git switch app
