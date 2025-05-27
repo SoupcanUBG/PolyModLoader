@@ -46,6 +46,7 @@ steps:
     settings:
       ssh_key:
         from_secret: CI_SSH_KEY
+      remote: ssh://git@codeberg.org/CRJakob/PolyModLoader.git
       remote_name: origin
       branch: app
       local_ref: app
