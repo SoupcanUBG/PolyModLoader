@@ -21,7 +21,7 @@ steps:
     commands:
       - cd ../
       - rm -rf PolyModLoader
-      - git clone --depth 1 --branch app https://codeberg.org/CRJakob/PolyModLoader.git
+      - git clone --depth 1 --branch app https://codeberg.org/polytrackmods/PolyModLoader.git
       - cd PolyModLoader
       - git config user.name "CRJakob"
       - git config user.email crjakob@noreply.codeberg.org
@@ -44,6 +44,7 @@ steps:
     settings:
       ssh_key:
         from_secret: CI_SSH_KEY
-      remote: ssh://git@codeberg.org/CRJakob/PolyModLoader.git
+      remote: ssh://git@codeberg.org/polytrackmods/PolyModLoader.git
       branch: app
       local_ref: app
+
