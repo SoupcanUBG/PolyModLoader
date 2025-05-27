@@ -14,7 +14,7 @@ steps:
     commands:
       - cd ../
       - mkdir -p temp
-      - cp PolyModLoader/app.asar tmp/
+      - cp PolyModLoader/app.asar temp/
 
   - name: switch to app branch
     image: node:20
@@ -28,8 +28,8 @@ steps:
     image: node:20
     commands:
       - cd ../
-      - cp tmp/app.asar PolyModLoader/windows/resources/
-      - cd tmp/app.asar PolyModLoader/linux/resources/
+      - cp temp/app.asar PolyModLoader/windows/resources/
+      - cp temp/app.asar PolyModLoader/linux/resources/
 
   - name: commit changes
     image: node:20
