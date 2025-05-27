@@ -1,0 +1,47 @@
+when:
+  event: [push]
+  branch: [dev]
+
+steps:
+  - name: compile asar
+    image: node:20
+    commands:
+      - npm install -g asar
+      - asar p . app.asar
+    
+  - name: copy to temp directory
+    image: node:20
+    commands:
+      -cd ../
+      - mkdir -p temp
+      - cp PolyModLoader/app.asar tmp/app.asar
+
+  - name: switch to app branch
+    image: node:20
+    commands:
+      - git config user.name "Woodpecker CI"
+      - git config user.email woodpecker@noreply.codeberg.org
+      - git remote set-url origin ssh://git@codeberg.org/CRJakob/PolyModLoader.git
+      - git switch app
+
+  - name: copy asar to app branch
+    image: node:20
+    commands:
+      - cd ../
+      - cp tmp/app.asar PolyModLoader/windows/resources/app.asar
+      - cd tmp/app.asar PolyModLoader/linux/resources/app.asar
+
+  - name: commit changes
+    image: node:20
+    commands:
+      - git add .
+      - git commit -m "Update app.asar [skip ci]" || echo "No changes to commit"
+
+  - name: push changes
+    image: appleboy/drone-git-push
+    settings:
+      ssh_key:
+        from_secret: CI_SSH_KEY
+      remote_name: origin
+      branch: app
+      local_ref: app
