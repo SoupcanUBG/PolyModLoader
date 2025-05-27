@@ -21,12 +21,10 @@ steps:
     commands:
       - cd ../
       - rm -rf PolyModLoader
-      - git clone https://codeberg.org/CRJakob/PolyModLoader.git
+      - git clone --depth 1 --branch app https://codeberg.org/CRJakob/PolyModLoader.git
       - cd PolyModLoader
       - git config user.name "CRJakob"
       - git config user.email crjakob@noreply.codeberg.org
-      # - git remote set-url origin ssh://git@codeberg.org/CRJakob/PolyModLoader.git
-      - git switch app
 
   - name: copy asar to app branch
     image: node:20
