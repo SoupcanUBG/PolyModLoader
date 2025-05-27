@@ -1,0 +1,49 @@
+when:
+  event: [push]
+  branch: [0.5.0]
+
+steps:
+  - name: compile asar
+    image: node:20
+    commands:
+      - npm install -g asar
+      - asar p . app.asar
+    
+  - name: copy to temp directory
+    image: node:20
+    commands:
+      - cd ../
+      - mkdir -p temp
+      - cp PolyModLoader/app.asar temp/
+
+  - name: switch to app branch
+    image: node:20
+    commands:
+      - cd ../
+      - rm -rf PolyModLoader
+      - git clone --depth 1 --branch app https://codeberg.org/CRJakob/PolyModLoader.git
+      - cd PolyModLoader
+      - git config user.name "CRJakob"
+      - git config user.email crjakob@noreply.codeberg.org
+
+  - name: copy asar to app branch
+    image: node:20
+    commands:
+      - cd ../
+      - cp temp/app.asar PolyModLoader/windows/resources/
+      - cp temp/app.asar PolyModLoader/linux/resources/
+
+  - name: commit changes
+    image: node:20
+    commands:
+      - git add .
+      - git commit -m "Update app.asar [skip ci]" || echo "No changes to commit"
+
+  - name: push changes
+    image: appleboy/drone-git-push
+    settings:
+      ssh_key:
+        from_secret: CI_SSH_KEY
+      remote: ssh://git@codeberg.org/CRJakob/PolyModLoader.git
+      branch: app
+      local_ref: app
