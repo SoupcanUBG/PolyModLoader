@@ -3,4 +3,4 @@
 
 PolyModLoader is a community developed mod loader for the game PolyTrack.
 
-[[User Wiki|../../../wiki]] | [Discord Server](https://discord.gg/g5Tr6Ysfh7)
+[[Wiki|../../../wiki]] | [Discord Server](https://discord.gg/g5Tr6Ysfh7)
