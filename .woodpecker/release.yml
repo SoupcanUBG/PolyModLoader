@@ -3,36 +3,46 @@ when:
     - tag
 
 steps:
+  - name: compile asar
+    image: node:20
+    commands:
+      - npm install -g asar
+      - asar p . app.asar
 
-  switch-to-app-branch:
+  - name: get app files from remote
     image: node:20
     commands:
       - cd ../
-      - rm -rf PolyModLoader
-      - git clone --depth 1 --branch app https://codeberg.org/polytrackmods/PolyModLoader.git
-      - cd PolyModLoader
-      - git config user.name "CRJakob"
-      - git config user.email "crjakob.noreply.codeberg.org"
+      - mkdir -p temp
+      - curl -o temp/macos.zip https://fileserver.crjakob.com/PolyModLoader/macos.zip
+      - curl -o temp/linux.zip https://fileserver.crjakob.com/PolyModLoader/linux.zip
+      - curl -o temp/windows.zip https://fileserver.crjakob.com/PolyModLoader/windows.zip
 
-  ready-release:
+  - name: copy asar to app files
     image: node:20
     commands:
-      - apt-get update
-      - apt-get install -y zip git-lfs
-      - git lfs install
-      - git lfs pull
-      - mkdir -p temp
-      - tar -czf temp/linux.tar.gz linux
-      - zip -r temp/macos.zip macos
-      - zip -r temp/windows.zip windows
+      - cd ../
+      - apt-get update && apt-get install -y zip
+      - mkdir -p temp/resources
+      - cp PolyModLoader/app.asar temp/resources/app.asar
+      - cd temp
+      - zip -g windows.zip resources/app.asar
+      - zip -g linux.zip resources/app.asar
+      - cd ../
+      - rm -rf temp/resources
+      - mkdir -p temp/PolyTrack.app/Contents/resources
+      - cp PolyModLoader/app.asar temp/PolyTrack.app/Contents/resources/app.asar
+      - cd temp/
+      - zip -r macos.zip PolyTrack.app/Contents/resources/app.asar
 
-  create-release:
+
+  - name: create release
     image: woodpeckerci/plugin-release
     settings:
       files:
-        - windows/resources/app.asar
-        - temp/macos.zip
-        - temp/linux.tar.gz
-        - temp/windows.zip
+        - ../temp/PolyTrack.app/Contents/resources/app.asar
+        - ../temp/macos.zip
+        - ../temp/linux.zip
+        - ../temp/windows.zip
       api_key:
         from_secret: ACCESS_TOKEN
