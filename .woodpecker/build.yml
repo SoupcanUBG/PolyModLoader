@@ -30,6 +30,7 @@ steps:
     image: node:20
     commands:
       - cd ../
+      - cp temp/app.asar PolyModLoader/macos/polytrack.app/Contents/Resources/
       - cp temp/app.asar PolyModLoader/windows/resources/
       - cp temp/app.asar PolyModLoader/linux/resources/
 
