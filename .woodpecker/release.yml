@@ -1,0 +1,34 @@
+when: 
+  event:
+    - tag
+
+steps:
+
+  switch-to-app-branch:
+    image: node:20
+    commands:
+      - git clone --depth 1 --branch app https://codeberg.org/polytrackmods/PolyModLoader.git
+      - cd PolyModLoader
+      - git config user.name "CRJakob"
+      - git config user.email "crjakob.noreply.codeberg.org"
+
+  ready-release:
+    image: node:20
+    commands:
+      - apt-get update
+      - apt-get install -y zip git-lfs
+      - git lfs install
+      - git lfs pull
+      - mkdir -p temp
+      - zip -r temp/linux.zip linux
+      - zip -r temp/windows.zip windows
+
+  create-release:
+    image: woodpeckerci/plugin-release
+    settings:
+      files:
+        - windows/resources/app.asar
+        - temp/linux.zip
+        - temp/windows.zip
+      api_key:
+        from_secret: ACCESS_TOKEN
