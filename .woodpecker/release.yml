@@ -22,7 +22,8 @@ steps:
       - git lfs install
       - git lfs pull
       - mkdir -p temp
-      - zip -r temp/linux.zip linux
+      - tar -czf temp/linux.tar.gz linux
+      - zip -r temp/macos.zip macos
       - zip -r temp/windows.zip windows
 
   create-release:
@@ -30,6 +31,7 @@ steps:
     settings:
       files:
         - windows/resources/app.asar
+        - temp/macos.zip
         - temp/linux.zip
         - temp/windows.zip
       api_key:
