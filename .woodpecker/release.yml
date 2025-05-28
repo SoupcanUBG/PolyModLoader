@@ -7,6 +7,8 @@ steps:
   switch-to-app-branch:
     image: node:20
     commands:
+      - cd ../
+      - rm -rf PolyModLoader
       - git clone --depth 1 --branch app https://codeberg.org/polytrackmods/PolyModLoader.git
       - cd PolyModLoader
       - git config user.name "CRJakob"
