@@ -32,7 +32,7 @@ steps:
       files:
         - windows/resources/app.asar
         - temp/macos.zip
-        - temp/linux.zip
+        - temp/linux.tar.gz
         - temp/windows.zip
       api_key:
         from_secret: ACCESS_TOKEN
