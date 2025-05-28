@@ -11,5 +11,14 @@
 <div id="transition-layer"></div>
 
 <script type="module" src="main.bundle.js" defer></script>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('debug') === 'true') {
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/eruda';
+    script.onload = () => eruda.init();
+    document.body.appendChild(script);
+}
+</script>
 </body>
 </html>
