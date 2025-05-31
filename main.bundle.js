@@ -48732,8 +48732,8 @@ ActivePolyModLoader.importMods().then(() => {
           ))
       }
       ActivePolyModLoader.initMods();
-      ActivePolyModLoader.postInitMods();
       polyInitFunction();
+      ActivePolyModLoader.postInitMods();
   }
   )()
 }
