@@ -370,6 +370,7 @@ class PMLCoreMod extends PolyMod {
         importButton.innerHTML = `<img class="button-icon" src="images/import.svg"> Import`
         importButton.addEventListener("click", () => {
             n.playUIClick();
+            importButton.disabled = true;
             let modUrl = urlInput.value;
             let modVersion = versionInput.value === "" ? "latest" : versionInput.value;
             this.modPmlInstance.addMod({"base": modUrl, "version": modVersion, "loaded": false}).then(() => {
