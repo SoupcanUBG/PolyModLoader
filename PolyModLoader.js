@@ -1,12 +1,3 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
     if (kind === "m") throw new TypeError("Private method is not writable");
     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
@@ -18,7 +9,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _SoundManager_soundClass, _PolyModLoader_instances, _PolyModLoader_polyVersion, _PolyModLoader_allMods, _PolyModLoader_physicsTouched, _PolyModLoader_simWorkerClassMixins, _PolyModLoader_simWorkerFuncMixins, _PolyModLoader_settings, _PolyModLoader_settingConstructor, _PolyModLoader_defaultSettings, _PolyModLoader_latestSetting, _PolyModLoader_keybindings, _PolyModLoader_defaultBinds, _PolyModLoader_bindConstructor, _PolyModLoader_latestBinding, _PolyModLoader_polyModUrls, _PolyModLoader_applySettings, _PolyModLoader_applyKeybinds, _PolyModLoader_preInitPML;
+var _SoundManager_soundClass, _EditorExtras_editorClass, _EditorExtras_latestCategory, _EditorExtras_latestBlock, _EditorExtras_categoryDefaults, _EditorExtras_simBlocks, _EditorExtras_modelUrls, _PolyModLoader_instances, _PolyModLoader_polyVersion, _PolyModLoader_allMods, _PolyModLoader_physicsTouched, _PolyModLoader_simWorkerClassMixins, _PolyModLoader_simWorkerFuncMixins, _PolyModLoader_settings, _PolyModLoader_settingConstructor, _PolyModLoader_defaultSettings, _PolyModLoader_latestSetting, _PolyModLoader_keybindings, _PolyModLoader_defaultBinds, _PolyModLoader_bindConstructor, _PolyModLoader_latestBinding, _PolyModLoader_polyModUrls, _PolyModLoader_applySettings, _PolyModLoader_applyKeybinds, _PolyModLoader_preInitPML;
 /**
  * Base class for all polytrack mods. Mods should export an instance of their mod class named `polyMod` in their main file.
  */
@@ -241,6 +232,52 @@ export class SoundManager {
     }
 }
 _SoundManager_soundClass = new WeakMap();
+export class EditorExtras {
+    constructor(pml) {
+        _EditorExtras_editorClass.set(this, void 0);
+        _EditorExtras_latestCategory.set(this, 8);
+        _EditorExtras_latestBlock.set(this, 155);
+        _EditorExtras_categoryDefaults.set(this, []);
+        _EditorExtras_simBlocks.set(this, []);
+        _EditorExtras_modelUrls.set(this, ["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"]);
+        this.pml = pml;
+    }
+    construct(editorClass) {
+        __classPrivateFieldSet(this, _EditorExtras_editorClass, editorClass, "f");
+    }
+    get getSimBlocks() {
+        return [...__classPrivateFieldGet(this, _EditorExtras_simBlocks, "f")];
+    }
+    get trackEditorClass() {
+        return __classPrivateFieldGet(this, _EditorExtras_editorClass, "f");
+    }
+    registerModel(url) {
+        __classPrivateFieldGet(this, _EditorExtras_modelUrls, "f").push(url);
+    }
+    registerCategory(id, defaultId) {
+        var _a;
+        __classPrivateFieldSet(this, _EditorExtras_latestCategory, (_a = __classPrivateFieldGet(this, _EditorExtras_latestCategory, "f"), _a++, _a), "f");
+        this.pml.getFromPolyTrack(`KA[KA.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestCategory, "f")}]  =  "${id}"`);
+        __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`F_[F_.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestCategory, "f")}]  =  "${id}"`);
+        __classPrivateFieldGet(this, _EditorExtras_categoryDefaults, "f").push(`case KA.${id}:n = this.getPart(eA.${defaultId});break;`);
+    }
+    registerBlock(id, categoryId, checksum, sceneName, modelName) {
+        var _a;
+        __classPrivateFieldSet(this, _EditorExtras_latestBlock, (_a = __classPrivateFieldGet(this, _EditorExtras_latestBlock, "f"), _a++, _a), "f");
+        this.pml.getFromPolyTrack(`eA[eA.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestBlock, "f")}]  =  "${id}"`);
+        __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`mu[mu.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestBlock, "f")}]  =  "${id}"`);
+        __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`j_.push(new X_("${checksum}",F_.${categoryId},mu.${id},[["${sceneName}", "${modelName}"]],G_,[[[-1, 0, -1], [0, 0, 0]]]))`);
+        this.pml.getFromPolyTrack(`ab.push(new rb("${checksum}",KA.${categoryId},eA.${id},[["${sceneName}", "${modelName}"]],nb,[[[-1, 0, -1], [0, 0, 0]]]))`);
+        this.pml.getFromPolyTrack(`for (const e of ab) {if (!sb.has(e.id)){ sb.set(e.id, e);}; }
+      `);
+    }
+    init() {
+        this.pml.registerClassMixin("GN.prototype", "init", MixinType.REPLACEBETWEEN, '["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"]', '["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"]', `["${__classPrivateFieldGet(this, _EditorExtras_modelUrls, "f").join('", "')}"]`);
+        console.log(`["${__classPrivateFieldGet(this, _EditorExtras_modelUrls, "f").join('", "')}"]`);
+        this.pml.registerClassMixin("GN.prototype", "getCategoryMesh", MixinType.INSERT, "break;", `${__classPrivateFieldGet(this, _EditorExtras_categoryDefaults, "f").join("")}`);
+    }
+}
+_EditorExtras_editorClass = new WeakMap(), _EditorExtras_latestCategory = new WeakMap(), _EditorExtras_latestBlock = new WeakMap(), _EditorExtras_categoryDefaults = new WeakMap(), _EditorExtras_simBlocks = new WeakMap(), _EditorExtras_modelUrls = new WeakMap();
 export class PolyModLoader {
     constructor(polyVersion) {
         _PolyModLoader_instances.add(this);
@@ -314,62 +351,61 @@ export class PolyModLoader {
         __classPrivateFieldSet(this, _PolyModLoader_defaultBinds, [], "f");
         __classPrivateFieldSet(this, _PolyModLoader_bindConstructor, [], "f");
         __classPrivateFieldSet(this, _PolyModLoader_latestBinding, 31, "f");
+        this.editorExtras = new EditorExtras(this);
     }
     initStorage(localStorage) {
         /** @type {Storage} */
         this.localStorage = localStorage;
         __classPrivateFieldSet(this, _PolyModLoader_polyModUrls, this.getPolyModsStorage(), "f");
     }
-    importMods() {
-        return __awaiter(this, void 0, void 0, function* () {
-            for (let polyModObject of __classPrivateFieldGet(this, _PolyModLoader_polyModUrls, "f")) {
-                let latest = false;
-                if (polyModObject.version === "latest") {
-                    try {
-                        const latestFile = yield fetch(`${polyModObject.base}/latest.json`).then(r => r.json());
-                        polyModObject.version = latestFile[__classPrivateFieldGet(this, _PolyModLoader_polyVersion, "f")];
-                        latest = true;
-                    }
-                    catch (err) {
-                        alert(`Couldn't find latest version for ${polyModObject.base}`);
-                        console.error("Error in fetching latest version json:", err);
-                    }
-                }
-                const polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
+    async importMods() {
+        for (let polyModObject of __classPrivateFieldGet(this, _PolyModLoader_polyModUrls, "f")) {
+            let latest = false;
+            if (polyModObject.version === "latest") {
                 try {
-                    const manifestFile = yield fetch(`${polyModUrl}/manifest.json`).then(r => r.json());
-                    let mod = manifestFile.polymod;
-                    try {
-                        const modImport = yield import(`${polyModUrl}/${mod.main}`);
-                        let newMod = modImport.polyMod;
-                        mod.version = polyModObject.version;
-                        if (this.getMod(mod.id))
-                            alert(`Duplicate mod detected: ${mod.name}`);
-                        newMod.applyManifest(manifestFile);
-                        newMod.baseUrl = polyModObject.base;
-                        newMod.applyManifest = (nothing) => { console.warn("Can't apply manifest after initialization!"); };
-                        newMod.savedLatest = latest;
-                        newMod.iconSrc = `${polyModUrl}/icon.png`;
-                        if (polyModObject.loaded) {
-                            newMod.setLoaded = true;
-                            if (newMod.touchesPhysics) {
-                                __classPrivateFieldSet(this, _PolyModLoader_physicsTouched, true, "f");
-                                this.registerClassMixin("HB.prototype", "submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => { });
-                            }
-                        }
-                        __classPrivateFieldGet(this, _PolyModLoader_allMods, "f").push(newMod);
-                    }
-                    catch (err) {
-                        alert(`Mod ${mod.name} failed to load.`);
-                        console.error("Error in loading mod:", err);
-                    }
+                    const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json());
+                    polyModObject.version = latestFile[__classPrivateFieldGet(this, _PolyModLoader_polyVersion, "f")];
+                    latest = true;
                 }
                 catch (err) {
-                    alert(`Couldn't load mod with URL ${polyModUrl}.`);
-                    console.error("Error in loading mod URL:", err);
+                    alert(`Couldn't find latest version for ${polyModObject.base}`);
+                    console.error("Error in fetching latest version json:", err);
                 }
             }
-        });
+            const polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
+            try {
+                const manifestFile = await fetch(`${polyModUrl}/manifest.json`).then(r => r.json());
+                let mod = manifestFile.polymod;
+                try {
+                    const modImport = await import(`${polyModUrl}/${mod.main}`);
+                    let newMod = modImport.polyMod;
+                    mod.version = polyModObject.version;
+                    if (this.getMod(mod.id))
+                        alert(`Duplicate mod detected: ${mod.name}`);
+                    newMod.applyManifest(manifestFile);
+                    newMod.baseUrl = polyModObject.base;
+                    newMod.applyManifest = (nothing) => { console.warn("Can't apply manifest after initialization!"); };
+                    newMod.savedLatest = latest;
+                    newMod.iconSrc = `${polyModUrl}/icon.png`;
+                    if (polyModObject.loaded) {
+                        newMod.setLoaded = true;
+                        if (newMod.touchesPhysics) {
+                            __classPrivateFieldSet(this, _PolyModLoader_physicsTouched, true, "f");
+                            this.registerClassMixin("HB.prototype", "submitLeaderboard", MixinType.OVERRIDE, [], (e, t, n, i, r, a) => { });
+                        }
+                    }
+                    __classPrivateFieldGet(this, _PolyModLoader_allMods, "f").push(newMod);
+                }
+                catch (err) {
+                    alert(`Mod ${mod.name} failed to load.`);
+                    console.error("Error in loading mod:", err);
+                }
+            }
+            catch (err) {
+                alert(`Couldn't load mod with URL ${polyModUrl}.`);
+                console.error("Error in loading mod URL:", err);
+            }
+        }
     }
     getPolyModsStorage() {
         const polyModsStorage = this.localStorage.getItem("polyMods");
@@ -429,59 +465,57 @@ export class PolyModLoader {
      *
      * @param {{base: string, version: string, loaded: bool}} polyModObject - The mod's JSON representation to add.
      */
-    addMod(polyModObject, autoUpdate) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let latest = false;
-            if (polyModObject.version === "latest") {
-                try {
-                    const latestFile = yield fetch(`${polyModObject.base}/latest.json`).then(r => r.json());
-                    polyModObject.version = latestFile[__classPrivateFieldGet(this, _PolyModLoader_polyVersion, "f")];
-                    if (autoUpdate) {
-                        latest = true;
-                    }
-                }
-                catch (_a) {
-                    alert(`Couldn't find latest version for ${polyModObject.base}`);
+    async addMod(polyModObject, autoUpdate) {
+        let latest = false;
+        if (polyModObject.version === "latest") {
+            try {
+                const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json());
+                polyModObject.version = latestFile[__classPrivateFieldGet(this, _PolyModLoader_polyVersion, "f")];
+                if (autoUpdate) {
+                    latest = true;
                 }
             }
-            const polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
-            try {
-                const manifestFile = yield fetch(`${polyModUrl}/manifest.json`).then(r => r.json());
-                const mod = manifestFile.polymod;
-                if (this.getMod(mod.id)) {
-                    alert("This mod is already present!");
-                    return;
-                }
-                if (mod.targets.indexOf(__classPrivateFieldGet(this, _PolyModLoader_polyVersion, "f")) === -1) {
-                    alert(`Mod target version does not match polytrack version!
+            catch {
+                alert(`Couldn't find latest version for ${polyModObject.base}`);
+            }
+        }
+        const polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
+        try {
+            const manifestFile = await fetch(`${polyModUrl}/manifest.json`).then(r => r.json());
+            const mod = manifestFile.polymod;
+            if (this.getMod(mod.id)) {
+                alert("This mod is already present!");
+                return;
+            }
+            if (mod.targets.indexOf(__classPrivateFieldGet(this, _PolyModLoader_polyVersion, "f")) === -1) {
+                alert(`Mod target version does not match polytrack version!
                     Note: ${mod.name} version ${polyModObject.version} targets polytrack versions ${mod.targets.join(', ')}, but current polytrack version is ${__classPrivateFieldGet(this, _PolyModLoader_polyVersion, "f")}.`);
-                    return;
-                }
-                try {
-                    const modImport = yield import(`${polyModUrl}/${mod.main}`);
-                    let newMod = modImport.polyMod;
-                    newMod.iconSrc = `${polyModUrl}/icon.png`;
-                    mod.version = polyModObject.version;
-                    newMod.applyManifest(manifestFile);
-                    newMod.baseUrl = polyModObject.base;
-                    newMod.applyManifest = (nothing) => { console.warn("Can't apply manifest after initialization!"); };
-                    newMod.savedLatest = latest;
-                    polyModObject.loaded = false;
-                    __classPrivateFieldGet(this, _PolyModLoader_allMods, "f").push(newMod);
-                    this.saveModsToLocalStorage();
-                    return this.getMod(newMod.id);
-                }
-                catch (err) {
-                    alert("Something went wrong importing this mod!");
-                    console.error("Error in importing mod:", err);
-                    return;
-                }
+                return;
+            }
+            try {
+                const modImport = await import(`${polyModUrl}/${mod.main}`);
+                let newMod = modImport.polyMod;
+                newMod.iconSrc = `${polyModUrl}/icon.png`;
+                mod.version = polyModObject.version;
+                newMod.applyManifest(manifestFile);
+                newMod.baseUrl = polyModObject.base;
+                newMod.applyManifest = (nothing) => { console.warn("Can't apply manifest after initialization!"); };
+                newMod.savedLatest = latest;
+                polyModObject.loaded = false;
+                __classPrivateFieldGet(this, _PolyModLoader_allMods, "f").push(newMod);
+                this.saveModsToLocalStorage();
+                return this.getMod(newMod.id);
             }
             catch (err) {
-                alert(`Couldn't find mod manifest for "${polyModObject.base}".`);
-                console.error("Error in getting mod manifest:", err);
+                alert("Something went wrong importing this mod!");
+                console.error("Error in importing mod:", err);
+                return;
             }
-        });
+        }
+        catch (err) {
+            alert(`Couldn't find mod manifest for "${polyModObject.base}".`);
+            console.error("Error in getting mod manifest:", err);
+        }
     }
     registerSettingCategory(name) {
         __classPrivateFieldGet(this, _PolyModLoader_settings, "f").push(`xI(this, eI, "m", gI).call(this, xI(this, nI, "f").get("${name}")),`);
@@ -635,6 +669,7 @@ export class PolyModLoader {
         }
         __classPrivateFieldGet(this, _PolyModLoader_instances, "m", _PolyModLoader_applySettings).call(this);
         __classPrivateFieldGet(this, _PolyModLoader_instances, "m", _PolyModLoader_applyKeybinds).call(this);
+        // this.editorExtras.init();
     }
     postInitMods() {
         for (let polyMod of __classPrivateFieldGet(this, _PolyModLoader_allMods, "f")) {
@@ -732,6 +767,7 @@ _PolyModLoader_polyVersion = new WeakMap(), _PolyModLoader_allMods = new WeakMap
     this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `defaultKeyBindings() {`, `${__classPrivateFieldGet(this, _PolyModLoader_bindConstructor, "f").join("")};`);
     this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `[Ix.SpectatorSpeedModifier, ["ShiftLeft", "ShiftRight"]]`, __classPrivateFieldGet(this, _PolyModLoader_defaultBinds, "f").join(""));
     this.registerFuncMixin("mI", MixinType.INSERT, "), Ix.ToggleSpectatorCamera)", __classPrivateFieldGet(this, _PolyModLoader_keybindings, "f").join(""));
+    this.registerClassMixin("PM.prototype", "update", MixinType.INSERT, `_M(this, YS, CM(this, BE, "m", kM).call(this), "f"),`, `ActivePolyModLoader.editorExtras.construct(this),`);
 }, _PolyModLoader_preInitPML = function _PolyModLoader_preInitPML() {
     this.registerFuncMixin("polyInitFunction", MixinType.INSERT, `let L = new BD(h,x,b,A,k,f,S,m,v,y,a,c,p,g,e,!1,_,C,P,I,R)
             , D = 0;`, `ActivePolyModLoader.popUpClass = S;`);

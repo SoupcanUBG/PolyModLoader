@@ -233,9 +233,64 @@ export class SoundManager {
     }
 }
 
+export class EditorExtras {
+    #editorClass: any;
+    pml: PolyModLoader;
+    #latestCategory: number = 8;
+    #latestBlock: number = 155;
+    #categoryDefaults: Array<string> = []
+    #simBlocks: Array<string> = [];
+    #modelUrls: Array<string> = ["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"];
+    constructor(pml: PolyModLoader) {
+        this.pml = pml;
+    }
+    construct(editorClass: any) {
+        this.#editorClass = editorClass;
+    }
+
+    get getSimBlocks() {
+        return [...this.#simBlocks];
+    }
+
+    get trackEditorClass() {
+        return this.#editorClass;
+    }
+
+    registerModel(url: string) {
+        this.#modelUrls.push(url);
+    }
+
+    registerCategory(id: string, defaultId: string) {
+        this.#latestCategory++;
+        this.pml.getFromPolyTrack(`KA[KA.${id} = ${this.#latestCategory}]  =  "${id}"`);
+        this.#simBlocks.push(`F_[F_.${id} = ${this.#latestCategory}]  =  "${id}"`);
+        this.#categoryDefaults.push(`case KA.${id}:n = this.getPart(eA.${defaultId});break;`)
+    }
+
+    registerBlock(id: string, categoryId: string, checksum: string, sceneName: string, modelName: string) {
+        this.#latestBlock++;
+        this.pml.getFromPolyTrack(`eA[eA.${id} = ${this.#latestBlock}]  =  "${id}"`);
+        this.#simBlocks.push(`mu[mu.${id} = ${this.#latestBlock}]  =  "${id}"`);
+        this.#simBlocks.push(`j_.push(new X_("${checksum}",F_.${categoryId},mu.${id},[["${sceneName}", "${modelName}"]],G_,[[[-1, 0, -1], [0, 0, 0]]]))`)
+        this.pml.getFromPolyTrack(`ab.push(new rb("${checksum}",KA.${categoryId},eA.${id},[["${sceneName}", "${modelName}"]],nb,[[[-1, 0, -1], [0, 0, 0]]]))`);
+        this.pml.getFromPolyTrack(`for (const e of ab) {if (!sb.has(e.id)){ sb.set(e.id, e);}; }
+      `);
+    }
+    init() {
+        this.pml.registerClassMixin("GN.prototype", 
+            "init", MixinType.REPLACEBETWEEN, 
+            '["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"]', 
+            '["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"]',
+            `["${this.#modelUrls.join('", "')}"]`);
+        console.log(`["${this.#modelUrls.join('", "')}"]`);
+        this.pml.registerClassMixin("GN.prototype", "getCategoryMesh", MixinType.INSERT, "break;", `${this.#categoryDefaults.join("")}`);
+    }
+}
+
 export class PolyModLoader {
     #polyVersion: string;
     #allMods: Array<PolyMod>;
+    editorExtras: EditorExtras;
     #physicsTouched: boolean;
     #simWorkerClassMixins: Array<{
         scope: string,
@@ -299,6 +354,7 @@ export class PolyModLoader {
         this.#defaultBinds = []
         this.#bindConstructor = []
         this.#latestBinding = 31
+        this.editorExtras = new EditorExtras(this);
     }
     localStorage: Storage
     #polyModUrls: Array<{ base: string, version: string, loaded: boolean }>
@@ -514,6 +570,7 @@ export class PolyModLoader {
         this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `defaultKeyBindings() {`, `${this.#bindConstructor.join("")};`)
         this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `[Ix.SpectatorSpeedModifier, ["ShiftLeft", "ShiftRight"]]`, this.#defaultBinds.join(""))
         this.registerFuncMixin("mI", MixinType.INSERT, "), Ix.ToggleSpectatorCamera)", this.#keybindings.join(""))
+        this.registerClassMixin("PM.prototype", "update", MixinType.INSERT, `_M(this, YS, CM(this, BE, "m", kM).call(this), "f"),`, `ActivePolyModLoader.editorExtras.construct(this),`);
     }
     getSetting(id: string) {
         return this.getFromPolyTrack(`ActivePolyModLoader.settingClass.getSetting($o.${id})`);
@@ -622,6 +679,7 @@ export class PolyModLoader {
         }
         this.#applySettings();
         this.#applyKeybinds();
+        // this.editorExtras.init();
     }
     postInitMods() {
         for (let polyMod of this.#allMods) {

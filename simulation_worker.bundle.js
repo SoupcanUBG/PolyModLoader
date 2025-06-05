@@ -27203,6 +27203,10 @@
             flipY: !0
         }]],G_,[[[-2, 0, -2], [1, 0, -2]]]), new X_("e5e1b1ca69d7b230331171be07876c4b1bdebba557c19b18ab17d91eee2771d5",F_.Sign,mu.SignWarning,[["Signs", "SignWarning"]],G_,[[[-2, 0, -2], [1, 0, -2]]]), new X_("64ed1fba4990a25bc774575ff8835117638d2c3e7c8f41bf0032d219e1083e4c",F_.Sign,mu.SignWrongWay,[["Signs", "SignWrongWay"]],G_,[[[-2, 0, -2], [1, 0, -2]]])]
           , q_ = new Map;
+
+        for(let execString of mixinData.data.toExecute) {
+            eval(execString);
+        }
         for (const e of j_) {
             if (q_.has(e.id))
                 throw new Error("Duplicate track part id " + e.id.toString());

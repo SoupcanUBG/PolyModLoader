@@ -1,4 +1,4 @@
-import { ActivePolyModLoader, MixinType, SoundManager } from "./PolyModLoader.js"
+import { ActivePolyModLoader, MixinType, SoundManager, EditorExtras } from "./PolyModLoader.js"
 ActivePolyModLoader.initStorage(localStorage);
 window.polyModLoader = ActivePolyModLoader;
 ActivePolyModLoader.importMods().then(() => {
@@ -43548,7 +43548,8 @@ ActivePolyModLoader.importMods().then(() => {
               lU(this, nU, "f").postMessage({
                 messageType: 69,
                 classMixins: ActivePolyModLoader.simWorkerClassMixins || [],
-                funcMixins: ActivePolyModLoader.simWorkerFuncMixins || []
+                funcMixins: ActivePolyModLoader.simWorkerFuncMixins || [],
+                toExecute: ActivePolyModLoader.editorExtras.getSimBlocks || []
               });
           }
           dispose() {
