@@ -239,6 +239,7 @@ export class EditorExtras {
     #latestCategory: number = 8;
     #latestBlock: number = 155;
     #categoryDefaults: Array<string> = []
+    ignoredBlocks: Array<number> = [];
     #simBlocks: Array<string> = [];
     #modelUrls: Array<string> = ["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"];
     constructor(pml: PolyModLoader) {
@@ -246,6 +247,10 @@ export class EditorExtras {
     }
     construct(editorClass: any) {
         this.#editorClass = editorClass;
+    }
+
+    blockNumberFromId(id): number {
+        return this.pml.getFromPolyTrack(`eA.${id}`);
     }
 
     get getSimBlocks() {
@@ -267,14 +272,18 @@ export class EditorExtras {
         this.#categoryDefaults.push(`case KA.${id}:n = this.getPart(eA.${defaultId});break;`)
     }
 
-    registerBlock(id: string, categoryId: string, checksum: string, sceneName: string, modelName: string) {
+    registerBlock(id: string, categoryId: string, checksum: string, sceneName: string, modelName: string, offsetSpace: Array<Array<number>>, extraSettings?: { ignoreOnExport: boolean }) {
         this.#latestBlock++;
         this.pml.getFromPolyTrack(`eA[eA.${id} = ${this.#latestBlock}]  =  "${id}"`);
-        this.#simBlocks.push(`mu[mu.${id} = ${this.#latestBlock}]  =  "${id}"`);
-        this.#simBlocks.push(`j_.push(new X_("${checksum}",F_.${categoryId},mu.${id},[["${sceneName}", "${modelName}"]],G_,[[[-1, 0, -1], [0, 0, 0]]]))`)
-        this.pml.getFromPolyTrack(`ab.push(new rb("${checksum}",KA.${categoryId},eA.${id},[["${sceneName}", "${modelName}"]],nb,[[[-1, 0, -1], [0, 0, 0]]]))`);
+        this.pml.getFromPolyTrack(`ab.push(new rb("${checksum}",KA.${categoryId},eA.${id},[["${sceneName}", "${modelName}"]],nb,[[[${offsetSpace[0][0]}, ${offsetSpace[0][1]}, ${offsetSpace[0][2]}], [${offsetSpace[1][0]}, ${offsetSpace[1][1]}, ${offsetSpace[1][2]}]]]))`);
         this.pml.getFromPolyTrack(`for (const e of ab) {if (!sb.has(e.id)){ sb.set(e.id, e);}; }
       `);
+        if(extraSettings && extraSettings.ignoreOnExport) {
+            this.ignoredBlocks.push(this.blockNumberFromId(id));
+            return;
+        }
+        this.#simBlocks.push(`mu[mu.${id} = ${this.#latestBlock}]  =  "${id}"`);
+        this.#simBlocks.push(`j_.push(new X_("${checksum}",F_.${categoryId},mu.${id},[["${sceneName}", "${modelName}"]],G_,[[[${offsetSpace[0][0]}, ${offsetSpace[0][1]}, ${offsetSpace[0][2]}], [${offsetSpace[1][0]}, ${offsetSpace[1][1]}, ${offsetSpace[1][2]}]]]))`);
     }
     init() {
         this.pml.registerClassMixin("GN.prototype", 
@@ -282,7 +291,7 @@ export class EditorExtras {
             '["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"]', 
             '["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"]',
             `["${this.#modelUrls.join('", "')}"]`);
-        console.log(`["${this.#modelUrls.join('", "')}"]`);
+        this.pml.registerFuncMixin("xb", MixinType.INSERT, `for (const [r,a] of Eb(this, Ab, "f")) {`, `if (ActivePolyModLoader.editorExtras.ignoredBlocks.includes(r)) {continue;};`);
         this.pml.registerClassMixin("GN.prototype", "getCategoryMesh", MixinType.INSERT, "break;", `${this.#categoryDefaults.join("")}`);
     }
 }
@@ -679,7 +688,7 @@ export class PolyModLoader {
         }
         this.#applySettings();
         this.#applyKeybinds();
-        // this.editorExtras.init();
+        this.editorExtras.init();
     }
     postInitMods() {
         for (let polyMod of this.#allMods) {
@@ -724,7 +733,7 @@ export class PolyModLoader {
     get lbInvalid() {
         return this.#physicsTouched;
     }
-    getFromPolyTrack = (path: string) => { }
+    getFromPolyTrack = (path: string): any => { }
     /**
      * Inject mixin under scope {@link scope} with target function name defined by {@link path}.
      * This only injects functions in `main.bundle.js`.

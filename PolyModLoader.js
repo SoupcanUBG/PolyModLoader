@@ -238,12 +238,16 @@ export class EditorExtras {
         _EditorExtras_latestCategory.set(this, 8);
         _EditorExtras_latestBlock.set(this, 155);
         _EditorExtras_categoryDefaults.set(this, []);
+        this.ignoredBlocks = [];
         _EditorExtras_simBlocks.set(this, []);
         _EditorExtras_modelUrls.set(this, ["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"]);
         this.pml = pml;
     }
     construct(editorClass) {
         __classPrivateFieldSet(this, _EditorExtras_editorClass, editorClass, "f");
+    }
+    blockNumberFromId(id) {
+        return this.pml.getFromPolyTrack(`eA.${id}`);
     }
     get getSimBlocks() {
         return [...__classPrivateFieldGet(this, _EditorExtras_simBlocks, "f")];
@@ -261,19 +265,23 @@ export class EditorExtras {
         __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`F_[F_.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestCategory, "f")}]  =  "${id}"`);
         __classPrivateFieldGet(this, _EditorExtras_categoryDefaults, "f").push(`case KA.${id}:n = this.getPart(eA.${defaultId});break;`);
     }
-    registerBlock(id, categoryId, checksum, sceneName, modelName) {
+    registerBlock(id, categoryId, checksum, sceneName, modelName, offsetSpace, extraSettings) {
         var _a;
         __classPrivateFieldSet(this, _EditorExtras_latestBlock, (_a = __classPrivateFieldGet(this, _EditorExtras_latestBlock, "f"), _a++, _a), "f");
         this.pml.getFromPolyTrack(`eA[eA.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestBlock, "f")}]  =  "${id}"`);
-        __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`mu[mu.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestBlock, "f")}]  =  "${id}"`);
-        __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`j_.push(new X_("${checksum}",F_.${categoryId},mu.${id},[["${sceneName}", "${modelName}"]],G_,[[[-1, 0, -1], [0, 0, 0]]]))`);
-        this.pml.getFromPolyTrack(`ab.push(new rb("${checksum}",KA.${categoryId},eA.${id},[["${sceneName}", "${modelName}"]],nb,[[[-1, 0, -1], [0, 0, 0]]]))`);
+        this.pml.getFromPolyTrack(`ab.push(new rb("${checksum}",KA.${categoryId},eA.${id},[["${sceneName}", "${modelName}"]],nb,[[[${offsetSpace[0][0]}, ${offsetSpace[0][1]}, ${offsetSpace[0][2]}], [${offsetSpace[1][0]}, ${offsetSpace[1][1]}, ${offsetSpace[1][2]}]]]))`);
         this.pml.getFromPolyTrack(`for (const e of ab) {if (!sb.has(e.id)){ sb.set(e.id, e);}; }
       `);
+        if (extraSettings && extraSettings.ignoreOnExport) {
+            this.ignoredBlocks.push(this.blockNumberFromId(id));
+            return;
+        }
+        __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`mu[mu.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestBlock, "f")}]  =  "${id}"`);
+        __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`j_.push(new X_("${checksum}",F_.${categoryId},mu.${id},[["${sceneName}", "${modelName}"]],G_,[[[${offsetSpace[0][0]}, ${offsetSpace[0][1]}, ${offsetSpace[0][2]}], [${offsetSpace[1][0]}, ${offsetSpace[1][1]}, ${offsetSpace[1][2]}]]]))`);
     }
     init() {
         this.pml.registerClassMixin("GN.prototype", "init", MixinType.REPLACEBETWEEN, '["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"]', '["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"]', `["${__classPrivateFieldGet(this, _EditorExtras_modelUrls, "f").join('", "')}"]`);
-        console.log(`["${__classPrivateFieldGet(this, _EditorExtras_modelUrls, "f").join('", "')}"]`);
+        this.pml.registerFuncMixin("xb", MixinType.INSERT, `for (const [r,a] of Eb(this, Ab, "f")) {`, `if (ActivePolyModLoader.editorExtras.ignoredBlocks.includes(r)) {continue;};`);
         this.pml.registerClassMixin("GN.prototype", "getCategoryMesh", MixinType.INSERT, "break;", `${__classPrivateFieldGet(this, _EditorExtras_categoryDefaults, "f").join("")}`);
     }
 }
@@ -669,7 +677,7 @@ export class PolyModLoader {
         }
         __classPrivateFieldGet(this, _PolyModLoader_instances, "m", _PolyModLoader_applySettings).call(this);
         __classPrivateFieldGet(this, _PolyModLoader_instances, "m", _PolyModLoader_applyKeybinds).call(this);
-        // this.editorExtras.init();
+        this.editorExtras.init();
     }
     postInitMods() {
         for (let polyMod of __classPrivateFieldGet(this, _PolyModLoader_allMods, "f")) {
