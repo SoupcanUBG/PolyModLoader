@@ -272,10 +272,10 @@ export class EditorExtras {
         this.#categoryDefaults.push(`case KA.${id}:n = this.getPart(eA.${defaultId});break;`)
     }
 
-    registerBlock(id: string, categoryId: string, checksum: string, sceneName: string, modelName: string, offsetSpace: Array<Array<number>>, extraSettings?: { ignoreOnExport: boolean }) {
+    registerBlock(id: string, categoryId: string, checksum: string, sceneName: string, modelName: string, overlapSpace: Array<Array<Array<number>>>, extraSettings?: { ignoreOnExport: boolean }) {
         this.#latestBlock++;
         this.pml.getFromPolyTrack(`eA[eA.${id} = ${this.#latestBlock}]  =  "${id}"`);
-        this.pml.getFromPolyTrack(`ab.push(new rb("${checksum}",KA.${categoryId},eA.${id},[["${sceneName}", "${modelName}"]],nb,[[[${offsetSpace[0][0]}, ${offsetSpace[0][1]}, ${offsetSpace[0][2]}], [${offsetSpace[1][0]}, ${offsetSpace[1][1]}, ${offsetSpace[1][2]}]]]))`);
+        this.pml.getFromPolyTrack(`ab.push(new rb("${checksum}",KA.${categoryId},eA.${id},[["${sceneName}", "${modelName}"]],nb,${JSON.stringify(overlapSpace)}))`);
         this.pml.getFromPolyTrack(`for (const e of ab) {if (!sb.has(e.id)){ sb.set(e.id, e);}; }
       `);
         if(extraSettings && extraSettings.ignoreOnExport) {
@@ -283,7 +283,7 @@ export class EditorExtras {
             return;
         }
         this.#simBlocks.push(`mu[mu.${id} = ${this.#latestBlock}]  =  "${id}"`);
-        this.#simBlocks.push(`j_.push(new X_("${checksum}",F_.${categoryId},mu.${id},[["${sceneName}", "${modelName}"]],G_,[[[${offsetSpace[0][0]}, ${offsetSpace[0][1]}, ${offsetSpace[0][2]}], [${offsetSpace[1][0]}, ${offsetSpace[1][1]}, ${offsetSpace[1][2]}]]]))`);
+        this.#simBlocks.push(`j_.push(new X_("${checksum}",F_.${categoryId},mu.${id},[["${sceneName}", "${modelName}"]],G_,${JSON.stringify(overlapSpace)}))`);
     }
     init() {
         this.pml.registerClassMixin("GN.prototype", 
@@ -623,8 +623,7 @@ export class PolyModLoader {
     }
     popUpClass: any;
     #preInitPML() {
-        this.registerFuncMixin("polyInitFunction", MixinType.INSERT, `let L = new BD(h,x,b,A,k,f,S,m,v,y,a,c,p,g,e,!1,_,C,P,I,R)
-            , D = 0;`, `ActivePolyModLoader.popUpClass = S;`)
+        this.registerFuncMixin("polyInitFunction", MixinType.INSERT, `, D = 0;`, `ActivePolyModLoader.popUpClass = S;`)
     }
     initMods() {
         this.#preInitPML();

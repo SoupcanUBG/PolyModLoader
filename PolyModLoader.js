@@ -265,11 +265,11 @@ export class EditorExtras {
         __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`F_[F_.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestCategory, "f")}]  =  "${id}"`);
         __classPrivateFieldGet(this, _EditorExtras_categoryDefaults, "f").push(`case KA.${id}:n = this.getPart(eA.${defaultId});break;`);
     }
-    registerBlock(id, categoryId, checksum, sceneName, modelName, offsetSpace, extraSettings) {
+    registerBlock(id, categoryId, checksum, sceneName, modelName, overlapSpace, extraSettings) {
         var _a;
         __classPrivateFieldSet(this, _EditorExtras_latestBlock, (_a = __classPrivateFieldGet(this, _EditorExtras_latestBlock, "f"), _a++, _a), "f");
         this.pml.getFromPolyTrack(`eA[eA.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestBlock, "f")}]  =  "${id}"`);
-        this.pml.getFromPolyTrack(`ab.push(new rb("${checksum}",KA.${categoryId},eA.${id},[["${sceneName}", "${modelName}"]],nb,[[[${offsetSpace[0][0]}, ${offsetSpace[0][1]}, ${offsetSpace[0][2]}], [${offsetSpace[1][0]}, ${offsetSpace[1][1]}, ${offsetSpace[1][2]}]]]))`);
+        this.pml.getFromPolyTrack(`ab.push(new rb("${checksum}",KA.${categoryId},eA.${id},[["${sceneName}", "${modelName}"]],nb,${JSON.stringify(overlapSpace)}))`);
         this.pml.getFromPolyTrack(`for (const e of ab) {if (!sb.has(e.id)){ sb.set(e.id, e);}; }
       `);
         if (extraSettings && extraSettings.ignoreOnExport) {
@@ -277,7 +277,7 @@ export class EditorExtras {
             return;
         }
         __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`mu[mu.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestBlock, "f")}]  =  "${id}"`);
-        __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`j_.push(new X_("${checksum}",F_.${categoryId},mu.${id},[["${sceneName}", "${modelName}"]],G_,[[[${offsetSpace[0][0]}, ${offsetSpace[0][1]}, ${offsetSpace[0][2]}], [${offsetSpace[1][0]}, ${offsetSpace[1][1]}, ${offsetSpace[1][2]}]]]))`);
+        __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`j_.push(new X_("${checksum}",F_.${categoryId},mu.${id},[["${sceneName}", "${modelName}"]],G_,${JSON.stringify(overlapSpace)}))`);
     }
     init() {
         this.pml.registerClassMixin("GN.prototype", "init", MixinType.REPLACEBETWEEN, '["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"]', '["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"]', `["${__classPrivateFieldGet(this, _EditorExtras_modelUrls, "f").join('", "')}"]`);
@@ -777,8 +777,7 @@ _PolyModLoader_polyVersion = new WeakMap(), _PolyModLoader_allMods = new WeakMap
     this.registerFuncMixin("mI", MixinType.INSERT, "), Ix.ToggleSpectatorCamera)", __classPrivateFieldGet(this, _PolyModLoader_keybindings, "f").join(""));
     this.registerClassMixin("PM.prototype", "update", MixinType.INSERT, `_M(this, YS, CM(this, BE, "m", kM).call(this), "f"),`, `ActivePolyModLoader.editorExtras.construct(this),`);
 }, _PolyModLoader_preInitPML = function _PolyModLoader_preInitPML() {
-    this.registerFuncMixin("polyInitFunction", MixinType.INSERT, `let L = new BD(h,x,b,A,k,f,S,m,v,y,a,c,p,g,e,!1,_,C,P,I,R)
-            , D = 0;`, `ActivePolyModLoader.popUpClass = S;`);
+    this.registerFuncMixin("polyInitFunction", MixinType.INSERT, `, D = 0;`, `ActivePolyModLoader.popUpClass = S;`);
 };
 const ActivePolyModLoader = new PolyModLoader("0.5.0");
 export { ActivePolyModLoader };
