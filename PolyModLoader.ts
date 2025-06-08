@@ -272,10 +272,10 @@ export class EditorExtras {
         this.#categoryDefaults.push(`case KA.${id}:n = this.getPart(eA.${defaultId});break;`)
     }
 
-    registerBlock(id: string, categoryId: string, checksum: string, sceneName: string, modelName: string, overlapSpace: Array<Array<Array<number>>>, extraSettings?: { ignoreOnExport: boolean }) {
+    registerBlock(id: string, categoryId: string, checksum: string, sceneName: string, modelName: string, overlapSpace: Array<Array<Array<number>>>, extraSettings?: { ignoreOnExport?: boolean, specialSettings?: {type: string, center: Array<number>, size: Array<number> } }) {
         this.#latestBlock++;
         this.pml.getFromPolyTrack(`eA[eA.${id} = ${this.#latestBlock}]  =  "${id}"`);
-        this.pml.getFromPolyTrack(`ab.push(new rb("${checksum}",KA.${categoryId},eA.${id},[["${sceneName}", "${modelName}"]],nb,${JSON.stringify(overlapSpace)}))`);
+        this.pml.getFromPolyTrack(`ab.push(new rb("${checksum}",KA.${categoryId},eA.${id},[["${sceneName}", "${modelName}"]],nb,${JSON.stringify(overlapSpace)}${extraSettings && extraSettings.specialSettings ? `, { type: XA.${extraSettings.specialSettings.type}, center: ${JSON.stringify(extraSettings.specialSettings.center)}, size: ${JSON.stringify(extraSettings.specialSettings.size)}}` : ""}))`);
         this.pml.getFromPolyTrack(`for (const e of ab) {if (!sb.has(e.id)){ sb.set(e.id, e);}; }
       `);
         if(extraSettings && extraSettings.ignoreOnExport) {
@@ -283,7 +283,7 @@ export class EditorExtras {
             return;
         }
         this.#simBlocks.push(`mu[mu.${id} = ${this.#latestBlock}]  =  "${id}"`);
-        this.#simBlocks.push(`j_.push(new X_("${checksum}",F_.${categoryId},mu.${id},[["${sceneName}", "${modelName}"]],G_,${JSON.stringify(overlapSpace)}))`);
+        this.#simBlocks.push(`j_.push(new X_("${checksum}",F_.${categoryId},mu.${id},[["${sceneName}", "${modelName}"]],G_,${JSON.stringify(overlapSpace)}${extraSettings && extraSettings.specialSettings ? `, { type: Jh.${extraSettings.specialSettings.type}, center: ${JSON.stringify(extraSettings.specialSettings.center)}, size: ${JSON.stringify(extraSettings.specialSettings.size)}}` : ""}))`);
     }
     init() {
         this.pml.registerClassMixin("GN.prototype", 

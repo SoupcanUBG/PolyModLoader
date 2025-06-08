@@ -269,7 +269,7 @@ export class EditorExtras {
         var _a;
         __classPrivateFieldSet(this, _EditorExtras_latestBlock, (_a = __classPrivateFieldGet(this, _EditorExtras_latestBlock, "f"), _a++, _a), "f");
         this.pml.getFromPolyTrack(`eA[eA.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestBlock, "f")}]  =  "${id}"`);
-        this.pml.getFromPolyTrack(`ab.push(new rb("${checksum}",KA.${categoryId},eA.${id},[["${sceneName}", "${modelName}"]],nb,${JSON.stringify(overlapSpace)}))`);
+        this.pml.getFromPolyTrack(`ab.push(new rb("${checksum}",KA.${categoryId},eA.${id},[["${sceneName}", "${modelName}"]],nb,${JSON.stringify(overlapSpace)}${extraSettings && extraSettings.specialSettings ? `, { type: XA.${extraSettings.specialSettings.type}, center: ${JSON.stringify(extraSettings.specialSettings.center)}, size: ${JSON.stringify(extraSettings.specialSettings.size)}}` : ""}))`);
         this.pml.getFromPolyTrack(`for (const e of ab) {if (!sb.has(e.id)){ sb.set(e.id, e);}; }
       `);
         if (extraSettings && extraSettings.ignoreOnExport) {
@@ -277,7 +277,7 @@ export class EditorExtras {
             return;
         }
         __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`mu[mu.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestBlock, "f")}]  =  "${id}"`);
-        __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`j_.push(new X_("${checksum}",F_.${categoryId},mu.${id},[["${sceneName}", "${modelName}"]],G_,${JSON.stringify(overlapSpace)}))`);
+        __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`j_.push(new X_("${checksum}",F_.${categoryId},mu.${id},[["${sceneName}", "${modelName}"]],G_,${JSON.stringify(overlapSpace)}${extraSettings && extraSettings.specialSettings ? `, { type: Jh.${extraSettings.specialSettings.type}, center: ${JSON.stringify(extraSettings.specialSettings.center)}, size: ${JSON.stringify(extraSettings.specialSettings.size)}}` : ""}))`);
     }
     init() {
         this.pml.registerClassMixin("GN.prototype", "init", MixinType.REPLACEBETWEEN, '["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"]', '["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"]', `["${__classPrivateFieldGet(this, _EditorExtras_modelUrls, "f").join('", "')}"]`);
