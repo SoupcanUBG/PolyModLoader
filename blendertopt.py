@@ -62,7 +62,7 @@ class OBJECT_OT_export_polytrack_pairs(bpy.types.Operator):
             data.append(ordered)
 
         print("Converted pairs:")
-        print(data)
+        print(pairs)
 
         self.report({'INFO'}, f"Exported {len(pairs)} pairs to console")
         return {'FINISHED'}
