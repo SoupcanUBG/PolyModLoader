@@ -283,6 +283,23 @@ export class EditorExtras {
         this.pml.registerClassMixin("GN.prototype", "init", MixinType.REPLACEBETWEEN, '["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"]', '["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"]', `["${__classPrivateFieldGet(this, _EditorExtras_modelUrls, "f").join('", "')}"]`);
         this.pml.registerFuncMixin("xb", MixinType.INSERT, `for (const [r,a] of Eb(this, Ab, "f")) {`, `if (ActivePolyModLoader.editorExtras.ignoredBlocks.includes(r)) {continue;};`);
         this.pml.registerClassMixin("GN.prototype", "getCategoryMesh", MixinType.INSERT, "break;", `${__classPrivateFieldGet(this, _EditorExtras_categoryDefaults, "f").join("")}`);
+        this.pml.registerClassWideMixin("rb", MixinType.CLASSREPLACE, `const l = [];`, `l.push([n, i, r])`, `const l = [];
+for (const [start, end] of a) {
+    const [x0, y0, z0] = start;
+    const [x1, y1, z1] = end;
+
+    const minX = Math.min(x0, x1), maxX = Math.max(x0, x1);
+    const minY = Math.min(y0, y1), maxY = Math.max(y0, y1);
+    const minZ = Math.min(z0, z1), maxZ = Math.max(z0, z1);
+
+    for (let x = minX; x <= maxX; x++)
+        for (let y = minY; y <= maxY; y++)
+            for (let z = minZ; z <= maxZ; z++) {
+                if (l.find(([a, b, c]) => a === x && b === y && c === z)) {
+                    throw new Error("Duplicate tile in track part");
+                }
+                l.push([x, y, z]);
+            }`);
     }
 }
 _EditorExtras_editorClass = new WeakMap(), _EditorExtras_latestCategory = new WeakMap(), _EditorExtras_latestBlock = new WeakMap(), _EditorExtras_categoryDefaults = new WeakMap(), _EditorExtras_simBlocks = new WeakMap(), _EditorExtras_modelUrls = new WeakMap();

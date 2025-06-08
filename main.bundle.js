@@ -1793,7 +1793,6 @@ ActivePolyModLoader.importMods().then(() => {
                     throw new Error(`Token "${func}" not found in function "${path}".`);
                 }
                 let injectedCode2 = null;
-                console.log(typeof func);
                 if(typeof func1 === "function") {
                     injectedCode2 = func1.toString()
                     injectedCode2 = injectedCode2
@@ -1856,9 +1855,7 @@ ActivePolyModLoader.importMods().then(() => {
                 } else {
                     injectedCode2 = funcOptional;
                 }
-                console.log(newClassStr);
                 newClassStr = originalClassStr.split(originalClassStr.substring(firstTokenIndex1, secondTokenIndex1 + funcOrSecondToken.length)).join(injectedCode2);                     
-                console.log(newClassStr);
         }
         eval(`${path} = ${newClassStr}`);
     }

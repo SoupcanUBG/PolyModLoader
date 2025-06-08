@@ -293,6 +293,23 @@ export class EditorExtras {
             `["${this.#modelUrls.join('", "')}"]`);
         this.pml.registerFuncMixin("xb", MixinType.INSERT, `for (const [r,a] of Eb(this, Ab, "f")) {`, `if (ActivePolyModLoader.editorExtras.ignoredBlocks.includes(r)) {continue;};`);
         this.pml.registerClassMixin("GN.prototype", "getCategoryMesh", MixinType.INSERT, "break;", `${this.#categoryDefaults.join("")}`);
+        this.pml.registerClassWideMixin("rb", MixinType.CLASSREPLACE, `const l = [];`, `l.push([n, i, r])`,`const l = [];
+for (const [start, end] of a) {
+    const [x0, y0, z0] = start;
+    const [x1, y1, z1] = end;
+
+    const minX = Math.min(x0, x1), maxX = Math.max(x0, x1);
+    const minY = Math.min(y0, y1), maxY = Math.max(y0, y1);
+    const minZ = Math.min(z0, z1), maxZ = Math.max(z0, z1);
+
+    for (let x = minX; x <= maxX; x++)
+        for (let y = minY; y <= maxY; y++)
+            for (let z = minZ; z <= maxZ; z++) {
+                if (l.find(([a, b, c]) => a === x && b === y && c === z)) {
+                    throw new Error("Duplicate tile in track part");
+                }
+                l.push([x, y, z]);
+            }`)
     }
 }
 
