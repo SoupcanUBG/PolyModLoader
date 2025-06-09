@@ -8,12 +8,13 @@ bl_info = {
 }
 
 import bpy
-import json
 import bmesh
 import mathutils
-from collections import deque
 from mathutils import Vector
-from mathutils.bvhtree import BVHTree
+from bpy.types import Operator, Panel
+from bpy_extras import object_utils
+from collections import defaultdict
+import math
 from math import floor
 
 # Conversion functions
@@ -98,154 +99,135 @@ class OBJECT_OT_import_polytrack_input(bpy.types.Operator):
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
 
-GRID_SIZE = 2.5
-GRID_SPACING = 5.0
+VOXEL_SIZE = 0.25
+CUBE_SIZE = 2.5
+SNAP_SIZE = CUBE_SIZE * 2  # 5m spacing
+DEBUG_MAT_NAME = "HighlightMaterial"
 
-def get_bounding_box(obj):
-    mat = obj.matrix_world
-    corners = [mat @ Vector(corner) for corner in obj.bound_box]
-    min_corner = Vector((min(v[i] for v in corners) for i in range(3)))
-    max_corner = Vector((max(v[i] for v in corners) for i in range(3)))
-    return min_corner, max_corner
+def snap(v: Vector):
+    return Vector((
+        round(v.x / SNAP_SIZE) * SNAP_SIZE,
+        round(v.y / SNAP_SIZE) * SNAP_SIZE,
+        round(v.z / SNAP_SIZE) * SNAP_SIZE
+    ))
 
-def cube_intersects_object(center, size, obj_bvh):
-    if not isinstance(center, Vector):
-        center = Vector(center)
-    
-    half_size = size / 2.0
-    
-    # Define the 8 corners of the cube
-    corners = [
-        center + Vector(( half_size,  half_size,  half_size)),
-        center + Vector(( half_size,  half_size, -half_size)),
-        center + Vector(( half_size, -half_size,  half_size)),
-        center + Vector(( half_size, -half_size, -half_size)),
-        center + Vector((-half_size,  half_size,  half_size)),
-        center + Vector((-half_size,  half_size, -half_size)),
-        center + Vector((-half_size, -half_size,  half_size)),
-        center + Vector((-half_size, -half_size, -half_size))
-    ]
-    
-    # Check if any of the cube's corners are inside the object
-    for corner in corners:
-        # Raycast from the corner in an arbitrary direction to check if it's inside
-        # (odd number of hits means the point is inside the mesh)
-        direction = Vector((1.0, 0.0, 0.0))  # Arbitrary direction
-        location, normal, index, distance = obj_bvh.ray_cast(corner, direction)
-        if location is not None:
-            # Ray hit something; now cast in the opposite direction
-            opposite_location, _, _, _ = obj_bvh.ray_cast(corner, -direction)
-            if opposite_location is not None:
-                # If both rays hit, the point is inside the mesh
-                return True
-    
-    # Check if any of the cube's edges intersect the object
-    edges = [
-        (0, 1), (0, 2), (0, 4),
-        (1, 3), (1, 5),
-        (2, 3), (2, 6),
-        (3, 7),
-        (4, 5), (4, 6),
-        (5, 7),
-        (6, 7)
-    ]
-    
-    for i, j in edges:
-        start = corners[i]
-        end = corners[j]
-        location, normal, index, distance = obj_bvh.ray_cast(start, (end - start).normalized(), size)
-        if location is not None and (location - start).length < size:
-            return True
-    
-    # Check if any of the cube's faces intersect the object
-    # (Approximate by checking the face centers and some points on the faces)
-    face_centers = [
-        center + Vector(( half_size,  0.0,  0.0)),  # +X face
-        center + Vector((-half_size,  0.0,  0.0)),  # -X face
-        center + Vector(( 0.0,  half_size,  0.0)),  # +Y face
-        center + Vector(( 0.0, -half_size,  0.0)),  # -Y face
-        center + Vector(( 0.0,  0.0,  half_size)),  # +Z face
-        center + Vector(( 0.0,  0.0, -half_size))   # -Z face
-    ]
-    
-    face_normals = [
-        Vector(( 1.0,  0.0,  0.0)),  # +X face
-        Vector((-1.0,  0.0,  0.0)),  # -X face
-        Vector(( 0.0,  1.0,  0.0)),  # +Y face
-        Vector(( 0.0, -1.0,  0.0)),  # -Y face
-        Vector(( 0.0,  0.0,  1.0)),  # +Z face
-        Vector(( 0.0,  0.0, -1.0))   # -Z face
-    ]
-    
-    for center_pt, normal in zip(face_centers, face_normals):
-        # Cast a ray from the face center outward to check for intersections
-        location, _, _, _ = obj_bvh.ray_cast(center_pt, normal, size)
-        if location is not None:
-            return True
-    
-    return False
+def create_debug_material():
+    if DEBUG_MAT_NAME in bpy.data.materials:
+        return bpy.data.materials[DEBUG_MAT_NAME]
+    mat = bpy.data.materials.new(name=DEBUG_MAT_NAME)
+    mat.diffuse_color = (1.0, 0.1, 0.1, 0.4)
+    mat.use_nodes = True
+    return mat
 
-def bvh_for_cube(center, size):
-    # Construct a temporary cube mesh BVH (can be cached)
-    bpy.ops.mesh.primitive_cube_add(size=size, location=center)
-    cube = bpy.context.active_object
-    cube_bvh = mathutils.bvhtree.BVHTree.FromObject(cube, bpy.context.evaluated_depsgraph_get())
-    bpy.data.objects.remove(cube, do_unlink=True)
-    return cube_bvh
+def get_voxelized_surface_coords(obj):
+    world_matrix = obj.matrix_world
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    bm.verts.ensure_lookup_table()
+    bm.faces.ensure_lookup_table()
 
-def flood_fill_voxels(start_coord, grid_size, obj_bvh, max_depth=2000):
-    visited = set()
-    queue = deque([start_coord])
-    result = set()
+    touched = set()
+    for face in bm.faces:
+        for loop in face.loops:
+            pt = world_matrix @ loop.vert.co
+            snapped = snap(pt)
+            touched.add(tuple(snapped))
+    bm.free()
+    return list(touched)
 
-    while queue and len(result) < max_depth:
-        coord = queue.popleft()
-        if coord in visited:
-            continue
-        visited.add(coord)
+def filter_redundant_cubes(cube_coords, obj):
+    # Group cubes by axis-aligned lines
+    def group_by_axis(coords, axis):
+        groups = defaultdict(list)
+        for coord in coords:
+            key = tuple(coord[i] for i in range(3) if i != axis)
+            groups[key].append(coord)
+        return groups
 
-        center = Vector([c * grid_size for c in coord])
-        if cube_intersects_object(center, grid_size, obj_bvh):
-            result.add(coord)
-            for d in [(1,0,0), (-1,0,0), (0,1,0), (0,-1,0), (0,0,1), (0,0,-1)]:
-                neighbor = tuple(coord[i] + d[i] for i in range(3))
-                if neighbor not in visited:
-                    queue.append(neighbor)
+    def cube_key(c): return tuple(round(c[i], 3) for i in range(3))
 
-    return result
+    def create_prism_between(p1, p2):
+        p1 = Vector(p1)
+        p2 = Vector(p2)
+        centerX = (p1.x + p2.x) / 2
+        centerY = (p1.y + p2.y) / 2
+        centerZ = (p1.z + p1.z) / 2
+        center = Vector((centerX, centerY, centerZ))
+        size = Vector((
+            abs(p1.x - p2.x) + SNAP_SIZE,
+            abs(p1.y - p2.y) + SNAP_SIZE,
+            abs(p1.z - p2.z) + SNAP_SIZE,
+        ))
+        bpy.ops.mesh.primitive_cube_add(location=center)
+        prism = bpy.context.active_object
+        prism.scale = size / 2
+        return prism
 
-def voxelize_by_floodfill(obj):
-    depsgraph = bpy.context.evaluated_depsgraph_get()
-    obj_eval = obj.evaluated_get(depsgraph)
-    obj_bvh = mathutils.bvhtree.BVHTree.FromObject(obj_eval, depsgraph)
+    def intersects_mesh(prism, target_obj):
+        bpy.ops.object.select_all(action='DESELECT')
+        prism.select_set(True)
+        target_obj.select_set(True)
+        bpy.context.view_layer.objects.active = target_obj
+        bpy.ops.object.duplicate()
+        dup = bpy.context.selected_objects[0]
+        bpy.ops.object.modifier_add(type='BOOLEAN')
+        mod = dup.modifiers[-1]
+        mod.operation = 'INTERSECT'
+        mod.object = prism
+        bpy.ops.object.modifier_apply(modifier=mod.name)
+        result = len(dup.data.polygons) > 0
+        bpy.data.objects.remove(prism)
+        bpy.data.objects.remove(dup)
+        return result
 
-    start_point = Vector((0, 0, 0))
-    # Find first intersecting cube around origin or use bounding box center
-    bbox_center = 0.125 * sum((Vector(b) for b in obj.bound_box), Vector())
-    start_coord = tuple(floor(v / GRID_SIZE) for v in bbox_center)
+    coords_set = set(cube_key(c) for c in cube_coords)
+    keepers = set()
 
-    return flood_fill_voxels(start_coord, GRID_SIZE, obj_bvh)
+    for axis in range(3):
+        groups = group_by_axis(cube_coords, axis)
+        for group_key, line_coords in groups.items():
+            line_coords.sort(key=lambda c: c[axis])
+            n = len(line_coords)
+            for i in range(n):
+                for j in range(i + 2, n):  # skip adjacent (j=i+1)
+                    c1 = line_coords[i]
+                    c2 = line_coords[j]
+                    # All coords in between
+                    in_between = [cube_key(c) for c in line_coords[i + 1:j]]
+                    prism = create_prism_between(c1, c2)
+                    if intersects_mesh(prism, obj):
+                        keepers.add(cube_key(c1))
+                        keepers.add(cube_key(c2))
+                        for k in in_between:
+                            coords_set.discard(k)
+                        break  # Stop at first valid span
+                    else:
+                        bpy.data.objects.remove(prism)
 
-def place_cube(grid_pos):
-    center = Vector((grid_pos[0] * GRID_SPACING, grid_pos[1] * GRID_SPACING, grid_pos[2] * GRID_SPACING))
-    bpy.ops.mesh.primitive_cube_add(scale=(GRID_SIZE,GRID_SIZE,GRID_SIZE), location=center)
+    return [Vector(k) for k in coords_set.union(keepers)]
 
-class OBJECT_OT_generate_highlight_cubes(bpy.types.Operator):
-    bl_idname = "object.generate_highlight_cubes"
-    bl_label = "Generate Highlight Cubes"
+def draw_debug_cubes(coords):
+    mat = create_debug_material()
+    for coord in coords:
+        bpy.ops.mesh.primitive_cube_add(size=CUBE_SIZE, location=coord)
+        cube = bpy.context.active_object
+        cube.data.materials.append(mat)
+
+class HighlightNecessaryCubesOperator(bpy.types.Operator):
+    bl_idname = "object.highlight_necessary_cubes"
+    bl_label = "Highlight Necessary Cubes"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         obj = context.active_object
         if not obj or obj.type != 'MESH':
-            self.report({'ERROR'}, "Please select a mesh object")
+            self.report({'ERROR'}, "Please select a mesh object.")
             return {'CANCELLED'}
 
-        raw_voxels = voxelize_by_floodfill(obj)
+        voxel_coords = get_voxelized_surface_coords(obj)
+        minimal_coords = filter_redundant_cubes(voxel_coords, obj)
+        draw_debug_cubes(minimal_coords)
 
-        for voxel in raw_voxels:
-            place_cube(voxel)
-
-        self.report({'INFO'}, f"Placed {len(raw_voxels)} cubes")
         return {'FINISHED'}
 
 # Menus
@@ -256,13 +238,24 @@ def menu_func_import_input(self, context):
     self.layout.operator(OBJECT_OT_import_polytrack_input.bl_idname)
 
 def menu_func_generate_highlight(self, context):
-    self.layout.operator(OBJECT_OT_generate_highlight_cubes.bl_idname)
+    self.layout.operator(HighlightNecessaryCubesOperator.bl_idname)
+
+class OBJECT_PT_highlight_panel(Panel):
+    bl_label = "Highlight Cubes"
+    bl_idname = "OBJECT_PT_highlight_cubes"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = 'Highlight'
+
+    def draw(self, context):
+        self.layout.operator("object.highlight_surface_cubes")
 
 # Register
 def register():
     bpy.utils.register_class(OBJECT_OT_export_polytrack_pairs)
     bpy.utils.register_class(OBJECT_OT_import_polytrack_input)
-    bpy.utils.register_class(OBJECT_OT_generate_highlight_cubes)
+    bpy.utils.register_class(HighlightNecessaryCubesOperator)
+    bpy.utils.register_class(OBJECT_PT_highlight_panel)
     bpy.types.VIEW3D_MT_object.append(menu_func_export)
     bpy.types.VIEW3D_MT_object.append(menu_func_import_input)
     bpy.types.VIEW3D_MT_object.append(menu_func_generate_highlight)
@@ -270,7 +263,8 @@ def register():
 def unregister():
     bpy.utils.unregister_class(OBJECT_OT_export_polytrack_pairs)
     bpy.utils.unregister_class(OBJECT_OT_import_polytrack_input)
-    bpy.utils.unregister_class(OBJECT_OT_generate_highlight_cubes)
+    bpy.utils.unregister_class(HighlightNecessaryCubesOperator)
+    bpy.utils.unregister_class(OBJECT_PT_highlight_panel)
     bpy.types.VIEW3D_MT_object.remove(menu_func_export)
     bpy.types.VIEW3D_MT_object.remove(menu_func_import_input)
     bpy.types.VIEW3D_MT_object.remove(menu_func_generate_highlight)
