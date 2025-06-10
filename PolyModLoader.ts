@@ -405,7 +405,7 @@ export class PolyModLoader {
         loadingDiv.style.transition = "background-color 1s ease-out";
 
         const loadingUI = document.createElement("div");
-        loadingUI.style.margin = "200px 0 0 0";
+        loadingUI.style.margin = "100px 0 0 0";
         loadingUI.style.padding = "0";
 
         const loadingText = document.createElement("p");
@@ -449,7 +449,7 @@ export class PolyModLoader {
         const progressDiv = document.createElement("div");
         progressDiv.style.textAlign = "left";
         progressDiv.style.width = "1000px";
-        progressDiv.style.margin = "5px auto";
+        progressDiv.style.margin = "100px auto";
 
         loadingBarOuter.appendChild(loadingBarInner);
         loadingBarInner.appendChild(loadingBarFill);
@@ -587,7 +587,6 @@ export class PolyModLoader {
                 const manifestFile = await fetch(`${polyModUrl}/manifest.json`).then(r => r.json());
                 let mod = manifestFile.polymod;
                 startFetchModMain(mod.main);
-                // throw TypeError("die");
                 try {
                     const modImport = await import(`${polyModUrl}/${mod.main}`);
 
