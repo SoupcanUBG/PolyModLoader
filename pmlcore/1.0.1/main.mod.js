@@ -974,7 +974,7 @@ class PMLCoreMod extends PolyMod {
         console.log(needsUpdate);
         if (needsUpdate) {
           this.modPmlInstance.popUpClass.show(
-            "You are playing on an outdated version of PolyModLoader, which can cause major problems. Please update your game by downloading the latest version from the releases page on the Codeberg Repository: https://codeberg.org/CRJakob/PolyModLoader/releases",
+            "You are playing on an outdated version of PolyModLoader, which can cause major problems. Please update your game by downloading the latest version from the releases page on the Codeberg Repository: https://codeberg.org/polytrackmods/PolyModLoader/releases",
             "Dismiss",
             () => {}
           );
