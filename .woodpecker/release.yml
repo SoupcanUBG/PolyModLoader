@@ -3,11 +3,6 @@ when:
     - tag
 
 steps:
-  - name: create version file
-    image: alpine
-    commands:
-      - echo "$CI_COMMIT_TAG" > version.txt
-  
   - name: compile asar
     image: node:20
     commands:
