@@ -442,7 +442,7 @@ export class PolyModLoader {
         } else {
             this.#polyModUrls = [
                 {
-                    "base": "https://pml.orangy.cfd/PolyTrackMods/PolyModLoader/0.5.0/pmlcore",
+                    "base": "https://pml.crjakob.com/PolyTrackMods/PolyModLoader/0.5.0/pmlcore",
                     "version": "latest",
                     "loaded": true
                 }
