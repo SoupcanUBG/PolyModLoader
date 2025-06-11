@@ -35,7 +35,7 @@ ActivePolyModLoader.importMods().then(() => {
       ,
       853: (e, t, n) => {
           "use strict";
-          e.exports = n.p + "images/icon.svg"
+          e.exports = n.p + "images/pmlicon.svg"
       }
       ,
       858: (e, t, n) => {
@@ -1251,10 +1251,10 @@ ActivePolyModLoader.importMods().then(() => {
               "./grid_small.svg": 4930,
               "./helmet.svg": 1333,
               "./help.svg": 5031,
-              "./icon.svg": 853,
+              "./pmlicon.svg": 853,
               "./import.svg": 9077,
               "./load.svg": 5918,
-              "./logo.svg": 8903,
+              "./pmllogo.svg": 8903,
               "./official_tracks.jpg": 9391,
               "./overlapping_disabled.svg": 8358,
               "./overlapping_enabled.svg": 2493,
@@ -1467,7 +1467,7 @@ ActivePolyModLoader.importMods().then(() => {
       ,
       8903: (e, t, n) => {
           "use strict";
-          e.exports = n.p + "images/logo.svg"
+          e.exports = n.p + "images/pmllogo.svg"
       }
       ,
       8909: (e, t, n) => {
@@ -40559,7 +40559,7 @@ ActivePolyModLoader.importMods().then(() => {
               wD(this, GL, "f").className = "menu",
               wD(this, HL, "f").appendChild(wD(this, GL, "f")),
               vD(this, jL, document.createElement("img"), "f"),
-              wD(this, jL, "f").src = "images/logo.svg",
+              wD(this, jL, "f").src = "images/pmllogo.svg",
               wD(this, jL, "f").className = "logo",
               wD(this, GL, "f").appendChild(wD(this, jL, "f")),
               function() {
