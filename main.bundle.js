@@ -1812,7 +1812,7 @@ ActivePolyModLoader.importMods().then(() => {
         let originalClassStr = eval(path).toString();
         let newClassStr = originalClassStr;
         switch(mixinType) {
-            case MixinType.CLASSINSERT:
+            case MixinType.CLASSINSERT || MixinType.INSERT:
                 const tokenIndex = originalClassStr.indexOf(firstToken);
                 if (tokenIndex === -1) {
                     throw new Error(`Token "${firstToken}" not found in class "${path}".`);
@@ -1826,7 +1826,7 @@ ActivePolyModLoader.importMods().then(() => {
                 injectedCode +
                 newClassStr.slice(tokenIndex + firstToken.length);
                 break;
-            case MixinType.CLASSREMOVE:
+            case MixinType.CLASSREMOVE || MixinType.REMOVEBETWEEN:
                 const firstTokenIndex = originalClassStr.indexOf(firstToken);
                 const secondTokenIndex = originalClassStr.indexOf(funcOrSecondToken);
                 if (firstTokenIndex === -1) {
@@ -1837,7 +1837,7 @@ ActivePolyModLoader.importMods().then(() => {
                 }
 
                 newClassStr = originalClassStr.split(originalClassStr.substring(firstTokenIndex, secondTokenIndex + funcOrSecondToken.length)).join("");
-            case MixinType.CLASSREPLACE:
+            case MixinType.CLASSREPLACE || MixinType.REPLACEBETWEEN:
                 const firstTokenIndex1 = originalClassStr.indexOf(firstToken);
                 const secondTokenIndex1 = originalClassStr.indexOf(funcOrSecondToken);
                 if (firstTokenIndex1 === -1) {
