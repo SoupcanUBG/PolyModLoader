@@ -384,23 +384,184 @@ export class PolyModLoader {
         __classPrivateFieldSet(this, _PolyModLoader_polyModUrls, this.getPolyModsStorage(), "f");
     }
     async importMods() {
+        // Mod loading UI
+        const ui = document.getElementById("ui");
+        const loadingDiv = document.createElement("div");
+        loadingDiv.style.display = "flex";
+        loadingDiv.style.flexDirection = "column";
+        loadingDiv.style.position = "absolute";
+        loadingDiv.style.left = "0";
+        loadingDiv.style.top = "0";
+        loadingDiv.style.width = "100%";
+        loadingDiv.style.height = "100%";
+        loadingDiv.style.textAlign = "center";
+        loadingDiv.style.backgroundColor = "#192042";
+        loadingDiv.style.transition = "background-color 1s ease-out";
+        loadingDiv.style.overflow = "hidden";
+        loadingDiv.innerHTML = `<img src="https://pml.crjakob.com/polytrackmods/PolyModLoader/0.5.0/images/pmllogo.svg" style="width: calc(100vw * (1000 / 1300)); height: 200px; margin: 30px auto 0 auto" />`;
+        const loadingUI = document.createElement("div");
+        loadingUI.style.margin = "20px 0 0 0";
+        loadingUI.style.padding = "0";
+        const loadingText = document.createElement("p");
+        loadingText.innerText = "[PML] Loading Mods...";
+        loadingText.style.margin = "5px";
+        loadingText.style.padding = "0";
+        loadingText.style.color = "#ffffff";
+        loadingText.style.fontSize = "32px";
+        loadingText.style.fontStyle = "italic";
+        loadingText.style.fontFamily = "ForcedSquare, Arial, sans-serif";
+        loadingText.style.lineHeight = "1";
+        const loadingBarOuter = document.createElement("div");
+        loadingBarOuter.style.margin = "0 auto";
+        loadingBarOuter.style.padding = "0";
+        loadingBarOuter.style.width = "600px";
+        loadingBarOuter.style.height = "50px";
+        loadingBarOuter.style.backgroundColor = "#28346a";
+        loadingBarOuter.style.clipPath = "polygon(9px 0, 100% 0, calc(100% - 9px) 100%, 0 100%)";
+        loadingBarOuter.style.overflow = "hidden";
+        const loadingBarInner = document.createElement("div");
+        loadingBarInner.style.margin = "15px 20px";
+        loadingBarInner.style.padding = "0";
+        loadingBarInner.style.width = "560px";
+        loadingBarInner.style.height = "20px";
+        loadingBarInner.style.clipPath = "polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%)";
+        loadingBarInner.style.backgroundColor = "#222244";
+        loadingBarInner.style.boxShadow = "inset 0 0 6px #000000";
+        const loadingBarFill = document.createElement("div");
+        loadingBarFill.style.margin = "0";
+        loadingBarFill.style.padding = "0";
+        loadingBarFill.style.width = "0";
+        loadingBarFill.style.height = "100%";
+        loadingBarFill.style.clipPath = "polygon(2px 0, 100% 0, calc(100% - 2px) 100%, 0 100%)";
+        loadingBarFill.style.backgroundColor = "#ffffff";
+        loadingBarFill.style.boxShadow = "inset 0 0 6px #000000";
+        loadingBarFill.style.transition = "width 0.1s ease-in-out";
+        const progressDiv = document.createElement("div");
+        progressDiv.style.textAlign = "left";
+        progressDiv.style.width = "1000px";
+        progressDiv.style.margin = "50px auto";
+        loadingBarOuter.appendChild(loadingBarInner);
+        loadingBarInner.appendChild(loadingBarFill);
+        loadingUI.appendChild(loadingText);
+        loadingUI.appendChild(loadingBarOuter);
+        loadingUI.appendChild(progressDiv);
+        loadingDiv.appendChild(loadingUI);
+        ui.appendChild(loadingDiv);
+        const total = __classPrivateFieldGet(this, _PolyModLoader_polyModUrls, "f").length;
+        const current = {
+            num: 0,
+            text: undefined,
+            url: "",
+            version: "",
+            totalParts: 0,
+            part: 0,
+        };
+        function updateBar(num) {
+            current.num = num;
+            loadingBarFill.style.width = `${(current.num / total) * 100}%`;
+        }
+        function nextPart() {
+            updateBar(current.num + current.part / current.totalParts);
+            current.part += 1;
+        }
+        function currPartStr() {
+            return `[${current.part}/${current.totalParts}]`;
+        }
+        function startImportMod(url, version) {
+            current.url = url;
+            current.version = version;
+            progressDiv.innerHTML = "";
+            const modP = document.createElement("p");
+            modP.innerText = "[PML] Loading Mods...";
+            modP.style.color = "#ffffff";
+            modP.style.fontSize = "18px";
+            modP.style.fontStyle = "italic";
+            modP.style.fontFamily = "ForcedSquare, Arial, sans-serif";
+            modP.style.lineHeight = "1";
+            modP.innerText = `Importing mod from URL: ${current.url} @ version ${current.version}`;
+            progressDiv.appendChild(modP);
+            // @ts-ignore
+            current.text = modP;
+        }
+        function startFetchLatest() {
+            nextPart();
+            const latestP = document.createElement("p");
+            latestP.style.color = "#ffffff";
+            latestP.style.fontSize = "18px";
+            latestP.style.fontStyle = "italic";
+            latestP.style.fontFamily = "ForcedSquare, Arial, sans-serif";
+            latestP.style.lineHeight = "1";
+            latestP.innerText = `${currPartStr()} Fetching latest mod version from ${current.url}/latest.json`;
+            progressDiv.appendChild(latestP);
+            // @ts-ignore
+            current.text = latestP;
+        }
+        function finishFetchLatest(version) {
+            current.version = version;
+            // @ts-ignore
+            current.text.innerText = `${currPartStr()} Fetched latest mod version: v${current.version}`;
+        }
+        function startFetchManifest() {
+            nextPart();
+            const manifestP = document.createElement("p");
+            manifestP.style.color = "#ffffff";
+            manifestP.style.fontSize = "18px";
+            manifestP.style.fontStyle = "italic";
+            manifestP.style.fontFamily = "ForcedSquare, Arial, sans-serif";
+            manifestP.style.lineHeight = "1";
+            manifestP.innerText = `${currPartStr()} Fetching mod manifest from ${current.url}/${current.version}/manifest.json`;
+            progressDiv.appendChild(manifestP);
+            // @ts-ignore
+            current.text = manifestP;
+        }
+        function startFetchModMain(js) {
+            nextPart();
+            const mainP = document.createElement("p");
+            mainP.style.color = "#ffffff";
+            mainP.style.fontSize = "18px";
+            mainP.style.fontStyle = "italic";
+            mainP.style.fontFamily = "ForcedSquare, Arial, sans-serif";
+            mainP.style.lineHeight = "1";
+            mainP.innerText = `${currPartStr()} Fetching mod js from ${current.url}/${current.version}/${js}`;
+            progressDiv.appendChild(mainP);
+            // @ts-ignore
+            current.text = mainP;
+        }
+        function errorCurrent() {
+            // @ts-ignore
+            current.text.style.color = "red";
+        }
+        function finishImportMod() {
+            current.totalParts = 0;
+            current.part = 0;
+            updateBar(Math.floor(current.num) + 1);
+        }
+        // Actual mod importing
         for (let polyModObject of __classPrivateFieldGet(this, _PolyModLoader_polyModUrls, "f")) {
+            startImportMod(polyModObject.base, polyModObject.version);
             let latest = false;
+            current.totalParts = 2;
             if (polyModObject.version === "latest") {
+                current.totalParts = 3;
+                startFetchLatest();
                 try {
                     const latestFile = await fetch(`${polyModObject.base}/latest.json`).then(r => r.json());
                     polyModObject.version = latestFile[__classPrivateFieldGet(this, _PolyModLoader_polyVersion, "f")];
                     latest = true;
                 }
                 catch (err) {
+                    errorCurrent();
                     alert(`Couldn't find latest version for ${polyModObject.base}`);
                     console.error("Error in fetching latest version json:", err);
                 }
+                finishFetchLatest(polyModObject.version);
             }
             const polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
+            startFetchManifest();
             try {
                 const manifestFile = await fetch(`${polyModUrl}/manifest.json`).then(r => r.json());
                 let mod = manifestFile.polymod;
+                startFetchModMain(mod.main);
                 try {
                     const modImport = await import(`${polyModUrl}/${mod.main}`);
                     let newMod = modImport.polyMod;
@@ -422,15 +583,19 @@ export class PolyModLoader {
                     __classPrivateFieldGet(this, _PolyModLoader_allMods, "f").push(newMod);
                 }
                 catch (err) {
+                    errorCurrent();
                     alert(`Mod ${mod.name} failed to load.`);
                     console.error("Error in loading mod:", err);
                 }
             }
             catch (err) {
+                errorCurrent();
                 alert(`Couldn't load mod with URL ${polyModUrl}.`);
                 console.error("Error in loading mod URL:", err);
             }
+            finishImportMod();
         }
+        loadingDiv.remove();
     }
     getPolyModsStorage() {
         const polyModsStorage = this.localStorage.getItem("polyMods");
