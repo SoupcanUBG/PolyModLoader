@@ -620,8 +620,6 @@ export class PolyModLoader {
                 console.error("Error in loading mod URL:", err);
             }
 
-            throw new TypeError("die");
-
             finishImportMod();
         }
 
