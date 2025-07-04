@@ -907,6 +907,12 @@ export class PolyModLoader {
     get lbInvalid() {
         return __classPrivateFieldGet(this, _PolyModLoader_physicsTouched, "f");
     }
+    get simWorkerClassMixins() {
+        return [...__classPrivateFieldGet(this, _PolyModLoader_simWorkerClassMixins, "f");];
+    }
+    get simWorkerClassMixins() {
+        return [...__classPrivateFieldGet(this, _PolyModLoader_simWorkerFuncMixins, "f");];
+    }
     /**
      * Inject mixin under scope {@link scope} with target function name defined by {@link path}.
      * This only injects functions in `simulation_worker.bundle.js`.
