@@ -939,6 +939,12 @@ export class PolyModLoader {
     get lbInvalid() {
         return this.#physicsTouched;
     }
+    get simWorkerClassMixins() {
+        return [...this.#simWorkerClassMixins];
+    }
+    get simWorkerFuncMixins() {
+        return [...this.#simWorkerFuncMixins];
+    }
     getFromPolyTrack = (path: string): any => { }
     /**
      * Inject mixin under scope {@link scope} with target function name defined by {@link path}.
