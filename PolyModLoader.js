@@ -910,7 +910,7 @@ export class PolyModLoader {
     get simWorkerClassMixins() {
         return [...__classPrivateFieldGet(this, _PolyModLoader_simWorkerClassMixins, "f")];
     }
-    get simWorkerClassMixins() {
+    get simWorkerFuncMixins() {
         return [...__classPrivateFieldGet(this, _PolyModLoader_simWorkerFuncMixins, "f")];
     }
     /**
