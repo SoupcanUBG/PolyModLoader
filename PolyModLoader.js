@@ -908,10 +908,10 @@ export class PolyModLoader {
         return __classPrivateFieldGet(this, _PolyModLoader_physicsTouched, "f");
     }
     get simWorkerClassMixins() {
-        return [...__classPrivateFieldGet(this, _PolyModLoader_simWorkerClassMixins, "f");];
+        return [...__classPrivateFieldGet(this, _PolyModLoader_simWorkerClassMixins, "f")];
     }
     get simWorkerClassMixins() {
-        return [...__classPrivateFieldGet(this, _PolyModLoader_simWorkerFuncMixins, "f");];
+        return [...__classPrivateFieldGet(this, _PolyModLoader_simWorkerFuncMixins, "f")];
     }
     /**
      * Inject mixin under scope {@link scope} with target function name defined by {@link path}.
