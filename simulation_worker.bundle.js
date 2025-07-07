@@ -28745,13 +28745,7 @@
                 }
             }
         };
-
-        for(let data of mixinData.data.classMixins) {
-            registerClassMixin(data.scope, data.path, data.mixinType, data.accessors, data.funcString, data.func2Sstring);
-        }
-        for(let data of mixinData.data.funcMixins) {
-            registerFuncMixin(data.path, data.mixinType, data.accessors, data.funcString, data.func2Sstring);
-        }
+        
         importScripts("lib/ammo.wasm.js");
         const Dv = [];
         onmessage = e => {
@@ -29135,6 +29129,12 @@
             }
         }
         );
+        for(let data of mixinData.data.classMixins) {
+            registerClassMixin(data.scope, data.path, data.mixinType, data.accessors, data.funcString, data.func2Sstring);
+        }
+        for(let data of mixinData.data.funcMixins) {
+            registerFuncMixin(data.path, data.mixinType, data.accessors, data.funcString, data.func2Sstring);
+        }
         Ammo().then(ammoFunc)
     }
     );
