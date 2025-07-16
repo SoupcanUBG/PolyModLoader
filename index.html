@@ -28,15 +28,6 @@
     />
     <script defer="defer" src="error_screen.bundle.js"></script>
     <script defer="defer" src="main.bundle.js"></script>
-    <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('debug') === 'true') {
-      const script = document.createElement('script');
-      script.src = '//cdn.jsdelivr.net/npm/eruda';
-      script.onload = () => eruda.init();
-      document.body.appendChild(script);
-    }
-  </script>
   </head>
   <body>
     <canvas id="screen"></canvas>
