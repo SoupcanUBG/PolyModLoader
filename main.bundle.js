@@ -64027,5 +64027,214 @@ ActivePolyModLoader.importMods().then(() => {
               })
           })
         })()
+        let polyInitFunction = function() {
+          const e = new vB;
+          e.addResource(),
+          qC().then(( () => {
+              e.loadedResource()
+          }
+          )).catch((e => {
+              console.error(e)
+          }
+          )),
+          e.addCompleteListener(( () => {
+              $_()
+          }
+          ));
+          const t = n(7780);
+          for (const n of t.keys())
+              e.preloadImage("images/" + n.substring(2));
+          const i = new ZN
+            , r = new OB
+            , a = new ul(e);
+          a.load("music", ["audio/music.mp3", "audio/music.flac"]),
+          a.load("click", ["audio/click.flac"]),
+          a.load("engine", ["audio/engine.flac"]),
+          a.load("suspension", ["audio/suspension.flac"]),
+          a.load("tires", ["audio/tires.flac"]),
+          a.load("collision", ["audio/collision.flac"]),
+          a.load("skidding", ["audio/skidding.flac"]),
+          a.load("editor_edit", ["audio/editor_edit.flac"]),
+          a.load("checkpoint", ["audio/checkpoint.flac"]),
+          a.load("finish", ["audio/checkpoint.flac"]),
+          $u.initResources(e);
+          const s = Aw.initResources();
+          ex.initResources(e);
+          const o = new GN
+            , l = o.init(e)
+            , c = new _B;
+          c.migrate();
+          const h = new cU(!0,o,e)
+            , d = new cU(!1,o,e)
+            , u = h.testDeterminism();
+          e.addResource(),
+          e.addResource(),
+          e.addResource(),
+          s.then((t => {
+              e.loadedResource(),
+              l.then((n => {
+                  e.loadedResource(),
+                  u.then((i => {
+                      e.loadedResource(),
+                      g.determinismState = i ? n && t ? VI.Ok : VI.AssetsFailed : VI.TestFailed
+                  }
+                  )).catch((e => {
+                      console.error(e)
+                  }
+                  ))
+              }
+              )).catch((e => {
+                  console.error(e)
+              }
+              ))
+          }
+          )).catch((e => {
+              console.error(e)
+          }
+          ));
+          const p = new ZB(c)
+            , f = new Mz(p.getSetting($o.Language))
+            , m = new gL(c)
+            , g = new HB;
+          m.syncUserProfile(g);
+          const v = new yN(c,g,m)
+            , w = document.getElementById("screen")
+            , y = new Au(w,p)
+            , A = new rB(y,p,e)
+            , b = new VP(y)
+            , x = new jb(y,p,o)
+            , k = new LN(e,c)
+            , E = new SA
+            , S = new eN(a)
+            , M = new JO
+            , T = t => {
+              i.trigger(( () => {
+                  X_(),
+                  Z_(),
+                  L.dispose(),
+                  L = new BD(h,x,b,A,k,f,S,m,v,y,a,c,p,g,e,t,_,C,P,I,R),
+                  J_()
+              }
+              ))
+          }
+            , _ = () => {
+              i.trigger(( () => {
+                  X_(),
+                  Z_(),
+                  L.dispose(),
+                  L = new pA(f,x,b,A,y,a,m,p,g,S,( () => {
+                      T(!1)
+                  }
+                  )),
+                  J_()
+              }
+              ))
+          }
+            , C = () => {
+              i.trigger(( () => {
+                  Z_(),
+                  L.dispose();
+                  const t = L = new FM(x,o,c,b,A,f,a,y,p,i,m,v,k,S,M,( () => {
+                      X_(),
+                      Z_(),
+                      L.dispose(),
+                      L = new BD(h,x,b,A,k,f,S,m,v,y,a,c,p,g,e,!1,_,C,P,I,R),
+                      J_()
+                  }
+                  ),( (e, n, i) => {
+                      const s = L = new AP(h,d,x,b,A,f,y,a,m,p,r,S,M,e,n,"custom",[],null,( () => {}
+                      ),( () => {
+                          q_(),
+                          s.dispose(!1),
+                          L = t,
+                          i()
+                      }
+                      ),null)
+                  }
+                  ));
+                  return J_(),
+                  t.isPaused = !0,
+                  eC(( () => {
+                      a.mute()
+                  }
+                  ), "start-editor").finally(( () => {
+                      q_(),
+                      a.unmute(),
+                      t.isPaused = !1
+                  }
+                  ))
+              }
+              ))
+          }
+            , P = (e, t, n, s) => {
+              i.trigger(( () => {
+                  Z_(),
+                  L.dispose();
+                  const i = m.profileSlot
+                    , o = v.getRecordTime(i, t.getId())
+                    , l = L = new AP(h,d,x,b,A,f,y,a,m,p,r,S,M,e,t,n,s,o,( (e, t, n) => {
+                      if (null != e) {
+                          const r = v.getRecordTime(i, e);
+                          (null == r || n.lessThan(r)) && v.setRecord(i, e, n, t)
+                      }
+                  }
+                  ),( () => {
+                      T(!0)
+                  }
+                  ),I);
+                  return J_(),
+                  l.isPaused = !0,
+                  eC(( () => {
+                      a.mute()
+                  }
+                  ), "start-game").finally(( () => {
+                      a.unmute(),
+                      l.isPaused = !1
+                  }
+                  ))
+              }
+              ))
+          }
+            , I = (e, t, n, r) => {
+              i.trigger(( () => {
+                  Z_(),
+                  L.dispose(),
+                  L = new YO(d,x,e,t,n,b,A,y,a,f,p,r,P),
+                  J_(),
+                  q_()
+              }
+              ))
+          }
+            , R = t => {
+              i.trigger(( () => {
+                  Z_(),
+                  L.dispose(),
+                  L = new iz(a,y,g,k,o,p,e,t,( () => {
+                      T(!1)
+                  }
+                  )),
+                  J_(),
+                  q_()
+              }
+              ))
+          }
+          ;
+          let L = new BD(h,x,b,A,k,f,S,m,v,y,a,c,p,g,e,!1,_,C,P,I,R)
+            , D = 0;
+          y.setAnimationLoop((function(e) {
+              const t = Math.max(e - D, 0) / 1e3;
+              D = e,
+              L.update(t),
+              E.update(t)
+          }
+          )),
+          window.addEventListener("keyup", (e => {
+              p.checkKeyBinding(e, Ix.ToggleFpsCounter) && E.toggle()
+          }
+          ))
+      }
+        ActivePolyModLoader.initMods();
+        polyInitFunction();
+        ActivePolyModLoader.postInitMods();
     })()
-})()
+});
