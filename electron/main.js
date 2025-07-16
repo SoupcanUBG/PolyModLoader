@@ -1,39 +1,39 @@
-const { app, BrowserWindow, shell, ipcMain } = require("electron"),
-  path = require("path");
-let browserWindow = null;
-const singleInstanceLockSucessful = app.requestSingleInstanceLock();
+const { app, BrowserWindow, shell, ipcMain } = require('electron'),
+  path = require('path')
+let browserWindow = null
+const singleInstanceLockSucessful = app.requestSingleInstanceLock()
 singleInstanceLockSucessful
-  ? app.on("second-instance", () => {
+  ? app.on('second-instance', () => {
       null != browserWindow &&
         (browserWindow.isMinimized() && browserWindow.restore(),
-        browserWindow.focus());
+        browserWindow.focus())
     })
   : app.quit(),
-  app.on("web-contents-created", (e, n) => {
+  app.on('web-contents-created', (e, n) => {
     n.setWindowOpenHandler(
       ({ url: e }) => (
-        ("https://www.kodub.com/" != e &&
-          "https://opengameart.org/content/sci-fi-theme-1" != e &&
-          "https://www.kodub.com/privacy/polytrack" != e &&
-          "https://www.kodub.com/discord/polytrack" != e) ||
+        ('https://www.kodub.com/' != e &&
+          'https://opengameart.org/content/sci-fi-theme-1' != e &&
+          'https://www.kodub.com/privacy/polytrack' != e &&
+          'https://www.kodub.com/discord/polytrack' != e) ||
           setImmediate(() => {
-            shell.openExternal(e);
+            shell.openExternal(e)
           }),
-        { action: "deny" }
+        { action: 'deny' }
       )
     ),
-      n.on("will-navigate", (e, n) => {
-        e.preventDefault();
-      });
+      n.on('will-navigate', (e, n) => {
+        e.preventDefault()
+      })
   }),
-  ipcMain.on("quit", () => {
-    app.quit();
+  ipcMain.on('quit', () => {
+    app.quit()
   }),
-  app.on("window-all-closed", () => {
-    app.quit();
+  app.on('window-all-closed', () => {
+    app.quit()
   }),
   app.whenReady().then(() => {
-    (browserWindow = new BrowserWindow({
+    ;(browserWindow = new BrowserWindow({
       width: 1024,
       height: 800,
       minWidth: 320,
@@ -43,28 +43,28 @@ singleInstanceLockSucessful
       autoHideMenuBar: !0,
       webPreferences: {
         devTools: !0,
-        preload: path.join(__dirname, "preload.js"),
-        backgroundThrottling: !1,
-      },
+        preload: path.join(__dirname, 'preload.js'),
+        backgroundThrottling: !1
+      }
     })),
-      browserWindow.webContents.on("before-input-event", (e, n) => {
+      browserWindow.webContents.on('before-input-event', (e, n) => {
         n.isAutoRepeat ||
-          "keyDown" != n.type ||
-          (("F11" == n.code || (n.alt && "Enter" == n.code)) &&
+          'keyDown' != n.type ||
+          (('F11' == n.code || (n.alt && 'Enter' == n.code)) &&
             (browserWindow.setFullScreen(!browserWindow.isFullScreen()),
-            e.preventDefault()));
+            e.preventDefault()))
       }),
-      browserWindow.on("enter-full-screen", () => {
-        browserWindow.webContents.send("fullscreen-change", !0);
+      browserWindow.on('enter-full-screen', () => {
+        browserWindow.webContents.send('fullscreen-change', !0)
       }),
-      browserWindow.on("leave-full-screen", () => {
-        browserWindow.webContents.send("fullscreen-change", !1);
+      browserWindow.on('leave-full-screen', () => {
+        browserWindow.webContents.send('fullscreen-change', !1)
       }),
-      ipcMain.on("is-fullscreen", (e) => {
-        e.returnValue = browserWindow.isFullScreen();
+      ipcMain.on('is-fullscreen', e => {
+        e.returnValue = browserWindow.isFullScreen()
       }),
-      ipcMain.on("set-fullscreen", (e, n) => {
-        browserWindow.setFullScreen(n);
+      ipcMain.on('set-fullscreen', (e, n) => {
+        browserWindow.setFullScreen(n)
       }),
-      browserWindow.loadFile("index.html");
-  });
+      browserWindow.loadFile('index.html')
+  })
