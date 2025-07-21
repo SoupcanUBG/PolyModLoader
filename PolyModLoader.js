@@ -303,6 +303,17 @@ for (const [start, end] of a) {
     }
 }
 _EditorExtras_editorClass = new WeakMap(), _EditorExtras_latestCategory = new WeakMap(), _EditorExtras_latestBlock = new WeakMap(), _EditorExtras_categoryDefaults = new WeakMap(), _EditorExtras_simBlocks = new WeakMap(), _EditorExtras_modelUrls = new WeakMap();
+var Variables;
+(function (Variables) {
+    Variables["PreInitMixin"] = "D = 0";
+    Variables["PolyInitPopupClass"] = "E";
+    Variables["SoundClass"] = "gl";
+    Variables["SettingsClass"] = "hz";
+    Variables["SettingEnum"] = "el";
+    Variables["KeybindEnum"] = "mk";
+    Variables["SettingUIFunction"] = "yR";
+    Variables["EditorClass"] = "A_";
+})(Variables || (Variables = {}));
 export class PolyModLoader {
     constructor(polyVersion) {
         _PolyModLoader_instances.add(this);
@@ -708,56 +719,65 @@ export class PolyModLoader {
         }
     }
     registerSettingCategory(name) {
-        __classPrivateFieldGet(this, _PolyModLoader_settings, "f").push(`xI(this, eI, "m", gI).call(this, xI(this, nI, "f").get("${name}")),`);
+        __classPrivateFieldGet(this, _PolyModLoader_settings, "f").push(`MR(this, iR, 'm', bR).call(this, MR(this, aR, 'f').get('${name}')),`);
     }
     registerBindCategory(name) {
-        __classPrivateFieldGet(this, _PolyModLoader_keybindings, "f").push(`,xI(this, eI, "m", vI).call(this, xI(this, nI, "f").get("${name}"))`);
+        __classPrivateFieldGet(this, _PolyModLoader_keybindings, "f").push(`MR(this, iR, 'm', AR).call(this, MR(this, aR, 'f').get('${name}')),`);
     }
     registerSetting(name, id, type, defaultOption, optionsOptional) {
         var _a;
         __classPrivateFieldSet(this, _PolyModLoader_latestSetting, (_a = __classPrivateFieldGet(this, _PolyModLoader_latestSetting, "f"), _a++, _a), "f");
-        __classPrivateFieldGet(this, _PolyModLoader_settingConstructor, "f").push(`$o[$o.${id} = ${__classPrivateFieldGet(this, _PolyModLoader_latestSetting, "f")}] = "${id}";`);
+        __classPrivateFieldGet(this, _PolyModLoader_settingConstructor, "f").push(`${Variables.SettingEnum}[${Variables.SettingEnum}.${id} = ${__classPrivateFieldGet(this, _PolyModLoader_latestSetting, "f")}] = "${id}";`);
         if (type === "boolean") {
-            __classPrivateFieldGet(this, _PolyModLoader_defaultSettings, "f").push(`, [$o.${id}, "${defaultOption ? "true" : "false"}"]`);
+            __classPrivateFieldGet(this, _PolyModLoader_defaultSettings, "f").push(`, [${Variables.SettingEnum}.${id}, "${defaultOption ? "true" : "false"}"]`);
             __classPrivateFieldGet(this, _PolyModLoader_settings, "f").push(`
-                xI(this, eI, "m", wI).call(this, xI(this, nI, "f").get("${name}"), [{
-                    title: xI(this, nI, "f").get("Off"),
-                    value: "false"
-                }, {
-                    title: xI(this, nI, "f").get("On"),
-                    value: "true"
-                }], $o.${id}),
-                `);
+                MR(this, iR, 'm', xR).call(
+                this,
+                MR(this, aR, 'f').get('${name}'),
+                [
+                    { title: MR(this, aR, 'f').get('Off'), value: 'false' },
+                    { title: MR(this, aR, 'f').get('On'), value: 'true' }
+                ],
+                ${Variables.SettingEnum}.${id}
+                ),`);
         }
         else if (type === "slider") {
-            __classPrivateFieldGet(this, _PolyModLoader_defaultSettings, "f").push(`, [$o.${id}, "${defaultOption}"]`);
+            __classPrivateFieldGet(this, _PolyModLoader_defaultSettings, "f").push(`, [${Variables.SettingEnum}.${id}, "${defaultOption}"]`);
             __classPrivateFieldGet(this, _PolyModLoader_settings, "f").push(`
-                 xI(this, eI, "m", yI).call(this, xI(this, nI, "f").get("${name}"), $o.${id}),`);
+                 MR(this, iR, 'm', kR).call(
+              this,
+              MR(this, aR, 'f').get('${name}'),
+              ${Variables.SettingEnum}.${id}
+            ),`);
         }
         else if (type === "custom") {
-            __classPrivateFieldGet(this, _PolyModLoader_defaultSettings, "f").push(`, [$o.${id}, "${defaultOption}"]`);
+            __classPrivateFieldGet(this, _PolyModLoader_defaultSettings, "f").push(`, [${Variables.SettingEnum}.${id}, "${defaultOption}"]`);
             __classPrivateFieldGet(this, _PolyModLoader_settings, "f").push(`
-                xI(this, eI, "m", wI).call(this, xI(this, nI, "f").get("${name}"), ${JSON.stringify(optionsOptional)}, $o.${id}),
-                `);
+                MR(this, iR, 'm', xR).call(
+                this,
+                MR(this, aR, 'f').get('${name}'),
+                ${JSON.stringify(optionsOptional)},
+                ${Variables.SettingEnum}.${id}
+                ),`);
         }
     }
     registerKeybind(name, id, event, defaultBind, secondBindOptional, callback) {
         var _a;
-        __classPrivateFieldGet(this, _PolyModLoader_keybindings, "f").push(`,xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("${name}"), Ix.${id})`);
-        __classPrivateFieldGet(this, _PolyModLoader_bindConstructor, "f").push(`Ix[Ix.${id} = ${__classPrivateFieldGet(this, _PolyModLoader_latestBinding, "f")}] = "${id}";`);
-        __classPrivateFieldGet(this, _PolyModLoader_defaultBinds, "f").push(`, [Ix.${id}, ["${defaultBind}", ${secondBindOptional ? `"${secondBindOptional}"` : "null"}]]`);
+        __classPrivateFieldGet(this, _PolyModLoader_keybindings, "f").push(`,xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("${name}"), ${Variables.KeybindEnum}.${id})`);
+        __classPrivateFieldGet(this, _PolyModLoader_bindConstructor, "f").push(`${Variables.KeybindEnum}[${Variables.KeybindEnum}.${id} = ${__classPrivateFieldGet(this, _PolyModLoader_latestBinding, "f")}] = "${id}";`);
+        __classPrivateFieldGet(this, _PolyModLoader_defaultBinds, "f").push(`, [${Variables.KeybindEnum}.${id}, ["${defaultBind}", ${secondBindOptional ? `"${secondBindOptional}"` : "null"}]]`);
         __classPrivateFieldSet(this, _PolyModLoader_latestBinding, (_a = __classPrivateFieldGet(this, _PolyModLoader_latestBinding, "f"), _a++, _a), "f");
         window.addEventListener(event, (e) => {
-            if (this.settingClass.checkKeyBinding(e, this.getFromPolyTrack(`Ix.${id}`))) {
+            if (this.settingClass.checkKeyBinding(e, this.getFromPolyTrack(`${Variables.KeybindEnum}.${id}`))) {
                 callback(e);
             }
         });
     }
     getSetting(id) {
-        return this.getFromPolyTrack(`ActivePolyModLoader.settingClass.getSetting($o.${id})`);
+        return this.getFromPolyTrack(`ActivePolyModLoader.settingClass.getSetting(${Variables.SettingEnum}.${id})`);
     }
     registerSoundOverride(id, url) {
-        this.registerClassMixin("ul.prototype", "load", MixinType.INSERT, `dl(this, tl, "f").addResource(),`, `
+        this.registerClassMixin(`${Variables.SoundClass}.prototype`, "load", MixinType.INSERT, `ml(this, nl, 'f').addResource(),`, `
             null;
             if(e === "${id}") {
                 t = ["${url}"];
@@ -955,17 +975,19 @@ export class PolyModLoader {
     }
 }
 _PolyModLoader_polyVersion = new WeakMap(), _PolyModLoader_allMods = new WeakMap(), _PolyModLoader_physicsTouched = new WeakMap(), _PolyModLoader_simWorkerClassMixins = new WeakMap(), _PolyModLoader_simWorkerFuncMixins = new WeakMap(), _PolyModLoader_settings = new WeakMap(), _PolyModLoader_settingConstructor = new WeakMap(), _PolyModLoader_defaultSettings = new WeakMap(), _PolyModLoader_latestSetting = new WeakMap(), _PolyModLoader_keybindings = new WeakMap(), _PolyModLoader_defaultBinds = new WeakMap(), _PolyModLoader_bindConstructor = new WeakMap(), _PolyModLoader_latestBinding = new WeakMap(), _PolyModLoader_polyModUrls = new WeakMap(), _PolyModLoader_instances = new WeakSet(), _PolyModLoader_applySettings = function _PolyModLoader_applySettings() {
-    this.registerClassMixin("ul.prototype", "load", MixinType.INSERT, `dl(this, tl, "f").addResource(),`, `ActivePolyModLoader.soundManager = new SoundManager(this);`);
-    this.registerClassMixin("ZB.prototype", "defaultSettings", MixinType.INSERT, `defaultSettings() {`, `ActivePolyModLoader.settingClass = this;${__classPrivateFieldGet(this, _PolyModLoader_settingConstructor, "f").join("")}`);
-    this.registerClassMixin("ZB.prototype", "defaultSettings", MixinType.INSERT, `[$o.CheckpointVolume, "1"]`, __classPrivateFieldGet(this, _PolyModLoader_defaultSettings, "f").join(""));
-    this.registerFuncMixin("mI", MixinType.INSERT, "), $o.CheckpointVolume),", __classPrivateFieldGet(this, _PolyModLoader_settings, "f").join(""));
+    this.registerClassMixin(`${Variables.SoundClass}.prototype`, "load", MixinType.INSERT, `ml(this, nl, 'f').addResource(),`, `ActivePolyModLoader.soundManager = new SoundManager(this);`);
+    this.registerClassMixin(`${Variables.SettingsClass}.prototype`, "defaultSettings", MixinType.INSERT, `() {`, `ActivePolyModLoader.settingClass = this;${__classPrivateFieldGet(this, _PolyModLoader_settingConstructor, "f").join("")}`);
+    this.registerClassMixin(`${Variables.SettingsClass}.prototype`, "defaultSettings", MixinType.INSERT, `[${Variables.SettingEnum}.CheckpointVolume, '1']`, __classPrivateFieldGet(this, _PolyModLoader_defaultSettings, "f").join(""));
+    this.registerFuncMixin(Variables.SettingUIFunction, MixinType.INSERT, `              el.CheckpointVolume
+            ),`, __classPrivateFieldGet(this, _PolyModLoader_settings, "f").join(""));
 }, _PolyModLoader_applyKeybinds = function _PolyModLoader_applyKeybinds() {
-    this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `defaultKeyBindings() {`, `${__classPrivateFieldGet(this, _PolyModLoader_bindConstructor, "f").join("")};`);
-    this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `[Ix.SpectatorSpeedModifier, ["ShiftLeft", "ShiftRight"]]`, __classPrivateFieldGet(this, _PolyModLoader_defaultBinds, "f").join(""));
-    this.registerFuncMixin("mI", MixinType.INSERT, "), Ix.ToggleSpectatorCamera)", __classPrivateFieldGet(this, _PolyModLoader_keybindings, "f").join(""));
-    this.registerClassMixin("PM.prototype", "update", MixinType.INSERT, `_M(this, YS, CM(this, BE, "m", kM).call(this), "f"),`, `ActivePolyModLoader.editorExtras.construct(this),`);
+    this.registerClassMixin(`${Variables.SettingsClass}.prototype`, "defaultKeyBindings", MixinType.INSERT, `() {`, `${__classPrivateFieldGet(this, _PolyModLoader_bindConstructor, "f").join("")};`);
+    this.registerClassMixin(`${Variables.SettingsClass}.prototype`, "defaultKeyBindings", MixinType.INSERT, `[${Variables.KeybindEnum}.SpectatorSpeedModifier, ["ShiftLeft", "ShiftRight"]]`, __classPrivateFieldGet(this, _PolyModLoader_defaultBinds, "f").join(""));
+    this.registerFuncMixin(Variables.SettingUIFunction, MixinType.INSERT, `${Variables.KeybindEnum}.ToggleSpectatorCamera
+            )`, __classPrivateFieldGet(this, _PolyModLoader_keybindings, "f").join(""));
+    this.registerClassMixin(`${Variables.EditorClass}.prototype`, "update", MixinType.INSERT, `y_(this, DM, b_(this, bS, 'm', f_).call(this), 'f'),`, `ActivePolyModLoader.editorExtras.construct(this),`);
 }, _PolyModLoader_preInitPML = function _PolyModLoader_preInitPML() {
-    this.registerFuncMixin("polyInitFunction", MixinType.INSERT, `, D = 0;`, `ActivePolyModLoader.popUpClass = S;`);
+    this.registerFuncMixin("polyInitFunction", MixinType.INSERT, Variables.PreInitMixin, `;ActivePolyModLoader.popUpClass = ${Variables.PolyInitPopupClass};`);
 };
 const ActivePolyModLoader = new PolyModLoader("0.5.0");
 export { ActivePolyModLoader };

@@ -313,6 +313,17 @@ for (const [start, end] of a) {
     }
 }
 
+enum Variables {
+    PreInitMixin = "D = 0",
+    PolyInitPopupClass = "E",
+    SoundClass = "gl",
+    SettingsClass = "hz",
+    SettingEnum = "el",
+    KeybindEnum = "mk",
+    SettingUIFunction = "yR",
+    EditorClass = "A_",
+}
+
 export class PolyModLoader {
     #polyVersion: string;
     #allMods: Array<PolyMod>;
@@ -732,67 +743,78 @@ export class PolyModLoader {
         }
     }
     registerSettingCategory(name: string) {
-        this.#settings.push(`xI(this, eI, "m", gI).call(this, xI(this, nI, "f").get("${name}")),`);
+        this.#settings.push(`MR(this, iR, 'm', bR).call(this, MR(this, aR, 'f').get('${name}')),`);
     }
     registerBindCategory(name: string) {
-        this.#keybindings.push(`,xI(this, eI, "m", vI).call(this, xI(this, nI, "f").get("${name}"))`);
+        this.#keybindings.push(`MR(this, iR, 'm', AR).call(this, MR(this, aR, 'f').get('${name}')),`);
     }
     registerSetting(name: string, id: string, type: SettingType, defaultOption: any, optionsOptional?: Array<{ title: string, value: string }>) {
         this.#latestSetting++
-        this.#settingConstructor.push(`$o[$o.${id} = ${this.#latestSetting}] = "${id}";`);
+        this.#settingConstructor.push(`${Variables.SettingEnum}[${Variables.SettingEnum}.${id} = ${this.#latestSetting}] = "${id}";`);
         if (type === "boolean") {
-            this.#defaultSettings.push(`, [$o.${id}, "${defaultOption ? "true" : "false"}"]`)
+            this.#defaultSettings.push(`, [${Variables.SettingEnum}.${id}, "${defaultOption ? "true" : "false"}"]`)
             this.#settings.push(`
-                xI(this, eI, "m", wI).call(this, xI(this, nI, "f").get("${name}"), [{
-                    title: xI(this, nI, "f").get("Off"),
-                    value: "false"
-                }, {
-                    title: xI(this, nI, "f").get("On"),
-                    value: "true"
-                }], $o.${id}),
-                `)
+                MR(this, iR, 'm', xR).call(
+                this,
+                MR(this, aR, 'f').get('${name}'),
+                [
+                    { title: MR(this, aR, 'f').get('Off'), value: 'false' },
+                    { title: MR(this, aR, 'f').get('On'), value: 'true' }
+                ],
+                ${Variables.SettingEnum}.${id}
+                ),`)
         } else if (type === "slider") {
-            this.#defaultSettings.push(`, [$o.${id}, "${defaultOption}"]`)
+            this.#defaultSettings.push(`, [${Variables.SettingEnum}.${id}, "${defaultOption}"]`)
             this.#settings.push(`
-                 xI(this, eI, "m", yI).call(this, xI(this, nI, "f").get("${name}"), $o.${id}),`)
+                 MR(this, iR, 'm', kR).call(
+              this,
+              MR(this, aR, 'f').get('${name}'),
+              ${Variables.SettingEnum}.${id}
+            ),`)
         } else if (type === "custom") {
-            this.#defaultSettings.push(`, [$o.${id}, "${defaultOption}"]`)
+            this.#defaultSettings.push(`, [${Variables.SettingEnum}.${id}, "${defaultOption}"]`)
             this.#settings.push(`
-                xI(this, eI, "m", wI).call(this, xI(this, nI, "f").get("${name}"), ${JSON.stringify(optionsOptional)}, $o.${id}),
-                `)
+                MR(this, iR, 'm', xR).call(
+                this,
+                MR(this, aR, 'f').get('${name}'),
+                ${JSON.stringify(optionsOptional)},
+                ${Variables.SettingEnum}.${id}
+                ),`)
         }
     }
     settingClass: any;
     soundManager: SoundManager;
     registerKeybind(name: string, id: string, event: string, defaultBind: string, secondBindOptional: string | null, callback: Function) {
-        this.#keybindings.push(`,xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("${name}"), Ix.${id})`);
-        this.#bindConstructor.push(`Ix[Ix.${id} = ${this.#latestBinding}] = "${id}";`);
-        this.#defaultBinds.push(`, [Ix.${id}, ["${defaultBind}", ${secondBindOptional ? `"${secondBindOptional}"` : "null"}]]`);
+        this.#keybindings.push(`,xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("${name}"), ${Variables.KeybindEnum}.${id})`);
+        this.#bindConstructor.push(`${Variables.KeybindEnum}[${Variables.KeybindEnum}.${id} = ${this.#latestBinding}] = "${id}";`);
+        this.#defaultBinds.push(`, [${Variables.KeybindEnum}.${id}, ["${defaultBind}", ${secondBindOptional ? `"${secondBindOptional}"` : "null"}]]`);
         this.#latestBinding++;
         window.addEventListener(event, (e) => {
-            if (this.settingClass.checkKeyBinding(e, this.getFromPolyTrack(`Ix.${id}`))) {
+            if (this.settingClass.checkKeyBinding(e, this.getFromPolyTrack(`${Variables.KeybindEnum}.${id}`))) {
                 callback(e)
             }
         });
     }
     #applySettings() {
-        this.registerClassMixin("ul.prototype", "load", MixinType.INSERT, `dl(this, tl, "f").addResource(),`, `ActivePolyModLoader.soundManager = new SoundManager(this);`)
-        this.registerClassMixin("ZB.prototype", "defaultSettings", MixinType.INSERT, `defaultSettings() {`, `ActivePolyModLoader.settingClass = this;${this.#settingConstructor.join("")}`)
-        this.registerClassMixin("ZB.prototype", "defaultSettings", MixinType.INSERT, `[$o.CheckpointVolume, "1"]`, this.#defaultSettings.join(""))
-        this.registerFuncMixin("mI", MixinType.INSERT, "), $o.CheckpointVolume),", this.#settings.join(""))
+        this.registerClassMixin(`${Variables.SoundClass}.prototype`, "load", MixinType.INSERT, `ml(this, nl, 'f').addResource(),`, `ActivePolyModLoader.soundManager = new SoundManager(this);`)
+        this.registerClassMixin(`${Variables.SettingsClass}.prototype`, "defaultSettings", MixinType.INSERT, `() {`, `ActivePolyModLoader.settingClass = this;${this.#settingConstructor.join("")}`)
+        this.registerClassMixin(`${Variables.SettingsClass}.prototype`, "defaultSettings", MixinType.INSERT,`[${Variables.SettingEnum}.CheckpointVolume, '1']`, this.#defaultSettings.join(""))
+        this.registerFuncMixin(Variables.SettingUIFunction, MixinType.INSERT, `              el.CheckpointVolume
+            ),`, this.#settings.join(""))
     }
 
     #applyKeybinds() {
-        this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `defaultKeyBindings() {`, `${this.#bindConstructor.join("")};`)
-        this.registerClassMixin("ZB.prototype", "defaultKeyBindings", MixinType.INSERT, `[Ix.SpectatorSpeedModifier, ["ShiftLeft", "ShiftRight"]]`, this.#defaultBinds.join(""))
-        this.registerFuncMixin("mI", MixinType.INSERT, "), Ix.ToggleSpectatorCamera)", this.#keybindings.join(""))
-        this.registerClassMixin("PM.prototype", "update", MixinType.INSERT, `_M(this, YS, CM(this, BE, "m", kM).call(this), "f"),`, `ActivePolyModLoader.editorExtras.construct(this),`);
+        this.registerClassMixin(`${Variables.SettingsClass}.prototype`, "defaultKeyBindings", MixinType.INSERT, `() {`, `${this.#bindConstructor.join("")};`)
+        this.registerClassMixin(`${Variables.SettingsClass}.prototype`, "defaultKeyBindings", MixinType.INSERT, `[${Variables.KeybindEnum}.SpectatorSpeedModifier, ["ShiftLeft", "ShiftRight"]]`, this.#defaultBinds.join(""))
+        this.registerFuncMixin(Variables.SettingUIFunction, MixinType.INSERT, `${Variables.KeybindEnum}.ToggleSpectatorCamera
+            )`, this.#keybindings.join(""))
+        this.registerClassMixin(`${Variables.EditorClass}.prototype`, "update", MixinType.INSERT, `y_(this, DM, b_(this, bS, 'm', f_).call(this), 'f'),`, `ActivePolyModLoader.editorExtras.construct(this),`);
     }
     getSetting(id: string) {
-        return this.getFromPolyTrack(`ActivePolyModLoader.settingClass.getSetting($o.${id})`);
+        return this.getFromPolyTrack(`ActivePolyModLoader.settingClass.getSetting(${Variables.SettingEnum}.${id})`);
     }
     registerSoundOverride(id: string, url: string) {
-        this.registerClassMixin("ul.prototype", "load", MixinType.INSERT, `dl(this, tl, "f").addResource(),`, `
+        this.registerClassMixin(`${Variables.SoundClass}.prototype`, "load", MixinType.INSERT, `ml(this, nl, 'f').addResource(),`, `
             null;
             if(e === "${id}") {
                 t = ["${url}"];
@@ -830,7 +852,7 @@ export class PolyModLoader {
     }
     popUpClass: any;
     #preInitPML() {
-        this.registerFuncMixin("polyInitFunction", MixinType.INSERT, `, D = 0;`, `ActivePolyModLoader.popUpClass = S;`)
+        this.registerFuncMixin("polyInitFunction", MixinType.INSERT, Variables.PreInitMixin, `;ActivePolyModLoader.popUpClass = ${Variables.PolyInitPopupClass};`)
     }
     initMods() {
         this.#preInitPML();
