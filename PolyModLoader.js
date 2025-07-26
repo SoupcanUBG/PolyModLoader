@@ -198,6 +198,17 @@ export var SettingType;
     SettingType["SLIDER"] = "slider";
     SettingType["CUSTOM"] = "custom";
 })(SettingType || (SettingType = {}));
+var Variables;
+(function (Variables) {
+    Variables["PreInitMixin"] = "D = 0";
+    Variables["PolyInitPopupClass"] = "E";
+    Variables["SoundClass"] = "gl";
+    Variables["SettingsClass"] = "hz";
+    Variables["SettingEnum"] = "el";
+    Variables["KeybindEnum"] = "mk";
+    Variables["SettingUIFunction"] = "yR";
+    Variables["EditorClass"] = "A_";
+})(Variables || (Variables = {}));
 export class SoundManager {
     constructor(soundClass) {
         _SoundManager_soundClass.set(this, void 0);
@@ -280,40 +291,12 @@ export class EditorExtras {
         __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`j_.push(new X_("${checksum}",F_.${categoryId},mu.${id},[["${sceneName}", "${modelName}"]],G_,${JSON.stringify(overlapSpace)}${extraSettings && extraSettings.specialSettings ? `, { type: Jh.${extraSettings.specialSettings.type}, center: ${JSON.stringify(extraSettings.specialSettings.center)}, size: ${JSON.stringify(extraSettings.specialSettings.size)}}` : ""}))`);
     }
     init() {
-        this.pml.registerClassMixin("GN.prototype", "init", MixinType.REPLACEBETWEEN, '["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"]', '["models/blocks.glb", "models/pillar.glb", "models/planes.glb", "models/road.glb", "models/road_wide.glb", "models/signs.glb", "models/wall_track.glb"]', `["${__classPrivateFieldGet(this, _EditorExtras_modelUrls, "f").join('", "')}"]`);
-        this.pml.registerFuncMixin("xb", MixinType.INSERT, `for (const [r,a] of Eb(this, Ab, "f")) {`, `if (ActivePolyModLoader.editorExtras.ignoredBlocks.includes(r)) {continue;};`);
-        this.pml.registerClassMixin("GN.prototype", "getCategoryMesh", MixinType.INSERT, "break;", `${__classPrivateFieldGet(this, _EditorExtras_categoryDefaults, "f").join("")}`);
-        this.pml.registerClassWideMixin("rb", MixinType.CLASSREPLACE, `const l = [];`, `l.push([n, i, r])`, `const l = [];
-for (const [start, end] of a) {
-    const [x0, y0, z0] = start;
-    const [x1, y1, z1] = end;
-
-    const minX = Math.min(x0, x1), maxX = Math.max(x0, x1);
-    const minY = Math.min(y0, y1), maxY = Math.max(y0, y1);
-    const minZ = Math.min(z0, z1), maxZ = Math.max(z0, z1);
-
-    for (let x = minX; x <= maxX; x++)
-        for (let y = minY; y <= maxY; y++)
-            for (let z = minZ; z <= maxZ; z++) {
-                if (l.find(([a, b, c]) => a === x && b === y && c === z)) {
-                    throw new Error("Duplicate tile in track part");
-                }
-                l.push([x, y, z]);
-            }`);
+        this.pml.registerClassMixin("eU.prototype", "init", MixinType.REPLACEBETWEEN, `((a = [`, ` ]),`, `((a = ["${__classPrivateFieldGet(this, _EditorExtras_modelUrls, "f").join('", "')}"]),`);
+        // this.pml.registerFuncMixin("xb", MixinType.INSERT, `for (const [r,a] of Eb(this, Ab, "f")) {`, `if (ActivePolyModLoader.editorExtras.ignoredBlocks.includes(r)) {continue;};`);
+        // this.pml.registerClassMixin("GN.prototype", "getCategoryMesh", MixinType.INSERT, "break;", `${this.#categoryDefaults.join("")}`);
     }
 }
 _EditorExtras_editorClass = new WeakMap(), _EditorExtras_latestCategory = new WeakMap(), _EditorExtras_latestBlock = new WeakMap(), _EditorExtras_categoryDefaults = new WeakMap(), _EditorExtras_simBlocks = new WeakMap(), _EditorExtras_modelUrls = new WeakMap();
-var Variables;
-(function (Variables) {
-    Variables["PreInitMixin"] = "D = 0";
-    Variables["PolyInitPopupClass"] = "E";
-    Variables["SoundClass"] = "gl";
-    Variables["SettingsClass"] = "hz";
-    Variables["SettingEnum"] = "el";
-    Variables["KeybindEnum"] = "mk";
-    Variables["SettingUIFunction"] = "yR";
-    Variables["EditorClass"] = "A_";
-})(Variables || (Variables = {}));
 export class PolyModLoader {
     constructor(polyVersion) {
         _PolyModLoader_instances.add(this);
@@ -975,19 +958,17 @@ export class PolyModLoader {
     }
 }
 _PolyModLoader_polyVersion = new WeakMap(), _PolyModLoader_allMods = new WeakMap(), _PolyModLoader_physicsTouched = new WeakMap(), _PolyModLoader_simWorkerClassMixins = new WeakMap(), _PolyModLoader_simWorkerFuncMixins = new WeakMap(), _PolyModLoader_settings = new WeakMap(), _PolyModLoader_settingConstructor = new WeakMap(), _PolyModLoader_defaultSettings = new WeakMap(), _PolyModLoader_latestSetting = new WeakMap(), _PolyModLoader_keybindings = new WeakMap(), _PolyModLoader_defaultBinds = new WeakMap(), _PolyModLoader_bindConstructor = new WeakMap(), _PolyModLoader_latestBinding = new WeakMap(), _PolyModLoader_polyModUrls = new WeakMap(), _PolyModLoader_instances = new WeakSet(), _PolyModLoader_applySettings = function _PolyModLoader_applySettings() {
-    this.registerClassMixin(`${Variables.SoundClass}.prototype`, "load", MixinType.INSERT, `ml(this, nl, 'f').addResource(),`, `ActivePolyModLoader.soundManager = new SoundManager(this);`);
+    this.registerClassMixin(`${Variables.SoundClass}.prototype`, "load", MixinType.INSERT, `ml(this, nl, "f").addResource(),`, `ActivePolyModLoader.soundManager = new SoundManager(this);`);
     this.registerClassMixin(`${Variables.SettingsClass}.prototype`, "defaultSettings", MixinType.INSERT, `() {`, `ActivePolyModLoader.settingClass = this;${__classPrivateFieldGet(this, _PolyModLoader_settingConstructor, "f").join("")}`);
-    this.registerClassMixin(`${Variables.SettingsClass}.prototype`, "defaultSettings", MixinType.INSERT, `[${Variables.SettingEnum}.CheckpointVolume, '1']`, __classPrivateFieldGet(this, _PolyModLoader_defaultSettings, "f").join(""));
-    this.registerFuncMixin(Variables.SettingUIFunction, MixinType.INSERT, `              el.CheckpointVolume
-            ),`, __classPrivateFieldGet(this, _PolyModLoader_settings, "f").join(""));
+    this.registerClassMixin(`${Variables.SettingsClass}.prototype`, "defaultSettings", MixinType.INSERT, `[${Variables.SettingEnum}.CheckpointVolume, "1"]`, __classPrivateFieldGet(this, _PolyModLoader_defaultSettings, "f").join(""));
+    this.registerFuncMixin(Variables.SettingUIFunction, MixinType.REPLACEBETWEEN, `MR(this, iR, "m", bR).call(this, MR(this, aR, "f").get("Controls")),`, `MR(this, iR, "m", bR).call(this, MR(this, aR, "f").get("Controls")),`, `${__classPrivateFieldGet(this, _PolyModLoader_settings, "f").join("")}MR(this, iR, "m", bR).call(this, MR(this, aR, "f").get("Controls")),`);
 }, _PolyModLoader_applyKeybinds = function _PolyModLoader_applyKeybinds() {
     this.registerClassMixin(`${Variables.SettingsClass}.prototype`, "defaultKeyBindings", MixinType.INSERT, `() {`, `${__classPrivateFieldGet(this, _PolyModLoader_bindConstructor, "f").join("")};`);
     this.registerClassMixin(`${Variables.SettingsClass}.prototype`, "defaultKeyBindings", MixinType.INSERT, `[${Variables.KeybindEnum}.SpectatorSpeedModifier, ["ShiftLeft", "ShiftRight"]]`, __classPrivateFieldGet(this, _PolyModLoader_defaultBinds, "f").join(""));
-    this.registerFuncMixin(Variables.SettingUIFunction, MixinType.INSERT, `${Variables.KeybindEnum}.ToggleSpectatorCamera
-            )`, __classPrivateFieldGet(this, _PolyModLoader_keybindings, "f").join(""));
-    this.registerClassMixin(`${Variables.EditorClass}.prototype`, "update", MixinType.INSERT, `y_(this, DM, b_(this, bS, 'm', f_).call(this), 'f'),`, `ActivePolyModLoader.editorExtras.construct(this),`);
+    this.registerFuncMixin(Variables.SettingUIFunction, MixinType.REPLACEBETWEEN, ` );`, ` );`, `),${__classPrivateFieldGet(this, _PolyModLoader_keybindings, "f").join("")}null;`);
+    this.registerClassMixin(`${Variables.EditorClass}.prototype`, "update", MixinType.INSERT, `y_(this, DM, b_(this, bS, "m", f_).call(this), "f"),`, `ActivePolyModLoader.editorExtras.construct(this),`);
 }, _PolyModLoader_preInitPML = function _PolyModLoader_preInitPML() {
     this.registerFuncMixin("polyInitFunction", MixinType.INSERT, Variables.PreInitMixin, `;ActivePolyModLoader.popUpClass = ${Variables.PolyInitPopupClass};`);
 };
-const ActivePolyModLoader = new PolyModLoader("0.5.0");
+const ActivePolyModLoader = new PolyModLoader("0.5.1");
 export { ActivePolyModLoader };
