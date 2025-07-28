@@ -376,6 +376,9 @@ export class PolyModLoader {
         this.#latestBinding = 31
         this.editorExtras = new EditorExtras(this);
     }
+    get polyVersion() {
+        return this.#polyVersion; // Why is this even private lmfao
+    }
     localStorage: Storage
     #polyModUrls: Array<{ base: string, version: string, loaded: boolean }>
     initStorage(localStorage: Storage) {

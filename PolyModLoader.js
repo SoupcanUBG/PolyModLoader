@@ -372,6 +372,9 @@ export class PolyModLoader {
         __classPrivateFieldSet(this, _PolyModLoader_latestBinding, 31, "f");
         this.editorExtras = new EditorExtras(this);
     }
+    get polyVersion() {
+        return __classPrivateFieldGet(this, _PolyModLoader_polyVersion, "f"); // Why is this even private lmfao
+    }
     initStorage(localStorage) {
         /** @type {Storage} */
         this.localStorage = localStorage;
