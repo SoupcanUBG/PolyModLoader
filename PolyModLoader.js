@@ -685,7 +685,6 @@ export class PolyModLoader {
                 newMod.baseUrl = polyModObject.base;
                 newMod.applyManifest = (nothing) => { console.warn("Can't apply manifest after initialization!"); };
                 newMod.savedLatest = latest;
-                polyModObject.loaded = false;
                 __classPrivateFieldGet(this, _PolyModLoader_allMods, "f").push(newMod);
                 this.saveModsToLocalStorage();
                 return this.getMod(newMod.id);
