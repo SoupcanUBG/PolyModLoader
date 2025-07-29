@@ -770,7 +770,7 @@ export class PolyModLoader {
     settingClass: any;
     soundManager: SoundManager;
     registerKeybind(name: string, id: string, event: string, defaultBind: string, secondBindOptional: string | null, callback: Function) {
-        this.#keybindings.push(`,xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("${name}"), ${Variables.KeybindEnum}.${id})`);
+        this.#keybindings.push(`xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("${name}"), ${Variables.KeybindEnum}.${id}),`);
         this.#bindConstructor.push(`${Variables.KeybindEnum}[${Variables.KeybindEnum}.${id} = ${this.#latestBinding}] = "${id}";`);
         this.#defaultBinds.push(`, [${Variables.KeybindEnum}.${id}, ["${defaultBind}", ${secondBindOptional ? `"${secondBindOptional}"` : "null"}]]`);
         this.#latestBinding++;

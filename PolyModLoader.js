@@ -748,7 +748,7 @@ export class PolyModLoader {
     }
     registerKeybind(name, id, event, defaultBind, secondBindOptional, callback) {
         var _a;
-        __classPrivateFieldGet(this, _PolyModLoader_keybindings, "f").push(`,xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("${name}"), ${Variables.KeybindEnum}.${id})`);
+        __classPrivateFieldGet(this, _PolyModLoader_keybindings, "f").push(`xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("${name}"), ${Variables.KeybindEnum}.${id}),`);
         __classPrivateFieldGet(this, _PolyModLoader_bindConstructor, "f").push(`${Variables.KeybindEnum}[${Variables.KeybindEnum}.${id} = ${__classPrivateFieldGet(this, _PolyModLoader_latestBinding, "f")}] = "${id}";`);
         __classPrivateFieldGet(this, _PolyModLoader_defaultBinds, "f").push(`, [${Variables.KeybindEnum}.${id}, ["${defaultBind}", ${secondBindOptional ? `"${secondBindOptional}"` : "null"}]]`);
         __classPrivateFieldSet(this, _PolyModLoader_latestBinding, (_a = __classPrivateFieldGet(this, _PolyModLoader_latestBinding, "f"), _a++, _a), "f");
