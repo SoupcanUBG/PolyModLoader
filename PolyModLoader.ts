@@ -728,10 +728,10 @@ export class PolyModLoader {
         }
     }
     registerSettingCategory(name: string) {
-        this.#settings.push(`MR(this, iR, 'm', bR).call(this, MR(this, aR, 'f').get('${name}')),`);
+        this.#settings.push(`MR(this, iR, "m", bR).call(this, MR(this, aR, "f").get("${name}")),`);
     }
     registerBindCategory(name: string) {
-        this.#keybindings.push(`MR(this, iR, 'm', AR).call(this, MR(this, aR, 'f').get('${name}')),`);
+        this.#keybindings.push(`MR(this, iR, "m", AR).call(this, MR(this, aR, "f").get("${name}")),`);
     }
     registerSetting(name: string, id: string, type: SettingType, defaultOption: any, optionsOptional?: Array<{ title: string, value: string }>) {
         this.#latestSetting++
@@ -770,7 +770,7 @@ export class PolyModLoader {
     settingClass: any;
     soundManager: SoundManager;
     registerKeybind(name: string, id: string, event: string, defaultBind: string, secondBindOptional: string | null, callback: Function) {
-        this.#keybindings.push(`xI(this, eI, "m", AI).call(this, xI(this, nI, "f").get("${name}"), ${Variables.KeybindEnum}.${id}),`);
+        this.#keybindings.push(`MR(this, iR, "m", ER).call(this, MR(this, aR, "f").get("${name}"), ${Variables.KeybindEnum}.${id}),`);
         this.#bindConstructor.push(`${Variables.KeybindEnum}[${Variables.KeybindEnum}.${id} = ${this.#latestBinding}] = "${id}";`);
         this.#defaultBinds.push(`, [${Variables.KeybindEnum}.${id}, ["${defaultBind}", ${secondBindOptional ? `"${secondBindOptional}"` : "null"}]]`);
         this.#latestBinding++;
