@@ -663,7 +663,7 @@ export class PolyModLoader {
                 }
             }
             catch {
-                alert(`Couldn't find latest version for ${polyModObject.base}`);
+                alert(`Mod with URL ${polyModObject.base} does not have a version which supports PolyTrack v${__classPrivateFieldGet(this, _PolyModLoader_polyVersion, "f")}.`);
             }
         }
         const polyModUrl = `${polyModObject.base}/${polyModObject.version}`;
