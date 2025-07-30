@@ -797,7 +797,7 @@ export class PolyModLoader {
         return this.getFromPolyTrack(`ActivePolyModLoader.settingClass.getSetting(${Variables.SettingEnum}.${id})`);
     }
     registerSoundOverride(id: string, url: string) {
-        this.registerClassMixin(`${Variables.SoundClass}.prototype`, "load", MixinType.INSERT, `ml(this, nl, 'f').addResource(),`, `
+        this.registerClassMixin(`${Variables.SoundClass}.prototype`, "load", MixinType.INSERT, `ml(this, nl, "f").addResource(),`, `
             null;
             if(e === "${id}") {
                 t = ["${url}"];
