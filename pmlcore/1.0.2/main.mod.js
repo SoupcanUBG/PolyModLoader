@@ -1,7 +1,7 @@
 import {
   PolyMod,
   MixinType,
-} from "https://pml.crjakob.com/polytrackmods/PolyModLoader/0.5.1/PolyModLoader.js";
+} from "../../PolyModLoader.js";
 import { isElectron } from "https://pml.crjakob.com/CRJakob/jakobspolymods/dev/modpackTools.js";
 
 async function checkForUpdate() {

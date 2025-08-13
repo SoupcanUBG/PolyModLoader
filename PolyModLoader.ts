@@ -1,4 +1,11 @@
 /**
+ * 
+ *      To compile:
+ *          tsc PolyModLoader.ts --target ES2020 --module ES2020
+ * 
+ */
+
+/**
  * Base class for all polytrack mods. Mods should export an instance of their mod class named `polyMod` in their main file.
  */
 export class PolyMod {
@@ -149,6 +156,10 @@ export class PolyMod {
      * Function to run before initialization of `simulation_worker.bundle.js`.
      */
     simInit = () => { }
+     /**
+     * Function to run once game finishses loading
+     */
+    onGameLoad = () => { }
 }
 
 /**
@@ -262,7 +273,7 @@ export class EditorExtras {
     }
 
     blockNumberFromId(id): number {
-        return this.pml.getFromPolyTrack(`eA.${id}`);
+        return this.pml.getFromPolyTrack(`Sb.${id}`);
     }
 
     get getSimBlocks() {
@@ -279,31 +290,31 @@ export class EditorExtras {
 
     registerCategory(id: string, defaultId: string) {
         this.#latestCategory++;
-        this.pml.getFromPolyTrack(`KA[KA.${id} = ${this.#latestCategory}]  =  "${id}"`);
-        this.#simBlocks.push(`F_[F_.${id} = ${this.#latestCategory}]  =  "${id}"`);
-        this.#categoryDefaults.push(`case KA.${id}:n = this.getPart(eA.${defaultId});break;`)
+        this.pml.getFromPolyTrack(`RA[RA.${id} = ${this.#latestCategory}]  =  "${id}"`);
+        this.#simBlocks.push(`fv[fv.${id} = ${this.#latestCategory}]  =  "${id}"`);
+        this.#categoryDefaults.push(`case RA.${id}:n = this.getPart(Sb.${defaultId});break;`)
     }
 
     registerBlock(id: string, categoryId: string, checksum: string, sceneName: string, modelName: string, overlapSpace: Array<Array<Array<number>>>, extraSettings?: { ignoreOnExport?: boolean, specialSettings?: { type: string, center: Array<number>, size: Array<number> } }) {
         this.#latestBlock++;
-        this.pml.getFromPolyTrack(`eA[eA.${id} = ${this.#latestBlock}]  =  "${id}"`);
-        this.pml.getFromPolyTrack(`ab.push(new rb("${checksum}",KA.${categoryId},eA.${id},[["${sceneName}", "${modelName}"]],nb,${JSON.stringify(overlapSpace)}${extraSettings && extraSettings.specialSettings ? `, { type: XA.${extraSettings.specialSettings.type}, center: ${JSON.stringify(extraSettings.specialSettings.center)}, size: ${JSON.stringify(extraSettings.specialSettings.size)}}` : ""}))`);
-        this.pml.getFromPolyTrack(`for (const e of ab) {if (!sb.has(e.id)){ sb.set(e.id, e);}; }
+        this.pml.getFromPolyTrack(`Sb[Sb.${id} = ${this.#latestBlock}]  =  "${id}"`);
+        this.pml.getFromPolyTrack(`VA.push(new HA("${checksum}",RA.${categoryId},Sb.${id},[["${sceneName}", "${modelName}"]],FA,${JSON.stringify(overlapSpace)}${extraSettings && extraSettings.specialSettings ? `, { type: DA.${extraSettings.specialSettings.type}, center: ${JSON.stringify(extraSettings.specialSettings.center)}, size: ${JSON.stringify(extraSettings.specialSettings.size)}}` : ""}))`);
+        this.pml.getFromPolyTrack(`for (const e of VA) {if (!GA.has(e.id)){ GA.set(e.id, e);}; }
       `);
         if (extraSettings && extraSettings.ignoreOnExport) {
             this.ignoredBlocks.push(this.blockNumberFromId(id));
             return;
         }
-        this.#simBlocks.push(`mu[mu.${id} = ${this.#latestBlock}]  =  "${id}"`);
-        this.#simBlocks.push(`j_.push(new X_("${checksum}",F_.${categoryId},mu.${id},[["${sceneName}", "${modelName}"]],G_,${JSON.stringify(overlapSpace)}${extraSettings && extraSettings.specialSettings ? `, { type: Jh.${extraSettings.specialSettings.type}, center: ${JSON.stringify(extraSettings.specialSettings.center)}, size: ${JSON.stringify(extraSettings.specialSettings.size)}}` : ""}))`);
+        this.#simBlocks.push(`dd[dd.${id} = ${this.#latestBlock}]  =  "${id}"`);
+        this.#simBlocks.push(`xv.push(new yv("${checksum}",fv.${categoryId},dd.${id},[["${sceneName}", "${modelName}"]],vv,${JSON.stringify(overlapSpace)}${extraSettings && extraSettings.specialSettings ? `, { type: qh.${extraSettings.specialSettings.type}, center: ${JSON.stringify(extraSettings.specialSettings.center)}, size: ${JSON.stringify(extraSettings.specialSettings.size)}}` : ""}))`);
     }
     init() {
         this.pml.registerClassMixin("eU.prototype",
             "init", MixinType.REPLACEBETWEEN,
             `((a = [`,
             ` ]),`,`((a = ["${this.#modelUrls.join('", "')}"]),`);
-        // this.pml.registerFuncMixin("xb", MixinType.INSERT, `for (const [r,a] of Eb(this, Ab, "f")) {`, `if (ActivePolyModLoader.editorExtras.ignoredBlocks.includes(r)) {continue;};`);
-        // this.pml.registerClassMixin("GN.prototype", "getCategoryMesh", MixinType.INSERT, "break;", `${this.#categoryDefaults.join("")}`);
+        this.pml.registerFuncMixin("sx", MixinType.INSERT, `for (const [r, a] of lx(this, rx, "f")) {`, `if (ActivePolyModLoader.editorExtras.ignoredBlocks.includes(r)) {continue;};`);
+        this.pml.registerClassMixin("eU.prototype", "getCategoryMesh", MixinType.INSERT, "n = this.getPart(Sb.SignArrowLeft);", `break;${this.#categoryDefaults.join("")}`);
     }
 }
 
@@ -909,6 +920,25 @@ export class PolyModLoader {
                 } catch (err) {
                     alert(`Mod ${polyMod.name} failed to post initialize and will be unloaded.`);
                     console.error("Error in post initializing mod:", err);
+                    this.setModLoaded(polyMod, false);
+                }
+            }
+        }
+    }
+    gameLoadCalled:boolean = false;
+    gameLoad() {
+        if(!this.gameLoadCalled) {
+            this.gameLoadCalled = true;
+        } else {
+            return;
+        }
+        for (let polyMod of this.#allMods) {
+            if (polyMod.isLoaded) {
+                try {
+                    polyMod.onGameLoad();
+                } catch (err) {
+                    alert(`Mod ${polyMod.name} failed on game load and will be unloaded.`);
+                    console.error("Error on game load for mod:", err);
                     this.setModLoaded(polyMod, false);
                 }
             }

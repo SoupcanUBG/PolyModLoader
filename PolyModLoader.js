@@ -1,3 +1,9 @@
+/**
+ *
+ *      To compile:
+ *          tsc PolyModLoader.ts --target ES2020 --module ES2020
+ *
+ */
 var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
     if (kind === "m") throw new TypeError("Private method is not writable");
     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
@@ -48,6 +54,10 @@ export class PolyMod {
          * Function to run before initialization of `simulation_worker.bundle.js`.
          */
         this.simInit = () => { };
+        /**
+        * Function to run once game finishses loading
+        */
+        this.onGameLoad = () => { };
     }
     /**
      * The author of the mod.
@@ -258,7 +268,7 @@ export class EditorExtras {
         __classPrivateFieldSet(this, _EditorExtras_editorClass, editorClass, "f");
     }
     blockNumberFromId(id) {
-        return this.pml.getFromPolyTrack(`eA.${id}`);
+        return this.pml.getFromPolyTrack(`Sb.${id}`);
     }
     get getSimBlocks() {
         return [...__classPrivateFieldGet(this, _EditorExtras_simBlocks, "f")];
@@ -272,28 +282,28 @@ export class EditorExtras {
     registerCategory(id, defaultId) {
         var _a;
         __classPrivateFieldSet(this, _EditorExtras_latestCategory, (_a = __classPrivateFieldGet(this, _EditorExtras_latestCategory, "f"), _a++, _a), "f");
-        this.pml.getFromPolyTrack(`KA[KA.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestCategory, "f")}]  =  "${id}"`);
-        __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`F_[F_.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestCategory, "f")}]  =  "${id}"`);
-        __classPrivateFieldGet(this, _EditorExtras_categoryDefaults, "f").push(`case KA.${id}:n = this.getPart(eA.${defaultId});break;`);
+        this.pml.getFromPolyTrack(`RA[RA.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestCategory, "f")}]  =  "${id}"`);
+        __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`fv[fv.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestCategory, "f")}]  =  "${id}"`);
+        __classPrivateFieldGet(this, _EditorExtras_categoryDefaults, "f").push(`case RA.${id}:n = this.getPart(Sb.${defaultId});break;`);
     }
     registerBlock(id, categoryId, checksum, sceneName, modelName, overlapSpace, extraSettings) {
         var _a;
         __classPrivateFieldSet(this, _EditorExtras_latestBlock, (_a = __classPrivateFieldGet(this, _EditorExtras_latestBlock, "f"), _a++, _a), "f");
-        this.pml.getFromPolyTrack(`eA[eA.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestBlock, "f")}]  =  "${id}"`);
-        this.pml.getFromPolyTrack(`ab.push(new rb("${checksum}",KA.${categoryId},eA.${id},[["${sceneName}", "${modelName}"]],nb,${JSON.stringify(overlapSpace)}${extraSettings && extraSettings.specialSettings ? `, { type: XA.${extraSettings.specialSettings.type}, center: ${JSON.stringify(extraSettings.specialSettings.center)}, size: ${JSON.stringify(extraSettings.specialSettings.size)}}` : ""}))`);
-        this.pml.getFromPolyTrack(`for (const e of ab) {if (!sb.has(e.id)){ sb.set(e.id, e);}; }
+        this.pml.getFromPolyTrack(`Sb[Sb.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestBlock, "f")}]  =  "${id}"`);
+        this.pml.getFromPolyTrack(`VA.push(new HA("${checksum}",RA.${categoryId},Sb.${id},[["${sceneName}", "${modelName}"]],FA,${JSON.stringify(overlapSpace)}${extraSettings && extraSettings.specialSettings ? `, { type: DA.${extraSettings.specialSettings.type}, center: ${JSON.stringify(extraSettings.specialSettings.center)}, size: ${JSON.stringify(extraSettings.specialSettings.size)}}` : ""}))`);
+        this.pml.getFromPolyTrack(`for (const e of VA) {if (!GA.has(e.id)){ GA.set(e.id, e);}; }
       `);
         if (extraSettings && extraSettings.ignoreOnExport) {
             this.ignoredBlocks.push(this.blockNumberFromId(id));
             return;
         }
-        __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`mu[mu.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestBlock, "f")}]  =  "${id}"`);
-        __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`j_.push(new X_("${checksum}",F_.${categoryId},mu.${id},[["${sceneName}", "${modelName}"]],G_,${JSON.stringify(overlapSpace)}${extraSettings && extraSettings.specialSettings ? `, { type: Jh.${extraSettings.specialSettings.type}, center: ${JSON.stringify(extraSettings.specialSettings.center)}, size: ${JSON.stringify(extraSettings.specialSettings.size)}}` : ""}))`);
+        __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`dd[dd.${id} = ${__classPrivateFieldGet(this, _EditorExtras_latestBlock, "f")}]  =  "${id}"`);
+        __classPrivateFieldGet(this, _EditorExtras_simBlocks, "f").push(`xv.push(new yv("${checksum}",fv.${categoryId},dd.${id},[["${sceneName}", "${modelName}"]],vv,${JSON.stringify(overlapSpace)}${extraSettings && extraSettings.specialSettings ? `, { type: qh.${extraSettings.specialSettings.type}, center: ${JSON.stringify(extraSettings.specialSettings.center)}, size: ${JSON.stringify(extraSettings.specialSettings.size)}}` : ""}))`);
     }
     init() {
         this.pml.registerClassMixin("eU.prototype", "init", MixinType.REPLACEBETWEEN, `((a = [`, ` ]),`, `((a = ["${__classPrivateFieldGet(this, _EditorExtras_modelUrls, "f").join('", "')}"]),`);
-        // this.pml.registerFuncMixin("xb", MixinType.INSERT, `for (const [r,a] of Eb(this, Ab, "f")) {`, `if (ActivePolyModLoader.editorExtras.ignoredBlocks.includes(r)) {continue;};`);
-        // this.pml.registerClassMixin("GN.prototype", "getCategoryMesh", MixinType.INSERT, "break;", `${this.#categoryDefaults.join("")}`);
+        this.pml.registerFuncMixin("sx", MixinType.INSERT, `for (const [r, a] of lx(this, rx, "f")) {`, `if (ActivePolyModLoader.editorExtras.ignoredBlocks.includes(r)) {continue;};`);
+        this.pml.registerClassMixin("eU.prototype", "getCategoryMesh", MixinType.INSERT, "n = this.getPart(Sb.SignArrowLeft);", `break;${__classPrivateFieldGet(this, _EditorExtras_categoryDefaults, "f").join("")}`);
     }
 }
 _EditorExtras_editorClass = new WeakMap(), _EditorExtras_latestCategory = new WeakMap(), _EditorExtras_latestBlock = new WeakMap(), _EditorExtras_categoryDefaults = new WeakMap(), _EditorExtras_simBlocks = new WeakMap(), _EditorExtras_modelUrls = new WeakMap();
@@ -314,6 +324,7 @@ export class PolyModLoader {
         _PolyModLoader_bindConstructor.set(this, void 0);
         _PolyModLoader_latestBinding.set(this, void 0);
         _PolyModLoader_polyModUrls.set(this, void 0);
+        this.gameLoadCalled = false;
         this.getFromPolyTrack = (path) => { };
         /**
          * Inject mixin under scope {@link scope} with target function name defined by {@link path}.
@@ -875,6 +886,26 @@ export class PolyModLoader {
                 catch (err) {
                     alert(`Mod ${polyMod.name} failed to post initialize and will be unloaded.`);
                     console.error("Error in post initializing mod:", err);
+                    this.setModLoaded(polyMod, false);
+                }
+            }
+        }
+    }
+    gameLoad() {
+        if (!this.gameLoadCalled) {
+            this.gameLoadCalled = true;
+        }
+        else {
+            return;
+        }
+        for (let polyMod of __classPrivateFieldGet(this, _PolyModLoader_allMods, "f")) {
+            if (polyMod.isLoaded) {
+                try {
+                    polyMod.onGameLoad();
+                }
+                catch (err) {
+                    alert(`Mod ${polyMod.name} failed on game load and will be unloaded.`);
+                    console.error("Error on game load for mod:", err);
                     this.setModLoaded(polyMod, false);
                 }
             }

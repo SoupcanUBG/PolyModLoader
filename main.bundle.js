@@ -53745,6 +53745,7 @@ ActivePolyModLoader.importMods().then(() => {
                       }
                     }),
                     _N(this, rN, null, "f");
+                    ActivePolyModLoader.gameLoad();
                 })),
             u &&
               (TN(this, XD, "m", xN).call(this),
