@@ -13,7 +13,7 @@ steps:
     image: node:20-alpine
     commands:
       - npm install -g asar
-      - asar p . app.asar
+      - asar p . app.asar --exclude-hidden
 
   - name: get app files from remote and copy asar
     image: node:20-alpine
