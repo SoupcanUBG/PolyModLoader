@@ -6,14 +6,14 @@ steps:
   - name: set version tag
     image: alpine
     commands:
-      - sed -i "3a const pmlversion = \"${CI_COMMIT_TAG:-UNKNOWN}\";" main.bundle.js
-      - sed -i "4a window.pmlversion = pmlversion;" main.bundle.js
+      - sed -i "8a const pmlversion = \"${CI_COMMIT_TAG:-UNKNOWN}\";" main.bundle.js
+      - sed -i "9a window.pmlversion = pmlversion;" main.bundle.js
 
   - name: compile asar
     image: node:20-alpine
     commands:
       - npm install -g asar
-      - asar p . app.asar
+      - asar p . app.asar --exclude-hidden
 
   - name: get app files from remote and copy asar
     image: node:20-alpine
